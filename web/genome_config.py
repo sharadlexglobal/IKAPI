@@ -21,7 +21,7 @@ class APIConfig:
 
     @staticmethod
     def model() -> str:
-        return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+        return os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 
     @staticmethod
     def max_tokens() -> int:

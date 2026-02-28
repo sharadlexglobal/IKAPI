@@ -10,7 +10,7 @@ CLAUDE_PRICING = {
         "input_per_million": 0.25,
         "output_per_million": 1.25,
     },
-    "claude-sonnet-4-20250514": {
+    "claude-sonnet-4-6": {
         "input_per_million": 3.00,
         "output_per_million": 15.00,
     },
@@ -35,7 +35,7 @@ def calculate_claude_cost(model, input_tokens, output_tokens):
                 pricing = CLAUDE_PRICING[key]
                 break
     if not pricing:
-        pricing = CLAUDE_PRICING["claude-sonnet-4-20250514"]
+        pricing = CLAUDE_PRICING["claude-sonnet-4-6"]
 
     input_cost = (input_tokens / 1_000_000) * pricing["input_per_million"]
     output_cost = (output_tokens / 1_000_000) * pricing["output_per_million"]

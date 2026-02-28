@@ -127,7 +127,7 @@ def synthesize_research(pleading_text, case_context, genomes, questions_data=Non
 Generate the complete research memo now. Respond with ONLY valid JSON."""
 
     client = anthropic.Anthropic(api_key=api_key)
-    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 
     message = client.messages.create(
         model=model,

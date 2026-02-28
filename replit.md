@@ -183,7 +183,7 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 ## AI Models & Costs
 
 - **Claude Haiku** (`claude-3-haiku-20240307`): Smart Search query conversion (~$0.001/query), pipeline query generation (~$0.001/batch), relevance filtering (~$0.005/batch)
-- **Claude Sonnet 4** (`claude-sonnet-4-20250514`): Genome extraction & question extraction (max_tokens=30000, timeout=300s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
+- **Claude Sonnet 4** (`claude-sonnet-4-6`): Genome extraction & question extraction (max_tokens=30000, timeout=300s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
 - **Gemini 2.5 Flash**: Analysis tab summarization (billed to Replit credits)
 
 ### Pipeline Cost Tracking

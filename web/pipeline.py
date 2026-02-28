@@ -763,7 +763,7 @@ def _step_synthesize(job_id, job, cost_tracker):
         )
 
         if usage:
-            cost_tracker.add_claude_cost("synthesis", usage.get("model", "claude-sonnet-4-20250514"),
+            cost_tracker.add_claude_cost("synthesis", usage.get("model", "claude-sonnet-4-6"),
                                           usage.get("input_tokens", 0), usage.get("output_tokens", 0))
         _save_costs(job_id, cost_tracker)
 
