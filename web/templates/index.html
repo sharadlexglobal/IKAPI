@@ -14,6 +14,7 @@
             <div class="nav-tabs">
                 <button class="nav-tab active" data-view="search">Search</button>
                 <button class="nav-tab" data-view="analysis">Analysis</button>
+                <button class="nav-tab" data-view="genomeLab">Genome Lab</button>
             </div>
         </div>
     </div>
@@ -256,12 +257,135 @@
         </div>
     </div>
 
+    <div id="genomeLabView" class="view-panel">
+        <div class="container genome-container">
+            <div class="genome-sub-tabs">
+                <button class="genome-sub-tab active" data-subtab="genomeExtract">Judgment Genome</button>
+                <button class="genome-sub-tab" data-subtab="questionExtract">Research Questions</button>
+            </div>
+
+            <div id="genomeExtractPanel" class="genome-panel active">
+                <div class="genome-layout">
+                    <div class="genome-input-panel">
+                        <h3>Extract Judgment Genome</h3>
+                        <div class="genome-source-toggle">
+                            <button class="source-btn active" data-source="cached">From Cached Judgment</button>
+                            <button class="source-btn" data-source="paste">Paste Judgment Text</button>
+                        </div>
+                        <div id="genomeCachedSource" class="genome-source active">
+                            <label for="genomeCachedSelect">Select Cached Judgment</label>
+                            <select id="genomeCachedSelect">
+                                <option value="">-- Select a judgment --</option>
+                            </select>
+                        </div>
+                        <div id="genomePasteSource" class="genome-source">
+                            <label for="genomeCitationInput">Citation / Case Name</label>
+                            <input type="text" id="genomeCitationInput" class="search-input" placeholder="e.g. Md. Ibrahim vs State of Bihar (2009) 8 SCC 751">
+                            <label for="genomeTextInput" style="margin-top:12px;">Judgment Text</label>
+                            <textarea id="genomeTextInput" class="genome-textarea" rows="12" placeholder="Paste the full judgment text here..."></textarea>
+                        </div>
+                        <button id="extractGenomeBtn" class="genome-extract-btn" disabled>Extract Genome</button>
+                        <div id="genomeProgress" class="genome-progress" style="display:none;">
+                            <div class="spinner"></div>
+                            <p>Extracting genome with Claude Sonnet 4... This takes 30-90 seconds.</p>
+                        </div>
+                        <div id="genomeError" class="error-msg" style="display:none;"></div>
+                    </div>
+                    <div class="genome-viewer-panel">
+                        <div id="genomeViewerEmpty" class="empty-state">
+                            <h3>Judgment Genome Viewer</h3>
+                            <p>Select a cached judgment or paste text, then click Extract Genome.</p>
+                            <p class="empty-hint">The genome extracts 6 dimensions: what the judgment says, its logical structure, what's hidden, how to use it, synthesis, and a self-audit.</p>
+                        </div>
+                        <div id="genomeViewerContent" style="display:none;">
+                            <div class="genome-header-bar">
+                                <div class="genome-meta" id="genomeMetaInfo"></div>
+                                <div class="genome-header-actions">
+                                    <button class="btn-sm" id="downloadGenomeBtn">Download JSON</button>
+                                </div>
+                            </div>
+                            <div id="genomeCheatSheet" class="genome-cheat-sheet"></div>
+                            <div class="genome-dim-tabs" id="genomeDimTabs"></div>
+                            <div id="genomeDimContent" class="genome-dim-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="questionExtractPanel" class="genome-panel">
+                <div class="genome-layout">
+                    <div class="genome-input-panel">
+                        <h3>Extract Research Questions</h3>
+                        <div class="analysis-section">
+                            <label for="questionTypeSelect">Pleading Type</label>
+                            <select id="questionTypeSelect">
+                                <option value="WRIT_PETITION">Writ Petition</option>
+                                <option value="BAIL_APPLICATION">Bail Application</option>
+                                <option value="ANTICIPATORY_BAIL">Anticipatory Bail</option>
+                                <option value="CIVIL_SUIT">Civil Suit</option>
+                                <option value="APPEAL_MEMO">Appeal Memo</option>
+                                <option value="SPECIAL_LEAVE_PETITION">Special Leave Petition (SLP)</option>
+                                <option value="CRIMINAL_COMPLAINT">Criminal Complaint</option>
+                                <option value="WRITTEN_STATEMENT">Written Statement</option>
+                                <option value="COUNTER_AFFIDAVIT">Counter Affidavit</option>
+                                <option value="REVISION_PETITION">Revision Petition</option>
+                                <option value="REVIEW_PETITION">Review Petition</option>
+                                <option value="CURATIVE_PETITION">Curative Petition</option>
+                                <option value="APPLICATION_UNDER_SPECIFIC_STATUTE">Application (Specific Statute)</option>
+                                <option value="ARBITRATION_PETITION">Arbitration Petition</option>
+                                <option value="COMPANY_PETITION">Company Petition</option>
+                                <option value="EXECUTION_APPLICATION">Execution Application</option>
+                                <option value="DISCHARGE_APPLICATION">Discharge Application</option>
+                                <option value="QUASHING_PETITION">Quashing Petition (S.482)</option>
+                                <option value="TRANSFER_PETITION">Transfer Petition</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div class="analysis-section">
+                            <label for="questionCitationInput">Case Citation / Title</label>
+                            <input type="text" id="questionCitationInput" class="search-input" placeholder="e.g. Bhandari vs Canara Bank, WP No. 1234/2026">
+                        </div>
+                        <div class="analysis-section">
+                            <label for="questionTextInput">Pleading Text</label>
+                            <textarea id="questionTextInput" class="genome-textarea" rows="12" placeholder="Paste the full pleading text here (writ petition, bail application, appeal memo, etc.)..."></textarea>
+                        </div>
+                        <button id="extractQuestionsBtn" class="genome-extract-btn question-extract-btn" disabled>Extract Research Questions</button>
+                        <div id="questionProgress" class="genome-progress" style="display:none;">
+                            <div class="spinner"></div>
+                            <p>Extracting research questions with Claude Sonnet 4... This takes 30-90 seconds.</p>
+                        </div>
+                        <div id="questionError" class="error-msg" style="display:none;"></div>
+                    </div>
+                    <div class="genome-viewer-panel">
+                        <div id="questionViewerEmpty" class="empty-state">
+                            <h3>Research Question Extractor</h3>
+                            <p>Paste a litigation pleading, select the type, and click Extract.</p>
+                            <p class="empty-hint">Generates 80-120 strategic research questions across 14 categories, from 3 perspectives (Advocate, Opponent, Judge), with gate questions and decision tree logic.</p>
+                        </div>
+                        <div id="questionViewerContent" style="display:none;">
+                            <div class="genome-header-bar">
+                                <div class="genome-meta" id="questionMetaInfo"></div>
+                                <div class="genome-header-actions">
+                                    <button class="btn-sm" id="downloadQuestionsBtn">Download JSON</button>
+                                </div>
+                            </div>
+                            <div id="questionSummary" class="question-summary"></div>
+                            <div id="questionGates" class="question-gates"></div>
+                            <div id="questionCategories" class="question-categories"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="docOverlay" class="doc-overlay">
         <div class="doc-panel">
             <div class="doc-header">
                 <h2 id="docTitle">Document</h2>
                 <div class="doc-header-actions">
                     <span id="docCachedBadge" class="cached-badge" style="display:none;">Cached</span>
+                    <button id="docExtractGenomeBtn" class="extract-genome-doc-btn" style="display:none;">Extract Genome</button>
                     <button id="docClose" class="doc-close">&times;</button>
                 </div>
             </div>

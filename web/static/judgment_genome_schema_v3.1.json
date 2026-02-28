@@ -1,0 +1,2467 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://courtcraft.ai/schemas/judgment-genome-v3.json",
+  "title": "Judgment Genome Extraction v3.0",
+  "description": "Complete structured extraction from a legal judgment using the Judgment Genome Project\u2122 Framework v3.0 with embedded verification architecture.",
+  "type": "object",
+  "required": [
+    "document_id",
+    "schema_version",
+    "extraction_metadata",
+    "dimension_1_visible",
+    "dimension_2_structural",
+    "dimension_3_invisible",
+    "dimension_4_weaponizable",
+    "dimension_5_synthesis",
+    "dimension_6_audit"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the schema this document conforms to"
+    },
+    "extraction_metadata": {
+      "type": "object",
+      "description": "Metadata about the extraction itself",
+      "required": [
+        "extraction_date",
+        "source_url",
+        "judgment_citation",
+        "framework_version"
+      ],
+      "properties": {
+        "extraction_date": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO date when extraction was performed"
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL of the judgment source (e.g., Indian Kanoon, SCC Online)"
+        },
+        "judgment_citation": {
+          "type": "string",
+          "description": "Full legal citation, e.g., (2009) 8 SCC 751"
+        },
+        "framework_version": {
+          "type": "string",
+          "const": "Judgment Genome Project v3.0"
+        },
+        "extractor": {
+          "type": "string",
+          "description": "Identifier of the extracting agent (AI model or human)"
+        }
+      }
+    },
+    "dimension_1_visible": {
+      "type": "object",
+      "description": "DIMENSION 1: THE VISIBLE \u2014 What the judgment says",
+      "required": [
+        "case_identity",
+        "story",
+        "procedural_journey",
+        "provisions_engaged",
+        "precedent_registry",
+        "ratio_decidendi",
+        "obiter_dicta",
+        "operative_order"
+      ],
+      "properties": {
+        "case_identity": {
+          "type": "object",
+          "description": "Section 1.1 \u2014 Case Identity Card",
+          "required": [
+            "case_name",
+            "court",
+            "bench",
+            "date_of_judgment",
+            "case_number",
+            "domain",
+            "judgment_author"
+          ],
+          "properties": {
+            "case_name": {
+              "type": "string",
+              "description": "Full case name: Party v. Party"
+            },
+            "court": {
+              "type": "string",
+              "description": "Name of the court"
+            },
+            "bench": {
+              "type": "object",
+              "required": [
+                "judges",
+                "strength"
+              ],
+              "properties": {
+                "judges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "role"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "AUTHOR",
+                          "CONCURRING",
+                          "CONCURRING_WITH_SEPARATE_OPINION",
+                          "DISSENTING"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "strength": {
+                  "type": "integer",
+                  "description": "Number of judges on the bench"
+                },
+                "is_constitution_bench": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "date_of_judgment": {
+              "type": "string",
+              "format": "date",
+              "description": "ISO date of judgment"
+            },
+            "case_number": {
+              "type": "string",
+              "description": "Full case number with type"
+            },
+            "domain": {
+              "type": "string",
+              "enum": [
+                "CONSTITUTIONAL",
+                "CRIMINAL",
+                "CIVIL",
+                "TAX",
+                "LABOUR",
+                "COMMERCIAL",
+                "INTELLECTUAL_PROPERTY",
+                "FAMILY",
+                "ENVIRONMENTAL",
+                "ADMINISTRATIVE",
+                "OTHER"
+              ],
+              "description": "Primary legal domain"
+            },
+            "domain_detail": {
+              "type": "string",
+              "description": "Sub-domain or detailed description"
+            },
+            "judgment_author": {
+              "type": "string"
+            },
+            "dissenting_judges": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Empty array if unanimous"
+            },
+            "case_origin": {
+              "type": "string",
+              "enum": [
+                "SLP",
+                "APPEAL",
+                "REFERENCE",
+                "PIL",
+                "ORIGINAL_JURISDICTION",
+                "TRANSFER_PETITION",
+                "REVIEW",
+                "CURATIVE",
+                "OTHER",
+                "NOT_STATED_IN_JUDGMENT"
+              ],
+              "description": "How the case reached this court"
+            },
+            "source_paragraphs": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "\u00b6 numbers from which identity fields were extracted"
+            }
+          }
+        },
+        "story": {
+          "type": "object",
+          "description": "Section 1.2 \u2014 Factual Matrix as Narrative",
+          "required": [
+            "plain_language",
+            "legal_language"
+          ],
+          "properties": {
+            "plain_language": {
+              "type": "string",
+              "description": "8-15 sentences, no legal jargon"
+            },
+            "legal_language": {
+              "type": "string",
+              "description": "5-10 sentences, full legal precision"
+            },
+            "verification_note": {
+              "type": "string",
+              "description": "Confirmation that both versions are factually identical"
+            }
+          }
+        },
+        "procedural_journey": {
+          "type": "array",
+          "description": "Section 1.3 \u2014 Procedural stages",
+          "items": {
+            "type": "object",
+            "required": [
+              "stage",
+              "forum",
+              "outcome"
+            ],
+            "properties": {
+              "stage": {
+                "type": "string"
+              },
+              "forum": {
+                "type": "string"
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ISO date or null if not stated in judgment"
+              },
+              "date_source": {
+                "type": "string",
+                "enum": [
+                  "STATED_IN_JUDGMENT",
+                  "NOT_STATED_IN_JUDGMENT"
+                ],
+                "description": "Gate 1 traceability"
+              },
+              "outcome": {
+                "type": "string"
+              },
+              "what_was_decided": {
+                "type": "string"
+              },
+              "source_paragraph": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "\u00b6 number(s) from judgment"
+              }
+            }
+          },
+          "maxItems": 15
+        },
+        "provisions_engaged": {
+          "type": "array",
+          "description": "Section 1.4 \u2014 All legal provisions engaged in the judgment",
+          "items": {
+            "type": "object",
+            "required": [
+              "provision_id",
+              "parent_statute",
+              "role",
+              "court_action"
+            ],
+            "properties": {
+              "provision_id": {
+                "type": "string",
+                "description": "Section number and name, e.g., 'Section 464 IPC \u2014 Making a False Document'"
+              },
+              "parent_statute": {
+                "type": "string",
+                "description": "Full statute name"
+              },
+              "exact_text": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Quoted from judgment's reproduction, or null if not reproduced"
+              },
+              "text_source": {
+                "type": "string",
+                "enum": [
+                  "REPRODUCED_IN_JUDGMENT",
+                  "NOT_REPRODUCED_IN_JUDGMENT_REQUIRES_VERIFICATION",
+                  "PARAPHRASED_FROM_JUDGMENT"
+                ],
+                "description": "Gate 2 \u2014 Statutory Text Fidelity"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "PRIMARY_INTERPRETATION_TARGET",
+                  "CHARGED_PROVISION",
+                  "SUPPORTING_DEFINITION",
+                  "PROCEDURAL_VEHICLE",
+                  "CONSTITUTIONAL_TOUCHSTONE",
+                  "PROVISION_UNDER_CHALLENGE",
+                  "CROSS_REFERENCE"
+                ]
+              },
+              "court_action": {
+                "type": "string",
+                "enum": [
+                  "INTERPRETED",
+                  "APPLIED",
+                  "DISTINGUISHED",
+                  "STRUCK_DOWN",
+                  "READ_DOWN",
+                  "DECLARED_ULTRA_VIRES",
+                  "LEFT_OPEN",
+                  "QUASHED",
+                  "LEFT_UNDISTURBED",
+                  "REFERRED"
+                ]
+              },
+              "source_paragraph": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "corresponding_new_provision": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Gate 5 \u2014 Cross-statutory mapping if parent statute repealed/replaced",
+                "properties": {
+                  "new_provision_id": {
+                    "type": "string"
+                  },
+                  "new_parent_statute": {
+                    "type": "string"
+                  },
+                  "verification_status": {
+                    "type": "string",
+                    "enum": [
+                      "VERIFIED",
+                      "UNVERIFIED_REQUIRES_CONFIRMATION"
+                    ]
+                  },
+                  "verification_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "language_status": {
+                    "type": "string",
+                    "enum": [
+                      "IDENTICAL",
+                      "SUBSTANTIALLY_SIMILAR",
+                      "MODIFIED",
+                      "UNKNOWN"
+                    ]
+                  },
+                  "changes_noted": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 30
+        },
+        "precedent_registry": {
+          "type": "array",
+          "description": "Section 1.5 \u2014 All cases cited in the judgment",
+          "items": {
+            "type": "object",
+            "required": [
+              "case_name",
+              "citation",
+              "what_it_held",
+              "why_cited",
+              "treatment",
+              "source_paragraph"
+            ],
+            "properties": {
+              "case_name": {
+                "type": "string"
+              },
+              "citation": {
+                "type": "string",
+                "description": "As reproduced in judgment"
+              },
+              "what_it_held": {
+                "type": "string",
+                "description": "2-3 sentences \u2014 ONLY what current judgment says it held"
+              },
+              "why_cited": {
+                "type": "string"
+              },
+              "treatment": {
+                "type": "string",
+                "enum": [
+                  "FOLLOWED",
+                  "DISTINGUISHED",
+                  "OVERRULED",
+                  "DOUBTED",
+                  "MERELY_REFERRED",
+                  "REAFFIRMED",
+                  "EXPLAINED",
+                  "CONFINED"
+                ]
+              },
+              "source_paragraph": {
+                "type": "string"
+              }
+            }
+          },
+          "maxItems": 50
+        },
+        "ratio_decidendi": {
+          "type": "array",
+          "description": "Section 1.6 \u2014 Binding legal principles (universalized)",
+          "items": {
+            "type": "object",
+            "required": [
+              "ratio_id",
+              "proposition",
+              "source_paragraph"
+            ],
+            "properties": {
+              "ratio_id": {
+                "type": "string",
+                "description": "e.g., RATIO_1, RATIO_2",
+                "pattern": "^RATIO_[0-9]+$"
+              },
+              "label": {
+                "type": "string",
+                "description": "Short label, e.g., 'On Forgery'"
+              },
+              "proposition": {
+                "type": "string",
+                "description": "Universalized legal principle"
+              },
+              "source_paragraph": {
+                "type": "string"
+              },
+              "linked_syllogism_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "IDs of syllogisms from 2.1 that produce this ratio"
+              }
+            }
+          },
+          "maxItems": 10
+        },
+        "obiter_dicta": {
+          "type": "array",
+          "description": "Section 1.7 \u2014 Persuasive observations",
+          "items": {
+            "type": "object",
+            "required": [
+              "obiter_id",
+              "observation",
+              "future_significance",
+              "necessity_check"
+            ],
+            "properties": {
+              "obiter_id": {
+                "type": "string",
+                "pattern": "^OBITER_[0-9]+$"
+              },
+              "observation": {
+                "type": "string"
+              },
+              "future_significance": {
+                "type": "string"
+              },
+              "source_paragraph": {
+                "type": "string"
+              },
+              "necessity_check": {
+                "type": "object",
+                "description": "Verification: Is this truly obiter or should it be ratio?",
+                "required": [
+                  "is_necessary_for_decision",
+                  "verified"
+                ],
+                "properties": {
+                  "is_necessary_for_decision": {
+                    "type": "boolean",
+                    "description": "If true, reclassify as ratio"
+                  },
+                  "verified": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 10
+        },
+        "operative_order": {
+          "type": "object",
+          "description": "Section 1.8 \u2014 What the court actually ordered",
+          "required": [
+            "order_text",
+            "order_items"
+          ],
+          "properties": {
+            "order_text": {
+              "type": "string",
+              "description": "Verbatim or close paraphrase"
+            },
+            "order_items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "SET_ASIDE",
+                      "QUASHED",
+                      "LEFT_UNDISTURBED",
+                      "ALLOWED",
+                      "DISMISSED",
+                      "REMANDED",
+                      "DIRECTED",
+                      "MODIFIED",
+                      "UPHELD",
+                      "CONFIRMED",
+                      "STAYED",
+                      "COMMUTED",
+                      "ENHANCED",
+                      "RESTORED",
+                      "REFERRED_TO_LARGER_BENCH",
+                      "OTHER"
+                    ]
+                  },
+                  "detail": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "source_paragraph": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dimension_2_structural": {
+      "type": "object",
+      "description": "DIMENSION 2: THE STRUCTURAL \u2014 How the reasoning is built",
+      "required": [
+        "syllogisms",
+        "dependency_tree",
+        "interpretive_method",
+        "rhetorical_architecture"
+      ],
+      "properties": {
+        "syllogisms": {
+          "type": "object",
+          "description": "Section 2.1 \u2014 Logical DNA of the judgment",
+          "required": [
+            "items",
+            "chain_logic"
+          ],
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "syllogism_id",
+                  "major_premise",
+                  "minor_premise",
+                  "conclusion",
+                  "source_paragraphs"
+                ],
+                "properties": {
+                  "syllogism_id": {
+                    "type": "string",
+                    "description": "e.g., SYL_1, SYL_2",
+                    "pattern": "^SYL_[0-9]+$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Short descriptive label"
+                  },
+                  "major_premise": {
+                    "type": "string",
+                    "description": "The legal rule"
+                  },
+                  "minor_premise": {
+                    "type": "string",
+                    "description": "The case-specific facts applied"
+                  },
+                  "conclusion": {
+                    "type": "string"
+                  },
+                  "source_paragraphs": {
+                    "type": "string"
+                  },
+                  "is_independent": {
+                    "type": "boolean",
+                    "description": "True if this syllogism stands alone; false if it depends on another syllogism's conclusion"
+                  },
+                  "feeds_into": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IDs of syllogisms this conclusion feeds into (can be multiple)"
+                  }
+                }
+              },
+              "maxItems": 15
+            },
+            "chain_logic": {
+              "type": "string",
+              "description": "Narrative description of how syllogisms connect"
+            }
+          }
+        },
+        "dependency_tree": {
+          "type": "object",
+          "description": "Section 2.2 \u2014 Flat dependency tree with parent references",
+          "required": [
+            "root_node",
+            "nodes"
+          ],
+          "properties": {
+            "root_node": {
+              "type": "string",
+              "description": "The ultimate conclusion / operative order"
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "node_id",
+                  "parent_node_id",
+                  "branch_id",
+                  "premise",
+                  "type",
+                  "is_critical"
+                ],
+                "properties": {
+                  "node_id": {
+                    "type": "string",
+                    "pattern": "^DEP_[0-9]+$",
+                    "description": "Unique node ID within this tree"
+                  },
+                  "parent_node_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ID of parent node. null = root-level dependency."
+                  },
+                  "branch_id": {
+                    "type": "string",
+                    "description": "Which branch this node belongs to (e.g., BRANCH_A)"
+                  },
+                  "premise": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "LEGAL_RULE",
+                      "FACTUAL_FINDING",
+                      "SUB_CONCLUSION",
+                      "HIDDEN_ASSUMPTION",
+                      "FACTUAL_CHARACTERIZATION"
+                    ]
+                  },
+                  "is_critical": {
+                    "type": "boolean",
+                    "description": "True = removal collapses the branch; False = merely supportive"
+                  },
+                  "source_paragraph": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "interpretive_method": {
+          "type": "object",
+          "description": "Section 2.3 \u2014 Judge's interpretive fingerprint",
+          "required": [
+            "primary_method",
+            "method_basis",
+            "alternative_method_analysis"
+          ],
+          "properties": {
+            "primary_method": {
+              "type": "string",
+              "enum": [
+                "LITERAL",
+                "PURPOSIVE",
+                "HARMONIOUS",
+                "MISCHIEF_RULE",
+                "GOLDEN_RULE",
+                "BENEFICIAL",
+                "STRICT_CONSTRUCTION",
+                "CONSTITUTIONAL_READING_DOWN",
+                "SEVERABILITY",
+                "OTHER"
+              ]
+            },
+            "method_basis": {
+              "type": "string",
+              "enum": [
+                "EXPLICITLY_STATED",
+                "IMPLICIT"
+              ],
+              "description": "Did the judge explain the choice or was it implicit?"
+            },
+            "method_explanation": {
+              "type": "string"
+            },
+            "alternative_method_analysis": {
+              "type": "array",
+              "description": "What if a different method were used? Must SHOW steps, not just assert.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "analysis_narrative",
+                  "would_outcome_change",
+                  "analysis_steps"
+                ],
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "would_outcome_change": {
+                    "type": "boolean"
+                  },
+                  "likely_alternative_outcome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "analysis_steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 2,
+                    "description": "Step-by-step application of the alternative method. Minimum 2 steps."
+                  },
+                  "analysis_narrative": {
+                    "type": "string",
+                    "description": "Step-by-step application of alternative method"
+                  }
+                }
+              }
+            },
+            "judges_tendency": {
+              "type": "string"
+            }
+          }
+        },
+        "rhetorical_architecture": {
+          "type": "object",
+          "description": "Section 2.4",
+          "properties": {
+            "opening_move": {
+              "type": "string"
+            },
+            "persuasion_technique": {
+              "type": "string"
+            },
+            "metaphor_or_analogy": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tone": {
+              "type": "string",
+              "enum": [
+                "NEUTRAL",
+                "EMPHATIC",
+                "CAUTIONARY",
+                "REFORMIST",
+                "RESTRAINED",
+                "INSTRUCTIVE",
+                "CORRECTIVE"
+              ]
+            },
+            "strategic_ambiguity": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "ambiguity_type": {
+                  "type": "string",
+                  "enum": [
+                    "DELIBERATE_BY_JUDGE",
+                    "EXTRACTION_UNCERTAINTY"
+                  ],
+                  "description": "Distinguish judge's ambiguity from extractor's uncertainty"
+                },
+                "source_paragraph": {
+                  "type": "string"
+                }
+              }
+            },
+            "source_paragraphs": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "\u00b6 numbers supporting rhetorical analysis"
+            }
+          },
+          "required": [
+            "opening_move",
+            "persuasion_technique",
+            "tone"
+          ]
+        }
+      }
+    },
+    "dimension_3_invisible": {
+      "type": "object",
+      "description": "DIMENSION 3: THE INVISIBLE \u2014 What the judgment hides. ALL items carry confidence markers.",
+      "required": [
+        "hidden_assumptions",
+        "silent_arguments",
+        "fact_sensitivity_matrix",
+        "counterfactual_analysis",
+        "alternative_interpretations",
+        "doctrinal_undercurrent"
+      ],
+      "properties": {
+        "hidden_assumptions": {
+          "type": "array",
+          "description": "Section 3.1 \u2014 Unstated major premises",
+          "items": {
+            "type": "object",
+            "required": [
+              "assumption_id",
+              "what_court_assumes",
+              "where_it_operates",
+              "why_it_matters",
+              "how_to_challenge",
+              "confidence",
+              "self_check"
+            ],
+            "properties": {
+              "assumption_id": {
+                "type": "string",
+                "pattern": "^HA_[0-9]+$"
+              },
+              "what_court_assumes": {
+                "type": "string"
+              },
+              "where_it_operates": {
+                "type": "string",
+                "description": "\u00b6 number(s)"
+              },
+              "why_it_matters": {
+                "type": "string"
+              },
+              "how_to_challenge": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "VERIFIED",
+                  "SOUND_INFERENCE",
+                  "SPECULATIVE",
+                  "UNVERIFIED"
+                ]
+              },
+              "self_check": {
+                "type": "object",
+                "description": "Gate 3 self-check results",
+                "required": [
+                  "is_truly_unstated",
+                  "challenge_structurally_valid"
+                ],
+                "properties": {
+                  "is_truly_unstated": {
+                    "type": "boolean",
+                    "description": "Confirmed court did not state this?"
+                  },
+                  "challenge_structurally_valid": {
+                    "type": "boolean",
+                    "description": "Challenge passes Gate 3?"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 10
+        },
+        "silent_arguments": {
+          "type": "array",
+          "description": "Section 3.2 \u2014 Arguments never made but should have been. Each MUST include stress test.",
+          "items": {
+            "type": "object",
+            "required": [
+              "argument_id",
+              "the_argument",
+              "who_should_have_made_it",
+              "why_it_matters",
+              "provision_or_principle",
+              "confidence",
+              "stress_test"
+            ],
+            "properties": {
+              "argument_id": {
+                "type": "string",
+                "pattern": "^SA_[0-9]+$"
+              },
+              "the_argument": {
+                "type": "string"
+              },
+              "who_should_have_made_it": {
+                "type": "string",
+                "enum": [
+                  "APPELLANT",
+                  "RESPONDENT",
+                  "PROSECUTION",
+                  "DEFENCE",
+                  "COURT_SUO_MOTU"
+                ]
+              },
+              "why_it_matters": {
+                "type": "string"
+              },
+              "provision_or_principle": {
+                "type": "string",
+                "description": "EXACT section number + statute name. Gate 4 Step 1."
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "SOUND_INFERENCE",
+                  "SPECULATIVE"
+                ]
+              },
+              "stress_test": {
+                "type": "object",
+                "description": "Gate 4 \u2014 Mandatory three-step stress test",
+                "required": [
+                  "step_1_statutory_basis",
+                  "step_2_structural_validity",
+                  "step_3_adversarial_challenge",
+                  "verdict"
+                ],
+                "properties": {
+                  "step_1_statutory_basis": {
+                    "type": "object",
+                    "required": [
+                      "provision_identified",
+                      "provision_detail"
+                    ],
+                    "properties": {
+                      "provision_identified": {
+                        "type": "boolean"
+                      },
+                      "provision_detail": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "step_2_structural_validity": {
+                    "type": "object",
+                    "required": [
+                      "respects_hierarchy",
+                      "explanation"
+                    ],
+                    "properties": {
+                      "respects_hierarchy": {
+                        "type": "boolean"
+                      },
+                      "explanation": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "step_3_adversarial_challenge": {
+                    "type": "object",
+                    "required": [
+                      "counter_argument",
+                      "is_counter_stronger"
+                    ],
+                    "properties": {
+                      "counter_argument": {
+                        "type": "string",
+                        "description": "The strongest counter-argument"
+                      },
+                      "is_counter_stronger": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "verdict": {
+                    "type": "string",
+                    "enum": [
+                      "INCLUDE",
+                      "INCLUDE_WITH_CAVEAT",
+                      "REMOVE"
+                    ],
+                    "description": "Final decision on inclusion"
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 8
+        },
+        "fact_sensitivity_matrix": {
+          "type": "object",
+          "description": "Section 3.3",
+          "required": [
+            "load_bearing_facts",
+            "decorative_facts",
+            "ambiguous_facts"
+          ],
+          "properties": {
+            "load_bearing_facts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "fact",
+                  "dependent_syllogism_ids",
+                  "source_paragraph"
+                ],
+                "properties": {
+                  "fact": {
+                    "type": "string"
+                  },
+                  "source_paragraph": {
+                    "type": "string"
+                  },
+                  "dependent_syllogism_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IDs of ALL syllogisms from 2.1 that depend on this fact"
+                  }
+                }
+              }
+            },
+            "decorative_facts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "fact",
+                  "why_decorative",
+                  "source_paragraph"
+                ],
+                "properties": {
+                  "fact": {
+                    "type": "string"
+                  },
+                  "why_decorative": {
+                    "type": "string"
+                  },
+                  "source_paragraph": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "ambiguous_facts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "fact",
+                  "why_ambiguous",
+                  "source_paragraph"
+                ],
+                "properties": {
+                  "fact": {
+                    "type": "string"
+                  },
+                  "why_ambiguous": {
+                    "type": "string"
+                  },
+                  "source_paragraph": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "counterfactual_analysis": {
+          "type": "array",
+          "description": "Section 3.4 \u2014 What-if machine",
+          "items": {
+            "type": "object",
+            "required": [
+              "cf_id",
+              "original_fact",
+              "altered_fact",
+              "impact_on_reasoning",
+              "likely_new_outcome",
+              "applicable_provision",
+              "confidence",
+              "is_practically_plausible"
+            ],
+            "properties": {
+              "cf_id": {
+                "type": "string",
+                "pattern": "^CF_[0-9]+$"
+              },
+              "original_fact": {
+                "type": "string"
+              },
+              "original_fact_source": {
+                "type": "string",
+                "description": "\u00b6 number"
+              },
+              "altered_fact": {
+                "type": "string"
+              },
+              "impact_on_reasoning": {
+                "type": "string",
+                "description": "Which syllogism from 2.1 breaks?"
+              },
+              "broken_syllogism_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "likely_new_outcome": {
+                "type": "string"
+              },
+              "applicable_provision": {
+                "type": "string",
+                "description": "EXACT section + statute"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "SOUND_INFERENCE",
+                  "SPECULATIVE"
+                ]
+              },
+              "is_practically_plausible": {
+                "type": "boolean",
+                "description": "Reality check: would a practitioner encounter this variation?"
+              }
+            }
+          },
+          "maxItems": 8
+        },
+        "alternative_interpretations": {
+          "type": "array",
+          "description": "Section 3.5 \u2014 Interpretations not chosen",
+          "items": {
+            "type": "object",
+            "required": [
+              "alt_id",
+              "what_it_would_have_been",
+              "why_not_adopted",
+              "confidence",
+              "statutory_structure_check"
+            ],
+            "properties": {
+              "alt_id": {
+                "type": "string",
+                "pattern": "^ALT_[0-9]+$"
+              },
+              "what_it_would_have_been": {
+                "type": "string"
+              },
+              "why_not_adopted": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "SOUND_INFERENCE",
+                  "SPECULATIVE"
+                ]
+              },
+              "statutory_structure_check": {
+                "type": "object",
+                "description": "Gate 3 \u2014 Mandatory hierarchy check",
+                "required": [
+                  "respects_hierarchy",
+                  "hierarchy_explanation",
+                  "passes_check"
+                ],
+                "properties": {
+                  "respects_hierarchy": {
+                    "type": "boolean"
+                  },
+                  "hierarchy_explanation": {
+                    "type": "string",
+                    "description": "Draw the relationship between provisions"
+                  },
+                  "intent_vs_definition_confusion": {
+                    "type": "boolean",
+                    "description": "True if this interpretation confuses intent requirements with definitional expansion"
+                  },
+                  "passes_check": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "is_defensible": {
+                "type": "boolean",
+                "description": "After passing structure check"
+              },
+              "what_would_change": {
+                "type": "string"
+              }
+            }
+          },
+          "maxItems": 5
+        },
+        "doctrinal_undercurrent": {
+          "type": "object",
+          "description": "Section 3.6",
+          "required": [
+            "doctrines"
+          ],
+          "properties": {
+            "doctrines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "doctrine_name",
+                  "how_it_manifests"
+                ],
+                "properties": {
+                  "doctrine_name": {
+                    "type": "string"
+                  },
+                  "how_it_manifests": {
+                    "type": "string"
+                  },
+                  "source_paragraphs": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "tensions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "competing_doctrine",
+                  "verification_status"
+                ],
+                "properties": {
+                  "competing_doctrine": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "supporting_sc_judgment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "At least one SC judgment endorsing the competing doctrine"
+                  },
+                  "verification_status": {
+                    "type": "string",
+                    "enum": [
+                      "VERIFIED_WITH_CITATION",
+                      "UNVERIFIED_COMPETING_DOCTRINE_NOT_CONFIRMED"
+                    ]
+                  },
+                  "source_paragraph": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "\u00b6 numbers where tension manifests"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dimension_4_weaponizable": {
+      "type": "object",
+      "description": "DIMENSION 4: THE WEAPONIZABLE \u2014 How to use/attack this judgment",
+      "required": [
+        "sword_uses",
+        "shield_uses",
+        "vulnerability_map",
+        "distinguishing_playbook",
+        "cross_domain_transplants",
+        "temporal_vulnerability"
+      ],
+      "properties": {
+        "sword_uses": {
+          "type": "array",
+          "description": "Section 4.1 \u2014 Offensive uses",
+          "items": {
+            "type": "object",
+            "required": [
+              "use_case_id",
+              "scenario",
+              "how_to_cite",
+              "draft_argument",
+              "stage_of_proceedings",
+              "is_practically_common"
+            ],
+            "properties": {
+              "use_case_id": {
+                "type": "string",
+                "pattern": "^SWORD_[0-9]+$"
+              },
+              "scenario": {
+                "type": "string"
+              },
+              "how_to_cite": {
+                "type": "string",
+                "description": "Specific \u00b6 number"
+              },
+              "draft_argument": {
+                "type": "string",
+                "description": "2-3 sentences with judgment name, citation, \u00b6"
+              },
+              "stage_of_proceedings": {
+                "type": "string",
+                "enum": [
+                  "BAIL",
+                  "ANTICIPATORY_BAIL",
+                  "DISCHARGE",
+                  "CHARGE",
+                  "TRIAL",
+                  "APPEAL",
+                  "REVISION",
+                  "QUASHING_482",
+                  "SLP",
+                  "MULTIPLE"
+                ]
+              },
+              "is_practically_common": {
+                "type": "boolean",
+                "description": "Reality check"
+              }
+            }
+          },
+          "maxItems": 8
+        },
+        "shield_uses": {
+          "type": "array",
+          "description": "Section 4.2 \u2014 Defensive uses",
+          "items": {
+            "type": "object",
+            "required": [
+              "scenario_id",
+              "attack_being_faced",
+              "how_judgment_helps",
+              "key_factual_similarity",
+              "boundary_condition"
+            ],
+            "properties": {
+              "scenario_id": {
+                "type": "string",
+                "pattern": "^SHIELD_[0-9]+$"
+              },
+              "attack_being_faced": {
+                "type": "string"
+              },
+              "how_judgment_helps": {
+                "type": "string"
+              },
+              "key_factual_similarity": {
+                "type": "string",
+                "description": "What MUST be true for this shield to work"
+              },
+              "boundary_condition": {
+                "type": "string",
+                "description": "Under what facts would this shield FAIL?"
+              },
+              "source_paragraph": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "\u00b6 number supporting this defensive use"
+              }
+            }
+          },
+          "maxItems": 5
+        },
+        "vulnerability_map": {
+          "type": "object",
+          "description": "Section 4.3",
+          "required": [
+            "vulnerabilities",
+            "overall_durability_score",
+            "durability_reasoning"
+          ],
+          "properties": {
+            "vulnerabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "vuln_id",
+                  "weak_point",
+                  "attack_vector",
+                  "likelihood_of_success",
+                  "what_would_be_needed",
+                  "confidence",
+                  "stress_test"
+                ],
+                "properties": {
+                  "vuln_id": {
+                    "type": "string",
+                    "pattern": "^VULN_[0-9]+$"
+                  },
+                  "weak_point": {
+                    "type": "string"
+                  },
+                  "attack_vector": {
+                    "type": "string"
+                  },
+                  "likelihood_of_success": {
+                    "type": "string",
+                    "enum": [
+                      "HIGH",
+                      "MEDIUM",
+                      "LOW"
+                    ]
+                  },
+                  "what_would_be_needed": {
+                    "type": "string"
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "enum": [
+                      "SOUND_INFERENCE",
+                      "SPECULATIVE"
+                    ]
+                  },
+                  "stress_test": {
+                    "type": "object",
+                    "description": "Gate 4 stress test applied to the vulnerability",
+                    "required": [
+                      "statutory_basis",
+                      "respects_hierarchy",
+                      "defence_response",
+                      "is_defence_stronger"
+                    ],
+                    "properties": {
+                      "statutory_basis": {
+                        "type": "string"
+                      },
+                      "respects_hierarchy": {
+                        "type": "boolean"
+                      },
+                      "defence_response": {
+                        "type": "string"
+                      },
+                      "is_defence_stronger": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              },
+              "maxItems": 8
+            },
+            "overall_durability_score": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "durability_reasoning": {
+              "type": "string"
+            }
+          }
+        },
+        "distinguishing_playbook": {
+          "type": "array",
+          "description": "Section 4.4",
+          "items": {
+            "type": "object",
+            "required": [
+              "strategy_id",
+              "factual_difference",
+              "draft_argument",
+              "is_material_to_ratio"
+            ],
+            "properties": {
+              "strategy_id": {
+                "type": "string",
+                "pattern": "^DIST_[0-9]+$"
+              },
+              "factual_difference": {
+                "type": "string"
+              },
+              "draft_argument": {
+                "type": "string"
+              },
+              "is_material_to_ratio": {
+                "type": "boolean",
+                "description": "Validity check: does the ratio depend on this fact?"
+              },
+              "validity_note": {
+                "type": "string"
+              },
+              "source_paragraph": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "\u00b6 number supporting the factual difference"
+              }
+            }
+          },
+          "maxItems": 6
+        },
+        "cross_domain_transplants": {
+          "type": "array",
+          "description": "Section 4.5 \u2014 Only items that PASSED Gate 7",
+          "items": {
+            "type": "object",
+            "required": [
+              "transplant_id",
+              "original_domain",
+              "target_domain",
+              "analogous_principle",
+              "viability",
+              "gate_7_validation"
+            ],
+            "properties": {
+              "transplant_id": {
+                "type": "string",
+                "pattern": "^TRANS_[0-9]+$"
+              },
+              "original_domain": {
+                "type": "string"
+              },
+              "target_domain": {
+                "type": "string"
+              },
+              "analogous_principle": {
+                "type": "string"
+              },
+              "viability": {
+                "type": "string",
+                "enum": [
+                  "HIGH",
+                  "MEDIUM",
+                  "LOW"
+                ]
+              },
+              "gate_7_validation": {
+                "type": "object",
+                "description": "Gate 7 \u2014 Mandatory transplant validation",
+                "required": [
+                  "target_provision",
+                  "has_specialized_framework",
+                  "specialist_would_accept",
+                  "verdict"
+                ],
+                "properties": {
+                  "target_provision": {
+                    "type": "string",
+                    "description": "Specific section + statute in target domain"
+                  },
+                  "has_specialized_framework": {
+                    "type": "boolean"
+                  },
+                  "specialized_framework_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "works_within_framework": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "specialist_would_accept": {
+                    "type": "boolean"
+                  },
+                  "verdict": {
+                    "type": "string",
+                    "enum": [
+                      "VIABLE",
+                      "REMOVE"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 5
+        },
+        "temporal_vulnerability": {
+          "type": "object",
+          "description": "Section 4.6",
+          "required": [
+            "bench_strength",
+            "can_be_overruled_by",
+            "legislative_override_risk",
+            "survival_probability"
+          ],
+          "properties": {
+            "bench_strength": {
+              "type": "integer"
+            },
+            "can_be_overruled_by": {
+              "type": "string"
+            },
+            "legislative_override_risk": {
+              "type": "string"
+            },
+            "cross_statutory_mapping": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Gate 5 \u2014 Required if the statute has been repealed/replaced",
+              "properties": {
+                "old_statute": {
+                  "type": "string"
+                },
+                "new_statute": {
+                  "type": "string"
+                },
+                "mappings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "old_provision",
+                      "new_provision",
+                      "verification_status",
+                      "language_status"
+                    ],
+                    "properties": {
+                      "old_provision": {
+                        "type": "string"
+                      },
+                      "new_provision": {
+                        "type": "string"
+                      },
+                      "verification_status": {
+                        "type": "string",
+                        "enum": [
+                          "VERIFIED",
+                          "UNVERIFIED_REQUIRES_CONFIRMATION"
+                        ]
+                      },
+                      "verification_source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "language_status": {
+                        "type": "string",
+                        "enum": [
+                          "IDENTICAL",
+                          "SUBSTANTIALLY_SIMILAR",
+                          "MODIFIED",
+                          "UNKNOWN"
+                        ]
+                      },
+                      "changes_noted": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "societal_shift_risk": {
+              "type": "string"
+            },
+            "conflicting_trends": {
+              "type": "string"
+            },
+            "survival_probability": {
+              "type": "string",
+              "enum": [
+                "HIGH_10_PLUS_YEARS",
+                "MEDIUM_5_TO_10_YEARS",
+                "LOW_UNDER_5_YEARS",
+                "UNCERTAIN"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dimension_5_synthesis": {
+      "type": "object",
+      "description": "DIMENSION 5: THE SYNTHESIS \u2014 Pulling everything together",
+      "required": [
+        "interpretive_lineage_map",
+        "genome_summary",
+        "practitioners_cheat_sheet",
+        "questions_created",
+        "extraction_confidence"
+      ],
+      "properties": {
+        "interpretive_lineage_map": {
+          "type": "array",
+          "description": "Section 5.1 \u2014 One entry per provision interpreted",
+          "items": {
+            "type": "object",
+            "required": [
+              "provision",
+              "timeline"
+            ],
+            "properties": {
+              "provision": {
+                "type": "string",
+                "description": "e.g., 'Section 464 IPC'"
+              },
+              "timeline": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "year",
+                    "case_or_event",
+                    "layer_added",
+                    "status_now"
+                  ],
+                  "properties": {
+                    "year": {
+                      "type": [
+                        "integer",
+                        "string"
+                      ]
+                    },
+                    "case_or_event": {
+                      "type": "string"
+                    },
+                    "layer_added": {
+                      "type": "string"
+                    },
+                    "method_used": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status_now": {
+                      "type": "string"
+                    },
+                    "durability": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "is_current_judgment": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "CITED_IN_JUDGMENT",
+                        "ADDED_BY_EXTRACTOR"
+                      ],
+                      "description": "Whether this case was cited in the judgment or added by the extractor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 10
+        },
+        "genome_summary": {
+          "type": "object",
+          "description": "Section 5.2 \u2014 ONE paragraph capturing the complete genome + consistency verification",
+          "required": [
+            "text",
+            "consistency_verified_against",
+            "consistency_check_passed"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 200,
+              "description": "5-8 sentences capturing holding, assumptions, vulnerability, trajectory, value"
+            },
+            "consistency_verified_against": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Sections verified against, e.g., ['1.6', '2.1', '3.1', '4.3', '4.6']"
+            },
+            "consistency_check_passed": {
+              "type": "boolean"
+            }
+          }
+        },
+        "practitioners_cheat_sheet": {
+          "type": "object",
+          "description": "Section 5.3 \u2014 Actionable in 30 seconds",
+          "required": [
+            "cite_when",
+            "do_not_cite_when",
+            "killer_paragraph",
+            "hidden_gem"
+          ],
+          "properties": {
+            "cite_when": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "do_not_cite_when": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "killer_paragraph": {
+              "type": "object",
+              "required": [
+                "paragraph_number",
+                "text",
+                "text_verification"
+              ],
+              "properties": {
+                "paragraph_number": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "text_verification": {
+                  "type": "string",
+                  "enum": [
+                    "VERBATIM_FROM_JUDGMENT",
+                    "PARAPHRASED_VERIFY_AGAINST_ORIGINAL"
+                  ]
+                }
+              }
+            },
+            "hidden_gem": {
+              "type": "object",
+              "required": [
+                "paragraph_number",
+                "text",
+                "why_it_matters",
+                "text_verification"
+              ],
+              "properties": {
+                "paragraph_number": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "why_it_matters": {
+                  "type": "string"
+                },
+                "text_verification": {
+                  "type": "string",
+                  "enum": [
+                    "VERBATIM_FROM_JUDGMENT",
+                    "PARAPHRASED_VERIFY_AGAINST_ORIGINAL"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "questions_created": {
+          "type": "array",
+          "description": "Section 5.4 \u2014 NEW questions this judgment creates",
+          "items": {
+            "type": "object",
+            "required": [
+              "question_id",
+              "the_question",
+              "why_new",
+              "who_will_raise_first",
+              "likely_forum",
+              "confidence"
+            ],
+            "properties": {
+              "question_id": {
+                "type": "string",
+                "pattern": "^Q_[0-9]+$"
+              },
+              "the_question": {
+                "type": "string"
+              },
+              "why_new": {
+                "type": "string",
+                "description": "Why it didn't exist before this judgment"
+              },
+              "who_will_raise_first": {
+                "type": "string"
+              },
+              "likely_forum": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "SOUND_INFERENCE",
+                  "SPECULATIVE"
+                ]
+              },
+              "constitutional_reference": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Gate 6 \u2014 Required if the question involves constitutional rights",
+                "properties": {
+                  "article": {
+                    "type": "string"
+                  },
+                  "right_category": {
+                    "type": "string",
+                    "enum": [
+                      "FUNDAMENTAL_RIGHT_PART_III",
+                      "CONSTITUTIONAL_RIGHT_OTHER",
+                      "DIRECTIVE_PRINCIPLE_PART_IV"
+                    ]
+                  },
+                  "amendment_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Any relevant amendments"
+                  },
+                  "current_legal_status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "maxItems": 8
+        },
+        "extraction_confidence": {
+          "type": "object",
+          "description": "Section 5.5 \u2014 Extraction metadata",
+          "required": [
+            "overall_confidence",
+            "highest_uncertainty_sections",
+            "judgment_clarity_grade",
+            "extraction_limitations"
+          ],
+          "properties": {
+            "overall_confidence": {
+              "type": "string",
+              "enum": [
+                "HIGH",
+                "MEDIUM",
+                "LOW"
+              ]
+            },
+            "highest_uncertainty_sections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "judgment_clarity_grade": {
+              "type": "string",
+              "enum": [
+                "A",
+                "B",
+                "C",
+                "D"
+              ]
+            },
+            "extraction_limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dimension_6_audit": {
+      "type": "object",
+      "description": "DIMENSION 6: THE AUDIT \u2014 Mandatory self-verification report",
+      "required": [
+        "internal_consistency",
+        "statutory_verification",
+        "analytical_claims",
+        "final_certification"
+      ],
+      "properties": {
+        "internal_consistency": {
+          "type": "object",
+          "description": "Section 6.1 \u2014 5 internal consistency checks",
+          "required": [
+            "check_1_ratio_syllogism",
+            "check_2_operative_order",
+            "check_3_dependency_tree",
+            "check_4_fact_sensitivity",
+            "check_5_counterfactual"
+          ],
+          "properties": {
+            "check_1_ratio_syllogism": {
+              "type": "object",
+              "required": [
+                "passed",
+                "detail"
+              ],
+              "properties": {
+                "passed": {
+                  "type": "boolean"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            },
+            "check_2_operative_order": {
+              "type": "object",
+              "required": [
+                "passed",
+                "detail"
+              ],
+              "properties": {
+                "passed": {
+                  "type": "boolean"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            },
+            "check_3_dependency_tree": {
+              "type": "object",
+              "required": [
+                "passed",
+                "detail"
+              ],
+              "properties": {
+                "passed": {
+                  "type": "boolean"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            },
+            "check_4_fact_sensitivity": {
+              "type": "object",
+              "required": [
+                "passed",
+                "detail"
+              ],
+              "properties": {
+                "passed": {
+                  "type": "boolean"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            },
+            "check_5_counterfactual": {
+              "type": "object",
+              "required": [
+                "passed",
+                "detail"
+              ],
+              "properties": {
+                "passed": {
+                  "type": "boolean"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "statutory_verification": {
+          "type": "object",
+          "description": "Section 6.2 \u2014 Statutory accuracy checks",
+          "required": [
+            "check_6_provision_numbers",
+            "check_7_cross_statutory",
+            "check_8_hierarchy"
+          ],
+          "properties": {
+            "check_6_provision_numbers": {
+              "type": "object",
+              "required": [
+                "all_verified",
+                "unverified_provisions"
+              ],
+              "properties": {
+                "all_verified": {
+                  "type": "boolean"
+                },
+                "unverified_provisions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "check_7_cross_statutory": {
+              "type": "object",
+              "required": [
+                "mappings_present",
+                "all_verified"
+              ],
+              "properties": {
+                "mappings_present": {
+                  "type": "boolean"
+                },
+                "all_verified": {
+                  "type": "boolean"
+                },
+                "mapping_details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "old_provision": {
+                        "type": "string"
+                      },
+                      "new_provision": {
+                        "type": "string"
+                      },
+                      "verified": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "check_8_hierarchy": {
+              "type": "object",
+              "required": [
+                "claims_present",
+                "all_valid"
+              ],
+              "properties": {
+                "claims_present": {
+                  "type": "boolean"
+                },
+                "all_valid": {
+                  "type": "boolean"
+                },
+                "hierarchy_claims": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "claim": {
+                        "type": "string"
+                      },
+                      "structurally_valid": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "analytical_claims": {
+          "type": "object",
+          "description": "Section 6.3 \u2014 Analytical quality checks",
+          "required": [
+            "check_9_silent_arguments",
+            "check_10_transplants",
+            "check_11_constitutional",
+            "check_12_vulnerability_ratings"
+          ],
+          "properties": {
+            "check_9_silent_arguments": {
+              "type": "object",
+              "required": [
+                "all_stress_tested",
+                "results"
+              ],
+              "properties": {
+                "all_stress_tested": {
+                  "type": "boolean"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "argument_id": {
+                        "type": "string"
+                      },
+                      "stress_test_result": {
+                        "type": "string",
+                        "enum": [
+                          "PASSED",
+                          "FAILED",
+                          "PASSED_WITH_CAVEAT"
+                        ]
+                      },
+                      "removed_if_failed": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "check_10_transplants": {
+              "type": "object",
+              "required": [
+                "all_validated",
+                "results"
+              ],
+              "properties": {
+                "all_validated": {
+                  "type": "boolean"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "transplant_id": {
+                        "type": "string"
+                      },
+                      "gate_7_result": {
+                        "type": "string",
+                        "enum": [
+                          "PASSED",
+                          "FAILED"
+                        ]
+                      },
+                      "removed_if_failed": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "check_11_constitutional": {
+              "type": "object",
+              "required": [
+                "references_present",
+                "all_accurate"
+              ],
+              "properties": {
+                "references_present": {
+                  "type": "boolean"
+                },
+                "all_accurate": {
+                  "type": "boolean"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "reference": {
+                        "type": "string"
+                      },
+                      "accurate": {
+                        "type": "boolean"
+                      },
+                      "correction_needed": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "check_12_vulnerability_ratings": {
+              "type": "object",
+              "required": [
+                "all_adversarially_tested"
+              ],
+              "properties": {
+                "all_adversarially_tested": {
+                  "type": "boolean"
+                },
+                "downgrades": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "vuln_id": {
+                        "type": "string"
+                      },
+                      "original_rating": {
+                        "type": "string"
+                      },
+                      "downgraded_to": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "final_certification": {
+          "type": "object",
+          "description": "Section 6.4 \u2014 Final quality gate",
+          "required": [
+            "all_12_checks_completed",
+            "all_failed_items_corrected",
+            "unverifiable_items_flagged",
+            "confidence_markers_applied",
+            "certification_level",
+            "certified_date"
+          ],
+          "properties": {
+            "all_12_checks_completed": {
+              "type": "boolean"
+            },
+            "all_failed_items_corrected": {
+              "type": "boolean"
+            },
+            "unverifiable_items_flagged": {
+              "type": "boolean"
+            },
+            "confidence_markers_applied": {
+              "type": "boolean"
+            },
+            "certification_level": {
+              "type": "string",
+              "enum": [
+                "COURT_USE",
+                "RESEARCH_USE_ONLY",
+                "DRAFT_REQUIRES_FURTHER_VERIFICATION"
+              ]
+            },
+            "certified_date": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        }
+      }
+    },
+    "document_id": {
+      "type": "string",
+      "description": "Globally unique extraction ID (UUID or citation-based hash)"
+    },
+    "_search_hints": {
+      "type": "object",
+      "description": "Non-validated hints for downstream search/indexing systems",
+      "properties": {
+        "primary_text_search_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "dimension_1_visible.case_identity.case_name",
+            "dimension_1_visible.ratio_decidendi[].proposition",
+            "dimension_5_synthesis.genome_summary.text",
+            "dimension_5_synthesis.practitioners_cheat_sheet.cite_when[]"
+          ]
+        },
+        "facet_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "dimension_1_visible.case_identity.domain",
+            "dimension_1_visible.case_identity.court",
+            "dimension_1_visible.provisions_engaged[].provision_id",
+            "dimension_6_audit.final_certification.certification_level"
+          ]
+        },
+        "range_query_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "dimension_1_visible.case_identity.date_of_judgment",
+            "dimension_4_weaponizable.vulnerability_map.overall_durability_score",
+            "dimension_1_visible.case_identity.bench.strength"
+          ]
+        }
+      }
+    }
+  }
+}

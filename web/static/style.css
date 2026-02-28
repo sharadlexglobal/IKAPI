@@ -898,6 +898,700 @@ body {
     }
 }
 
+.genome-container {
+    max-width: 1200px;
+}
+
+.genome-sub-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.genome-sub-tab {
+    padding: 10px 24px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #636e72;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+}
+
+.genome-sub-tab:hover {
+    color: #2d3436;
+}
+
+.genome-sub-tab.active {
+    color: #6c5ce7;
+    border-bottom-color: #6c5ce7;
+}
+
+.genome-panel {
+    display: none;
+}
+
+.genome-panel.active {
+    display: block;
+}
+
+.genome-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.genome-input-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 20px;
+}
+
+.genome-input-panel h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #2d3436;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #6c5ce7;
+}
+
+.genome-source-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.source-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: #f8f9fa;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #636e72;
+    transition: all 0.2s;
+}
+
+.source-btn.active {
+    background: #6c5ce7;
+    color: white;
+}
+
+.genome-source {
+    display: none;
+    margin-bottom: 16px;
+}
+
+.genome-source.active {
+    display: block;
+}
+
+.genome-source label {
+    display: block;
+    font-size: 13px;
+    color: #636e72;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.genome-source select,
+.genome-source input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dfe6e9;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+.genome-source select:focus,
+.genome-source input:focus {
+    border-color: #6c5ce7;
+}
+
+.genome-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+}
+
+.genome-textarea:focus {
+    border-color: #6c5ce7;
+}
+
+.genome-extract-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 12px;
+}
+
+.genome-extract-btn:hover {
+    opacity: 0.9;
+}
+
+.genome-extract-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.question-extract-btn {
+    background: linear-gradient(135deg, #00b894, #55efc4);
+}
+
+.genome-progress {
+    text-align: center;
+    padding: 16px;
+    margin-top: 12px;
+    color: #636e72;
+    font-size: 13px;
+}
+
+.genome-viewer-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 400px;
+}
+
+.genome-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.genome-meta {
+    font-size: 12px;
+    color: #636e72;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.genome-meta .cert-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.cert-COURT_USE { background: #d4edda; color: #155724; }
+.cert-RESEARCH_USE_ONLY { background: #cce5ff; color: #004085; }
+.cert-DRAFT_REQUIRES_FURTHER_VERIFICATION { background: #fff3cd; color: #856404; }
+
+.genome-cheat-sheet {
+    background: linear-gradient(135deg, #f3f0ff, #ede8ff);
+    border: 1px solid #d5ccff;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.cheat-sheet-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #6c5ce7;
+    margin-bottom: 12px;
+}
+
+.cheat-item {
+    margin-bottom: 10px;
+}
+
+.cheat-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a4e8a;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.cheat-value {
+    font-size: 13px;
+    color: #2d3436;
+    line-height: 1.5;
+}
+
+.cheat-list {
+    list-style: none;
+    padding: 0;
+}
+
+.cheat-list li {
+    padding: 3px 0;
+    font-size: 13px;
+    color: #2d3436;
+    position: relative;
+    padding-left: 16px;
+}
+
+.cheat-list li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: #6c5ce7;
+    font-weight: bold;
+}
+
+.genome-dim-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    border-bottom: 2px solid #eee;
+}
+
+.dim-tab {
+    padding: 8px 14px;
+    border: none;
+    background: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    color: #636e72;
+}
+
+.dim-tab:hover {
+    color: #2d3436;
+}
+
+.dim-tab.active {
+    border-bottom-color: var(--dim-color, #6c5ce7);
+    color: var(--dim-color, #6c5ce7);
+}
+
+.dim-tab[data-dim="1"] { --dim-color: #00b894; }
+.dim-tab[data-dim="2"] { --dim-color: #6c5ce7; }
+.dim-tab[data-dim="3"] { --dim-color: #fdcb6e; }
+.dim-tab[data-dim="4"] { --dim-color: #e17055; }
+.dim-tab[data-dim="5"] { --dim-color: #a29bfe; }
+.dim-tab[data-dim="6"] { --dim-color: #00cec9; }
+
+.genome-dim-content {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #2d3436;
+}
+
+.genome-section {
+    margin-bottom: 16px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.genome-section-header {
+    padding: 10px 14px;
+    background: #f8f9fa;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+}
+
+.genome-section-header:hover {
+    background: #f1f2f6;
+}
+
+.genome-section-header .toggle-icon {
+    transition: transform 0.2s;
+    font-size: 12px;
+    color: #636e72;
+}
+
+.genome-section.open .toggle-icon {
+    transform: rotate(90deg);
+}
+
+.genome-section-body {
+    display: none;
+    padding: 14px;
+    border-top: 1px solid #eee;
+}
+
+.genome-section.open .genome-section-body {
+    display: block;
+}
+
+.confidence-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 4px;
+}
+
+.conf-VERIFIED { background: #d4edda; color: #155724; }
+.conf-SOUND_INFERENCE { background: #cce5ff; color: #004085; }
+.conf-SPECULATIVE { background: #fff3cd; color: #856404; }
+.conf-UNVERIFIED { background: #f8d7da; color: #721c24; }
+
+.stress-test-block {
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.stress-test-block .st-label {
+    font-weight: 600;
+    color: #636e72;
+    margin-bottom: 2px;
+}
+
+.stress-test-block .st-verdict {
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.verdict-INCLUDE { background: #d4edda; color: #155724; }
+.verdict-INCLUDE_WITH_CAVEAT { background: #fff3cd; color: #856404; }
+.verdict-REMOVE { background: #f8d7da; color: #721c24; }
+
+.genome-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.genome-table th {
+    background: #f8f9fa;
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 2px solid #eee;
+    font-weight: 600;
+    color: #636e72;
+}
+
+.genome-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #f1f2f6;
+    vertical-align: top;
+}
+
+.genome-kv {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 4px 12px;
+    font-size: 13px;
+}
+
+.genome-kv .kv-key {
+    font-weight: 600;
+    color: #636e72;
+}
+
+.genome-kv .kv-val {
+    color: #2d3436;
+}
+
+.source-para-ref {
+    font-size: 10px;
+    color: #a29bfe;
+    font-weight: 500;
+}
+
+.durability-score {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.durability-score .score-bar {
+    width: 60px;
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.durability-score .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+}
+
+.extract-genome-doc-btn {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.extract-genome-doc-btn:hover {
+    opacity: 0.9;
+}
+
+.question-summary {
+    background: linear-gradient(135deg, #e8f8f0, #d4f5e9);
+    border: 1px solid #b8e6d0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.question-summary h4 {
+    font-size: 14px;
+    color: #00b894;
+    margin-bottom: 10px;
+}
+
+.question-summary .qs-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.question-summary .qs-stat {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.question-summary .qs-stat span {
+    font-size: 11px;
+    font-weight: 500;
+    color: #636e72;
+    display: block;
+}
+
+.question-summary .qs-note {
+    font-size: 13px;
+    color: #2d3436;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+.question-gates {
+    margin-bottom: 16px;
+}
+
+.gate-card {
+    background: #fff8f0;
+    border: 1px solid #ffd9b3;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+.gate-card .gate-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #e17055;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.gate-card .gate-q {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2d3436;
+    margin-bottom: 6px;
+}
+
+.gate-card .gate-outcomes {
+    font-size: 12px;
+    color: #636e72;
+}
+
+.question-category-section {
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.qcat-header {
+    padding: 10px 14px;
+    background: #f8f9fa;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qcat-header:hover {
+    background: #f1f2f6;
+}
+
+.qcat-count {
+    font-size: 11px;
+    font-weight: 600;
+    background: #e0e0e0;
+    color: #636e72;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.qcat-body {
+    display: none;
+    padding: 0;
+}
+
+.question-category-section.open .qcat-body {
+    display: block;
+}
+
+.q-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f2f6;
+}
+
+.q-item:last-child {
+    border-bottom: none;
+}
+
+.q-item-header {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+
+.q-id {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6c5ce7;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.q-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2d3436;
+    line-height: 1.4;
+}
+
+.q-meta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    margin-left: 0;
+}
+
+.q-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 8px;
+    text-transform: uppercase;
+}
+
+.q-badge.importance-CRITICAL { background: #f8d7da; color: #721c24; }
+.q-badge.importance-HIGH { background: #fff3cd; color: #856404; }
+.q-badge.importance-MEDIUM { background: #cce5ff; color: #004085; }
+.q-badge.importance-LOW { background: #e2e3e5; color: #383d41; }
+
+.q-badge.perspective-ADVOCATE { background: #d4edda; color: #155724; }
+.q-badge.perspective-OPPONENT { background: #f8d7da; color: #721c24; }
+.q-badge.perspective-JUDGE { background: #cce5ff; color: #004085; }
+
+.q-badge.type-STRENGTHEN { background: #d4edda; color: #155724; }
+.q-badge.type-ANTICIPATE { background: #fff3cd; color: #856404; }
+.q-badge.type-EXPOSE_GAP { background: #f8d7da; color: #721c24; }
+.q-badge.type-JUDGE_CONCERN { background: #cce5ff; color: #004085; }
+
+.q-detail {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #636e72;
+    line-height: 1.5;
+}
+
+.q-detail strong {
+    color: #2d3436;
+}
+
+.q-sub-questions {
+    margin-top: 6px;
+    padding-left: 16px;
+    border-left: 2px solid #e0e0e0;
+}
+
+.q-sub-questions .sub-q {
+    font-size: 12px;
+    color: #555;
+    padding: 2px 0;
+}
+
+.q-sub-questions .sub-q .sub-id {
+    font-weight: 600;
+    color: #a29bfe;
+}
+
+.genome-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+@media (max-width: 900px) {
+    .genome-layout {
+        grid-template-columns: 1fr;
+    }
+    .genome-input-panel {
+        position: static;
+    }
+}
+
 @media (max-width: 640px) {
     .search-row {
         flex-direction: column;

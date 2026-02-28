@@ -8,13 +8,22 @@ import urllib.parse
 from flask import Flask, render_template, request, jsonify
 from bs4 import BeautifulSoup
 import anthropic
+import hashlib
 from db import (
     init_db, get_cached_judgment, save_judgment_metadata, save_judgment_full_text,
     save_search_query, get_saved_queries, get_judgments_for_query,
     get_judgments_by_tids, get_prompt_templates, save_prompt_template,
-    update_prompt_template, delete_prompt_template, seed_default_templates
+    update_prompt_template, delete_prompt_template, seed_default_templates,
+    get_cached_genome, save_genome, get_all_genomes,
+    get_cached_judgments_with_fulltext,
+    save_question_extraction, get_question_extraction
 )
 from gemini_service import summarize_judgments, estimate_tokens
+from genome_config import (
+    APIConfig, build_master_prompt, get_schema_summary,
+    strip_markdown_fences, build_question_extractor_prompt,
+    get_question_schema_summary
+)
 
 app = Flask(__name__)
 
@@ -681,6 +690,269 @@ def api_analyze():
         if "FREE_CLOUD_BUDGET_EXCEEDED" in error_msg:
             return jsonify({"error": "Cloud budget exceeded. Please check your Replit credits."}), 402
         return jsonify({"error": error_msg}), 500
+
+
+@app.route("/api/cached-judgments")
+def api_cached_judgments():
+    try:
+        judgments = get_cached_judgments_with_fulltext()
+        result = []
+        for j in judgments:
+            result.append({
+                "tid": j["tid"],
+                "title": j["title"] or "Untitled",
+                "doctype": j["doctype"] or "",
+                "court_source": j["court_source"] or "",
+                "publish_date": j["publish_date"].isoformat() if j["publish_date"] else "",
+                "num_cited_by": j["num_cited_by"] or 0,
+                "fetched_at": j["fetched_at"].isoformat() if j["fetched_at"] else "",
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/genome/extract", methods=["POST"])
+def api_genome_extract():
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+
+    tid = body.get("tid")
+    judgment_text = body.get("judgment_text", "").strip()
+    citation = body.get("citation", "")
+
+    if not tid and not judgment_text:
+        return jsonify({"error": "Provide tid (cached judgment) or judgment_text"}), 400
+
+    if not APIConfig.is_configured():
+        return jsonify({"error": "ANTHROPIC_API_KEY is not configured"}), 503
+
+    try:
+        if tid:
+            cached_genome = get_cached_genome(tid)
+            if cached_genome:
+                genome_data = cached_genome["genome_json"]
+                if isinstance(genome_data, str):
+                    genome_data = json.loads(genome_data)
+                return jsonify({
+                    "genome": genome_data,
+                    "cached": True,
+                    "tid": tid,
+                    "extraction_date": cached_genome["extraction_date"].isoformat() if cached_genome["extraction_date"] else "",
+                })
+
+            cached_doc = get_cached_judgment(tid)
+            if not cached_doc:
+                return jsonify({"error": "Judgment not found in cache. View it first to cache it."}), 404
+            soup = BeautifulSoup(cached_doc["full_text_html"], "html.parser")
+            judgment_text = soup.get_text(separator="\n", strip=True)
+            citation = cached_doc.get("title", "") or citation
+
+        text_len = len(judgment_text)
+        if text_len < APIConfig.MIN_JUDGMENT_LENGTH:
+            return jsonify({"error": f"Judgment text too short ({text_len} chars). Minimum {APIConfig.MIN_JUDGMENT_LENGTH} required."}), 400
+        if text_len > APIConfig.MAX_JUDGMENT_LENGTH:
+            return jsonify({"error": f"Judgment text too long ({text_len} chars). Maximum {APIConfig.MAX_JUDGMENT_LENGTH} allowed."}), 400
+
+        system_prompt = build_master_prompt()
+        schema_summary = get_schema_summary()
+
+        user_message = f"## SCHEMA SUMMARY\n{schema_summary}\n\n## JUDGMENT TEXT\n\nCitation: {citation}\n\n{judgment_text}"
+
+        client = anthropic.Anthropic(api_key=APIConfig.api_key())
+        message = client.messages.create(
+            model=APIConfig.model(),
+            max_tokens=APIConfig.max_tokens(),
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+            timeout=APIConfig.timeout(),
+        )
+
+        response_text = message.content[0].text
+        cleaned = strip_markdown_fences(response_text)
+
+        try:
+            genome_data = json.loads(cleaned)
+        except json.JSONDecodeError as e:
+            app.logger.error(f"Genome JSON parse failed: {e}. First 500 chars: {cleaned[:500]}")
+            return jsonify({"error": "Failed to parse genome output as JSON. The model may have returned invalid JSON."}), 422
+
+        doc_id = genome_data.get("document_id", "")
+        cert_level = None
+        durability = None
+        try:
+            cert_level = genome_data.get("dimension_6_audit", {}).get("final_certification", {}).get("certification_level")
+            durability = genome_data.get("dimension_4_weaponizable", {}).get("vulnerability_map", {}).get("overall_durability_score")
+        except Exception:
+            pass
+
+        if tid:
+            save_genome(
+                tid=tid,
+                genome_json=genome_data,
+                model=APIConfig.model(),
+                schema_version="3.1.0",
+                doc_id=doc_id,
+                cert_level=cert_level,
+                durability=durability,
+            )
+
+        return jsonify({
+            "genome": genome_data,
+            "cached": False,
+            "tid": tid,
+            "model": APIConfig.model(),
+            "input_tokens": message.usage.input_tokens if hasattr(message, 'usage') else None,
+            "output_tokens": message.usage.output_tokens if hasattr(message, 'usage') else None,
+        })
+
+    except anthropic.APITimeoutError:
+        return jsonify({"error": "Extraction timed out. The judgment may be too long. Try a shorter text."}), 504
+    except anthropic.RateLimitError:
+        return jsonify({"error": "Rate limited by Claude API. Please wait a moment and try again."}), 429
+    except anthropic.BadRequestError as e:
+        return jsonify({"error": f"Request rejected by Claude API (text may be too long): {str(e)}"}), 400
+    except anthropic.APIError as e:
+        return jsonify({"error": f"Claude API error: {str(e)}"}), 502
+    except Exception as e:
+        app.logger.error(f"Genome extraction failed: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/genome/<int:tid_val>")
+def api_genome_get(tid_val):
+    try:
+        cached = get_cached_genome(tid_val)
+        if not cached:
+            return jsonify({"error": "No genome found for this judgment"}), 404
+        genome_data = cached["genome_json"]
+        if isinstance(genome_data, str):
+            genome_data = json.loads(genome_data)
+        return jsonify({
+            "genome": genome_data,
+            "tid": tid_val,
+            "extraction_date": cached["extraction_date"].isoformat() if cached["extraction_date"] else "",
+            "certification_level": cached["certification_level"],
+            "overall_durability_score": cached["overall_durability_score"],
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/genome/list")
+def api_genome_list():
+    try:
+        genomes = get_all_genomes()
+        result = []
+        for g in genomes:
+            result.append({
+                "id": g["id"],
+                "tid": g["tid"],
+                "title": g["title"] or "Untitled",
+                "schema_version": g["schema_version"],
+                "extraction_model": g["extraction_model"],
+                "extraction_date": g["extraction_date"].isoformat() if g["extraction_date"] else "",
+                "certification_level": g["certification_level"],
+                "overall_durability_score": g["overall_durability_score"],
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/questions/extract", methods=["POST"])
+def api_questions_extract():
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+
+    pleading_text = body.get("pleading_text", "").strip()
+    pleading_type = body.get("pleading_type", "OTHER")
+    citation = body.get("citation", "")
+
+    if not pleading_text:
+        return jsonify({"error": "Pleading text is required"}), 400
+
+    if len(pleading_text) < 200:
+        return jsonify({"error": "Pleading text too short. Minimum 200 characters required."}), 400
+
+    if not APIConfig.is_configured():
+        return jsonify({"error": "ANTHROPIC_API_KEY is not configured"}), 503
+
+    text_hash = hashlib.sha256(pleading_text.encode("utf-8")).hexdigest()[:32]
+
+    try:
+        cached = get_question_extraction(text_hash)
+        if cached:
+            q_data = cached["questions_json"]
+            if isinstance(q_data, str):
+                q_data = json.loads(q_data)
+            return jsonify({
+                "questions": q_data,
+                "cached": True,
+                "question_count": cached["question_count"],
+                "extracted_at": cached["extracted_at"].isoformat() if cached["extracted_at"] else "",
+            })
+
+        system_prompt = build_question_extractor_prompt()
+        schema_summary = get_question_schema_summary()
+
+        user_message = f"## OUTPUT SCHEMA\n{schema_summary}\n\n## PLEADING TYPE: {pleading_type}\n## CITATION: {citation}\n\n## PLEADING TEXT\n\n{pleading_text}"
+
+        client = anthropic.Anthropic(api_key=APIConfig.api_key())
+        message = client.messages.create(
+            model=APIConfig.model(),
+            max_tokens=APIConfig.max_tokens(),
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+            timeout=APIConfig.timeout(),
+        )
+
+        response_text = message.content[0].text
+        cleaned = strip_markdown_fences(response_text)
+
+        try:
+            questions_data = json.loads(cleaned)
+        except json.JSONDecodeError as e:
+            app.logger.error(f"Questions JSON parse failed: {e}. First 500 chars: {cleaned[:500]}")
+            return jsonify({"error": "Failed to parse question extraction output as JSON."}), 422
+
+        total_q = 0
+        try:
+            total_q = questions_data.get("extraction_summary", {}).get("total_questions", 0)
+        except Exception:
+            pass
+
+        save_question_extraction(
+            text_hash=text_hash,
+            pleading_type=pleading_type,
+            citation=citation,
+            questions_json=questions_data,
+            question_count=total_q,
+            model=APIConfig.model(),
+        )
+
+        return jsonify({
+            "questions": questions_data,
+            "cached": False,
+            "question_count": total_q,
+            "model": APIConfig.model(),
+            "input_tokens": message.usage.input_tokens if hasattr(message, 'usage') else None,
+            "output_tokens": message.usage.output_tokens if hasattr(message, 'usage') else None,
+        })
+
+    except anthropic.APITimeoutError:
+        return jsonify({"error": "Extraction timed out. The pleading may be too long."}), 504
+    except anthropic.RateLimitError:
+        return jsonify({"error": "Rate limited by Claude API. Please wait and try again."}), 429
+    except anthropic.BadRequestError as e:
+        return jsonify({"error": f"Request rejected by Claude API (text may be too long): {str(e)}"}), 400
+    except anthropic.APIError as e:
+        return jsonify({"error": f"Claude API error: {str(e)}"}), 502
+    except Exception as e:
+        app.logger.error(f"Question extraction failed: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 try:

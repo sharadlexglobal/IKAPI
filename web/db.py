@@ -1,3 +1,4 @@
+import json
 import os
 import psycopg2
 import psycopg2.extras
@@ -58,6 +59,32 @@ def init_db():
                 CREATE INDEX IF NOT EXISTS idx_judgments_cited_by ON judgments(num_cited_by DESC);
                 CREATE INDEX IF NOT EXISTS idx_judgments_publish_date ON judgments(publish_date);
                 CREATE INDEX IF NOT EXISTS idx_search_queries_text ON search_queries(query_text);
+
+                CREATE TABLE IF NOT EXISTS judgment_genomes (
+                    id SERIAL PRIMARY KEY,
+                    tid BIGINT REFERENCES judgments(tid),
+                    genome_json JSONB NOT NULL,
+                    schema_version TEXT DEFAULT '3.1.0',
+                    extraction_model TEXT,
+                    extraction_date TIMESTAMP DEFAULT NOW(),
+                    document_id TEXT,
+                    certification_level TEXT,
+                    overall_durability_score INT,
+                    UNIQUE(tid)
+                );
+                CREATE INDEX IF NOT EXISTS idx_genomes_tid ON judgment_genomes(tid);
+
+                CREATE TABLE IF NOT EXISTS question_extractions (
+                    id SERIAL PRIMARY KEY,
+                    pleading_text_hash TEXT NOT NULL,
+                    pleading_type TEXT,
+                    citation TEXT,
+                    questions_json JSONB NOT NULL,
+                    question_count INT,
+                    extraction_model TEXT,
+                    extracted_at TIMESTAMP DEFAULT NOW(),
+                    UNIQUE(pleading_text_hash)
+                );
             """)
     finally:
         conn.close()
@@ -240,6 +267,106 @@ def delete_prompt_template(template_id):
         with conn.cursor() as cur:
             cur.execute("DELETE FROM prompt_templates WHERE id = %s", (template_id,))
             return cur.rowcount > 0
+    finally:
+        conn.close()
+
+
+def get_cached_genome(tid):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM judgment_genomes WHERE tid = %s", (tid,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def save_genome(tid, genome_json, model=None, schema_version="3.1.0",
+                doc_id=None, cert_level=None, durability=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO judgment_genomes (tid, genome_json, extraction_model, schema_version,
+                                              document_id, certification_level, overall_durability_score)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (tid) DO UPDATE SET
+                    genome_json = EXCLUDED.genome_json,
+                    extraction_model = EXCLUDED.extraction_model,
+                    schema_version = EXCLUDED.schema_version,
+                    document_id = EXCLUDED.document_id,
+                    certification_level = EXCLUDED.certification_level,
+                    overall_durability_score = EXCLUDED.overall_durability_score,
+                    extraction_date = NOW()
+                RETURNING *
+            """, (tid, json.dumps(genome_json), model, schema_version,
+                  doc_id, cert_level, durability))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_all_genomes():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT g.id, g.tid, g.schema_version, g.extraction_model,
+                       g.extraction_date, g.document_id, g.certification_level,
+                       g.overall_durability_score, j.title
+                FROM judgment_genomes g
+                JOIN judgments j ON g.tid = j.tid
+                ORDER BY g.extraction_date DESC
+            """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_cached_judgments_with_fulltext():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT tid, title, doctype, court_source, publish_date,
+                       num_cited_by, fetched_at
+                FROM judgments
+                WHERE metadata_only = FALSE AND full_text_html IS NOT NULL
+                ORDER BY fetched_at DESC
+            """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def save_question_extraction(text_hash, pleading_type, citation, questions_json,
+                              question_count, model=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO question_extractions (pleading_text_hash, pleading_type, citation,
+                                                   questions_json, question_count, extraction_model)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (pleading_text_hash) DO UPDATE SET
+                    questions_json = EXCLUDED.questions_json,
+                    question_count = EXCLUDED.question_count,
+                    extraction_model = EXCLUDED.extraction_model,
+                    extracted_at = NOW()
+                RETURNING *
+            """, (text_hash, pleading_type, citation,
+                  json.dumps(questions_json), question_count, model))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_question_extraction(text_hash):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM question_extractions WHERE pleading_text_hash = %s", (text_hash,))
+            return cur.fetchone()
     finally:
         conn.close()
 
