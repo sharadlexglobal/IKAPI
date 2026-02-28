@@ -21,12 +21,9 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = """
-echo 'IKAPI is ready! Use the Shell to run commands:
-  Python: python python/ikapi.py --help
-  Java: java -jar java/target/ikapi-1.0.0.jar --help'"""
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo '=== IKAPI - Indian Kanoon API Tools ===' && echo '' && echo 'Ready to search Indian legal judgments!' && echo '' && echo 'Quick start:' && echo '  ./search.sh \"right to information\"' && echo '  ./search.sh \"freedom of speech\"' && echo '' && echo 'Advanced (Python):' && echo '  python python/ikapi.py -s $IK_API_TOKEN -D ./data -q \"your query\" -p 5' && echo '' && echo 'Advanced (Java):' && echo '  java -jar java/target/ikapi-1.0.0.jar -s $IK_API_TOKEN -D ./data -q \"your query\"' && echo '' && echo 'Results are saved to the ./data directory.'"
