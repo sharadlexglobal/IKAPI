@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IKAPI - Indian Legal Search</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-inner">
+            <h1>Indian Legal Search</h1>
+            <p>Search millions of Indian court judgments, laws, and legal documents</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-box">
+            <div class="search-row">
+                <input type="text" id="searchInput" class="search-input"
+                       placeholder="Search judgments, e.g. &quot;right to privacy&quot;, &quot;freedom of speech&quot;..."
+                       autofocus>
+                <button id="searchBtn" class="search-btn">Search</button>
+            </div>
+            <button id="filtersToggle" class="filters-toggle">Show filters</button>
+            <div id="filtersPanel" class="filters">
+                <div class="filter-group">
+                    <label for="filterDoctype">Court / Document Type</label>
+                    <select id="filterDoctype">
+                        <option value="">All Courts</option>
+                        <option value="supremecourt">Supreme Court</option>
+                        <option value="judgments">All Courts (SC, HC, District)</option>
+                        <option value="delhi">Delhi High Court</option>
+                        <option value="bombay">Bombay High Court</option>
+                        <option value="kolkata">Kolkata High Court</option>
+                        <option value="chennai">Madras High Court</option>
+                        <option value="allahabad">Allahabad High Court</option>
+                        <option value="kerala">Kerala High Court</option>
+                        <option value="gujarat">Gujarat High Court</option>
+                        <option value="karnataka">Karnataka High Court</option>
+                        <option value="highcourts">All High Courts</option>
+                        <option value="tribunals">All Tribunals</option>
+                        <option value="laws">Central Acts and Rules</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterSort">Sort By</label>
+                    <select id="filterSort">
+                        <option value="">Relevance</option>
+                        <option value="mostrecent">Most Recent</option>
+                        <option value="leastrecent">Oldest First</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterFrom">From Date (DD-MM-YYYY)</label>
+                    <input type="text" id="filterFrom" placeholder="e.g. 01-01-2020">
+                </div>
+                <div class="filter-group">
+                    <label for="filterTo">To Date (DD-MM-YYYY)</label>
+                    <input type="text" id="filterTo" placeholder="e.g. 31-12-2024">
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsArea">
+            <div class="empty-state">
+                <h3>Search Indian Legal Documents</h3>
+                <p>Enter a query above to search through judgments, laws, and tribunal orders.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="docOverlay" class="doc-overlay">
+        <div class="doc-panel">
+            <div class="doc-header">
+                <h2 id="docTitle">Document</h2>
+                <button id="docClose" class="doc-close">&times;</button>
+            </div>
+            <div id="docBody" class="doc-body"></div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

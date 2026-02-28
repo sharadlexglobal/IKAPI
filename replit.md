@@ -1,50 +1,59 @@
 # IKAPI - Indian Kanoon API Tools
 
-A CLI toolkit for accessing the [Indian Kanoon](https://api.indiankanoon.org) legal database API. Available in both Python and Java.
+A toolkit for accessing the [Indian Kanoon](https://api.indiankanoon.org) legal database API. Includes a web frontend, plus CLI tools in Python and Java.
 
 ## Project Structure
 
 ```
 .
+├── web/
+│   ├── app.py              # Flask web server (port 5000)
+│   ├── templates/
+│   │   └── index.html       # Search page template
+│   └── static/
+│       ├── style.css        # Styles
+│       └── app.js           # Frontend search logic
 ├── python/
-│   ├── ikapi.py          # Python CLI tool
-│   └── requirements.txt  # Python dependencies (beautifulsoup4)
-└── java/
-    ├── pom.xml           # Maven build config (Java 19)
-    ├── run.sh            # Convenience shell script
-    └── src/
-        └── main/java/org/indiankanoon/
-            └── IKApiMain.java
+│   ├── ikapi.py             # Python CLI tool
+│   └── requirements.txt     # Original requirements
+├── java/
+│   ├── pom.xml              # Maven build config (Java 19)
+│   ├── run.sh               # Convenience shell script
+│   └── src/                 # Java source code
+├── search.sh                # Quick CLI search wrapper
+└── data/                    # Downloaded results directory
 ```
 
-## Setup
+## Web Frontend
 
-### Python
-Dependencies are installed via `uv` (beautifulsoup4).
+The main application is a Flask web app serving on port 5000. It provides:
+- Full-text search across Indian legal judgments
+- Filters by court type, date range, and sort order
+- Document viewer overlay for reading full judgments
+- Pagination through results
+
+## Environment Variables
+
+- `IK_API_TOKEN` - Indian Kanoon API token (stored as secret)
+
+## Dependencies
+
+- **Python**: flask, gunicorn, beautifulsoup4 (managed via uv/pyproject.toml)
+- **Java**: Maven project with argparse4j, json, opencsv, jsoup
+
+## Deployment
+
+- Target: autoscale
+- Run command: `gunicorn --bind=0.0.0.0:5000 --reuse-port web.app:app`
+
+## CLI Usage
 
 ```bash
-python python/ikapi.py --help
-```
-
-### Java
-Built with Maven. The JAR is pre-compiled at `java/target/ikapi-1.0.0.jar`.
-
-```bash
-java -jar java/target/ikapi-1.0.0.jar --help
-# or
-cd java && ./run.sh --help
-```
-
-## Usage
-
-Both tools require an Indian Kanoon API token (`-s TOKEN`) and a data directory (`-D DATADIR`).
-
-Example:
-```bash
-python python/ikapi.py -s YOUR_TOKEN -D ./data -q "right to information"
+./search.sh "right to information"
+python python/ikapi.py -s $IK_API_TOKEN -D ./data -q "your query"
+java -jar java/target/ikapi-1.0.0.jar -s $IK_API_TOKEN -D ./data -q "your query"
 ```
 
 ## Notes
 
-- Java compiler target was set to 19 (from 21) to match the available GraalVM CE 22.3.1 (Java 19) runtime in Replit.
-- This is a pure CLI tool — no web frontend or server component.
+- Java compiler target set to 19 (from 21) to match Replit's GraalVM CE 22.3.1
