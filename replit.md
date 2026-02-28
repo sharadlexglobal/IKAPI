@@ -117,7 +117,7 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - Smart Search model: claude-3-haiku-20240307
 - Smart Search uses single-quote strategy for phrase search in Claude's output
 - Smart Search has 3-layer JSON fallback: (1) direct parse, (2) double-quote fix, (3) regex field extraction
-- IK API calls have 15-second connection timeout and HTTP status validation
+- IK API calls have 30-second connection timeout and HTTP status validation
 - Enter key is blocked during Smart Search loading via dedicated `isSmartSearchLoading` flag
 - Smart Search resets all filter dropdowns before applying new values
 - Python 3.12 required for google-genai package compatibility

@@ -171,7 +171,7 @@ def call_ik_api(url):
         "Authorization": f"Token {token}",
         "Accept": "application/json",
     }
-    connection = http.client.HTTPSConnection(API_HOST, timeout=15)
+    connection = http.client.HTTPSConnection(API_HOST, timeout=30)
     try:
         connection.request("POST", url, headers=headers)
         response = connection.getresponse()
