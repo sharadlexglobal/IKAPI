@@ -75,30 +75,35 @@ You must respond with ONLY a valid JSON object (no markdown, no explanation, no 
 - "todate": date in DD-MM-YYYY format if user specified an end date, otherwise "" (optional)
 - "sortby": "mostrecent" or "leastrecent" if user wants sorting, otherwise "" (optional)
 
+IMPORTANT: For phrase search in the "query" field, use single quotes instead of double quotes.
+For example, use 'right to privacy' instead of "right to privacy".
+The system will convert single quotes back to double quotes for the actual search.
+This avoids JSON parsing issues with nested double quotes.
+
 EXAMPLES:
 User: "show me supreme court cases about right to privacy"
-{"query": "\"right to privacy\"", "doctype": "supremecourt", "fromdate": "", "todate": "", "sortby": ""}
+{"query": "'right to privacy'", "doctype": "supremecourt", "fromdate": "", "todate": "", "sortby": ""}
 
 User: "cases by justice chandrachud on fundamental rights from 2020"
-{"query": "\"fundamental rights\" author: chandrachud", "doctype": "", "fromdate": "01-01-2020", "todate": "", "sortby": ""}
+{"query": "'fundamental rights' author: chandrachud", "doctype": "", "fromdate": "01-01-2020", "todate": "", "sortby": ""}
 
 User: "latest bombay high court orders on bail in NDPS cases"
-{"query": "bail ANDD \"NDPS Act\"", "doctype": "bombay", "fromdate": "", "todate": "", "sortby": "mostrecent"}
+{"query": "bail ANDD 'NDPS Act'", "doctype": "bombay", "fromdate": "", "todate": "", "sortby": "mostrecent"}
 
 User: "land acquisition cases but not government land"
-{"query": "\"land acquisition\" ANDD NOTT \"government land\"", "doctype": "", "fromdate": "", "todate": "", "sortby": ""}
+{"query": "'land acquisition' ANDD NOTT 'government land'", "doctype": "", "fromdate": "", "todate": "", "sortby": ""}
 
 User: "section 498a or domestic violence cases in delhi"
-{"query": "\"section 498a\" ORR \"domestic violence\"", "doctype": "delhi", "fromdate": "", "todate": "", "sortby": ""}
+{"query": "'section 498a' ORR 'domestic violence'", "doctype": "delhi", "fromdate": "", "todate": "", "sortby": ""}
 
 User: "NGT orders on pollution in 2023"
 {"query": "pollution", "doctype": "greentribunal", "fromdate": "01-01-2023", "todate": "31-12-2023", "sortby": ""}
 
 User: "ITAT rulings on capital gains"
-{"query": "\"capital gains\"", "doctype": "itat", "fromdate": "", "todate": "", "sortby": ""}
+{"query": "'capital gains'", "doctype": "itat", "fromdate": "", "todate": "", "sortby": ""}
 
 User: "consumer court cases about defective products"
-{"query": "\"defective products\"", "doctype": "consumer", "fromdate": "", "todate": "", "sortby": ""}"""
+{"query": "'defective products'", "doctype": "consumer", "fromdate": "", "todate": "", "sortby": ""}"""
 
 
 def get_api_token():
@@ -129,13 +134,16 @@ def call_ik_api(url):
         "Authorization": f"Token {token}",
         "Accept": "application/json",
     }
-    connection = http.client.HTTPSConnection(API_HOST)
+    connection = http.client.HTTPSConnection(API_HOST, timeout=15)
     try:
         connection.request("POST", url, headers=headers)
         response = connection.getresponse()
+        status = response.status
         data = response.read()
         if isinstance(data, bytes):
             data = data.decode("utf8")
+        if status >= 400:
+            raise Exception(f"Indian Kanoon API returned error ({status})")
         return data
     finally:
         connection.close()
@@ -264,7 +272,24 @@ def api_smart_search():
             result = json.loads(response_text)
         except json.JSONDecodeError:
             fixed = re.sub(r'""([^"]+)""', r'"\1"', response_text)
-            result = json.loads(fixed)
+            try:
+                result = json.loads(fixed)
+            except json.JSONDecodeError:
+                query_match = re.search(r'"query"\s*:\s*"(.*?)"(?=\s*,\s*"(?:doctype|fromdate|todate|sortby)"|$)', response_text, re.DOTALL)
+                doctype_match = re.search(r'"doctype"\s*:\s*"([^"]*)"', response_text)
+                fromdate_match = re.search(r'"fromdate"\s*:\s*"([^"]*)"', response_text)
+                todate_match = re.search(r'"todate"\s*:\s*"([^"]*)"', response_text)
+                sortby_match = re.search(r'"sortby"\s*:\s*"([^"]*)"', response_text)
+                result = {
+                    "query": query_match.group(1) if query_match else user_query,
+                    "doctype": doctype_match.group(1) if doctype_match else "",
+                    "fromdate": fromdate_match.group(1) if fromdate_match else "",
+                    "todate": todate_match.group(1) if todate_match else "",
+                    "sortby": sortby_match.group(1) if sortby_match else "",
+                }
+
+        query_text = result.get("query", user_query)
+        query_text = re.sub(r"'([^']+)'", r'"\1"', query_text)
 
         doctype = result.get("doctype", "")
         if doctype not in VALID_DOCTYPES:
@@ -283,7 +308,7 @@ def api_smart_search():
             sortby = ""
 
         return jsonify({
-            "query": result.get("query", user_query),
+            "query": query_text,
             "doctype": doctype,
             "fromdate": fromdate,
             "todate": todate,

@@ -67,4 +67,8 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 - Java compiler target set to 19 (from 21) to match Replit's GraalVM CE 22.3.1
 - IK API uses POST requests for all endpoints; pagenum starts at 0
 - Smart Search model: claude-3-haiku-20240307
-- Smart Search handles malformed JSON from LLM (double-quoted strings fix)
+- Smart Search uses single-quote strategy for phrase search in Claude's output (avoids JSON parse issues with nested double quotes), converts balanced single-quoted phrases back to double quotes via regex before returning
+- Smart Search has 3-layer JSON fallback: (1) direct parse, (2) double-quote fix, (3) regex field extraction
+- IK API calls have 15-second connection timeout and HTTP status validation (raises on 4xx/5xx)
+- Enter key is blocked during Smart Search loading via dedicated `isSmartSearchLoading` flag
+- Smart Search resets all filter dropdowns before applying new values (prevents stale filters from previous queries)

@@ -2,6 +2,7 @@ let currentQuery = "";
 let currentPage = 0;
 let totalResults = 0;
 var PAGE_SIZE = 10;
+var isSmartSearchLoading = false;
 
 var searchInput = document.getElementById("searchInput");
 var searchBtn = document.getElementById("searchBtn");
@@ -19,7 +20,10 @@ var docClose = document.getElementById("docClose");
 
 searchBtn.addEventListener("click", function () { doSearch(0); });
 searchInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") doSearch(0);
+    if (e.key === "Enter") {
+        if (isSmartSearchLoading) return;
+        doSearch(0);
+    }
 });
 
 smartSearchBtn.addEventListener("click", doSmartSearch);
@@ -58,6 +62,7 @@ function doSmartSearch() {
     var q = searchInput.value.trim();
     if (!q) return;
 
+    isSmartSearchLoading = true;
     smartSearchBtn.disabled = true;
     searchBtn.disabled = true;
     smartSearchBtn.textContent = "Thinking...";
@@ -71,6 +76,7 @@ function doSmartSearch() {
     })
         .then(function (r) { return r.json(); })
         .then(function (data) {
+            isSmartSearchLoading = false;
             smartSearchBtn.disabled = false;
             searchBtn.disabled = false;
             smartSearchBtn.textContent = "Smart Search";
@@ -82,6 +88,11 @@ function doSmartSearch() {
             }
 
             searchInput.value = data.query || q;
+
+            document.getElementById("filterDoctype").value = "";
+            document.getElementById("filterFrom").value = "";
+            document.getElementById("filterTo").value = "";
+            document.getElementById("filterSort").value = "";
 
             if (data.doctype) {
                 document.getElementById("filterDoctype").value = data.doctype;
@@ -107,6 +118,7 @@ function doSmartSearch() {
             searchInput.focus();
         })
         .catch(function (err) {
+            isSmartSearchLoading = false;
             smartSearchBtn.disabled = false;
             searchBtn.disabled = false;
             smartSearchBtn.textContent = "Smart Search";
