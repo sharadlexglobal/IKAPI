@@ -131,6 +131,60 @@ def _save_costs(job_id, cost_tracker):
                         cost_breakdown_json=cost_tracker.get_breakdown())
 
 
+def _repair_truncated_json(text):
+    close_positions = []
+    in_string = False
+    escape_next = False
+    for i, ch in enumerate(text):
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == '\\' and in_string:
+            escape_next = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch in ('}', ']'):
+            close_positions.append(i)
+
+    for pos in reversed(close_positions[-500:]):
+        candidate = text[:pos + 1]
+        stack = []
+        s_in_str = False
+        s_esc = False
+        for ch in candidate:
+            if s_esc:
+                s_esc = False
+                continue
+            if ch == '\\' and s_in_str:
+                s_esc = True
+                continue
+            if ch == '"':
+                s_in_str = not s_in_str
+                continue
+            if s_in_str:
+                continue
+            if ch in ('{', '['):
+                stack.append(ch)
+            elif ch == '}' and stack and stack[-1] == '{':
+                stack.pop()
+            elif ch == ']' and stack and stack[-1] == '[':
+                stack.pop()
+
+        suffix = "".join(']' if o == '[' else '}' for o in reversed(stack))
+        try:
+            result = json.loads(candidate + suffix)
+            if isinstance(result, dict):
+                return candidate + suffix
+        except json.JSONDecodeError:
+            continue
+
+    raise json.JSONDecodeError("Could not repair truncated JSON", text, 0)
+
+
 def _step_extract_questions(job_id, job, cost_tracker):
     from db import update_research_job, get_question_extraction, save_question_extraction
     from genome_config import (
@@ -171,6 +225,11 @@ def _step_extract_questions(job_id, job, cost_tracker):
 
     user_message = (
         f"## OUTPUT SCHEMA\n{schema_summary}\n\n"
+        f"## IMPORTANT CONSTRAINTS\n"
+        f"- Limit to the TOP 40 most important questions across all categories.\n"
+        f"- Keep why_this_matters and research_direction fields to 1-2 sentences each.\n"
+        f"- Only include categories that have relevant questions (skip empty categories).\n"
+        f"- Prioritize CRITICAL and HIGH importance questions.\n\n"
         f"## PLEADING TYPE: {pleading_type}\n## CITATION: {citation}\n\n"
         f"## PLEADING TEXT\n\n{job['pleading_text']}"
     )
@@ -182,7 +241,7 @@ def _step_extract_questions(job_id, job, cost_tracker):
             max_tokens=APIConfig.max_tokens(),
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
-            timeout=APIConfig.timeout(),
+            timeout=600,
         )
 
         if hasattr(message, "usage"):
@@ -191,14 +250,33 @@ def _step_extract_questions(job_id, job, cost_tracker):
             _save_costs(job_id, cost_tracker)
 
         response_text = message.content[0].text
+        stop_reason = getattr(message, "stop_reason", None)
+        was_truncated = (stop_reason == "max_tokens")
+        if was_truncated:
+            logger.warning(f"[{job_id}] Question extraction output was truncated (max_tokens hit). Attempting JSON repair.")
+
         cleaned = strip_markdown_fences(response_text)
-        questions_data = json.loads(cleaned)
+
+        try:
+            questions_data = json.loads(cleaned)
+        except json.JSONDecodeError:
+            if was_truncated:
+                logger.info(f"[{job_id}] Repairing truncated JSON ({len(cleaned)} chars)")
+                repaired = _repair_truncated_json(cleaned)
+                questions_data = json.loads(repaired)
+                logger.info(f"[{job_id}] JSON repair successful")
+            else:
+                raise
 
         total_q = 0
         try:
             total_q = questions_data.get("extraction_summary", {}).get("total_questions", 0)
         except Exception:
             pass
+        if total_q == 0:
+            for cat_key, cat_val in questions_data.get("question_categories", {}).items():
+                if isinstance(cat_val, dict):
+                    total_q += len(cat_val.get("questions", []))
 
         saved = save_question_extraction(text_hash, pleading_type, citation,
                                           questions_data, total_q, APIConfig.model())
@@ -641,51 +719,67 @@ def _step_extract_genomes(job_id, job, cost_tracker):
         citation = cached_doc.get("title", "") or r.get("title", "")
         user_message = f"## SCHEMA SUMMARY\n{schema_summary}\n\n## JUDGMENT TEXT\n\nCitation: {citation}\n\n{judgment_text}"
 
-        try:
-            message = client.messages.create(
-                model=APIConfig.model(),
-                max_tokens=APIConfig.max_tokens(),
-                system=system_prompt,
-                messages=[{"role": "user", "content": user_message}],
-                timeout=APIConfig.timeout(),
-            )
-
-            if hasattr(message, "usage"):
-                cost_tracker.add_claude_cost("genome_extraction", APIConfig.model(),
-                                              message.usage.input_tokens, message.usage.output_tokens)
-                _check_cost_limit(job_id, cost_tracker)
-
-            response_text = message.content[0].text
-            cleaned = strip_markdown_fences(response_text)
-            genome_data = json.loads(cleaned)
-
-            doc_id = genome_data.get("document_id", "")
-            cert_level = None
-            durability = None
+        max_retries = 2
+        for attempt in range(max_retries + 1):
             try:
-                cert_level = genome_data.get("dimension_6_audit", {}).get("final_certification", {}).get("certification_level")
-                durability = genome_data.get("dimension_4_weaponizable", {}).get("vulnerability_map", {}).get("overall_durability_score")
-            except Exception:
-                pass
+                message = client.messages.create(
+                    model=APIConfig.model(),
+                    max_tokens=APIConfig.max_tokens(),
+                    system=system_prompt,
+                    messages=[{"role": "user", "content": user_message}],
+                    timeout=600,
+                )
 
-            save_genome(r["tid"], genome_data, APIConfig.model(), "3.1.0",
-                        doc_id, cert_level, durability)
-            update_pipeline_result(r["id"], genome_extracted=True)
-            extracted += 1
-            logger.info(f"[{job_id}] Genome extracted for tid {r['tid']} ({extracted}/{len(to_extract)})")
+                if hasattr(message, "usage"):
+                    cost_tracker.add_claude_cost("genome_extraction", APIConfig.model(),
+                                                  message.usage.input_tokens, message.usage.output_tokens)
+                    _check_cost_limit(job_id, cost_tracker)
 
-            _save_costs(job_id, cost_tracker)
-            update_research_job(job_id, total_genomes_extracted=already_done + extracted)
+                response_text = message.content[0].text
+                cleaned = strip_markdown_fences(response_text)
 
-        except anthropic.RateLimitError:
-            logger.warning(f"[{job_id}] Rate limited during genome extraction, waiting 30s")
-            time.sleep(30)
-            continue
-        except Exception as e:
-            logger.warning(f"[{job_id}] Genome extraction failed for tid {r['tid']}: {e}")
-            continue
+                stop_reason = getattr(message, "stop_reason", None)
+                if stop_reason == "max_tokens":
+                    logger.warning(f"[{job_id}] Genome for tid {r['tid']} truncated, attempting repair")
+                    cleaned = _repair_truncated_json(cleaned)
 
-        time.sleep(1)
+                genome_data = json.loads(cleaned)
+
+                doc_id = genome_data.get("document_id", "")
+                cert_level = None
+                durability = None
+                try:
+                    cert_level = genome_data.get("dimension_6_audit", {}).get("final_certification", {}).get("certification_level")
+                    durability = genome_data.get("dimension_4_weaponizable", {}).get("vulnerability_map", {}).get("overall_durability_score")
+                except Exception:
+                    pass
+
+                save_genome(r["tid"], genome_data, APIConfig.model(), "3.1.0",
+                            doc_id, cert_level, durability)
+                update_pipeline_result(r["id"], genome_extracted=True)
+                extracted += 1
+                logger.info(f"[{job_id}] Genome extracted for tid {r['tid']} ({extracted}/{len(to_extract)})")
+
+                _save_costs(job_id, cost_tracker)
+                update_research_job(job_id, total_genomes_extracted=already_done + extracted)
+                break
+
+            except anthropic.RateLimitError:
+                logger.warning(f"[{job_id}] Rate limited during genome extraction, waiting 30s")
+                time.sleep(30)
+            except (anthropic.APITimeoutError, anthropic.APIConnectionError) as e:
+                if attempt < max_retries:
+                    wait_time = 30 * (attempt + 1)
+                    logger.warning(f"[{job_id}] Genome timeout for tid {r['tid']} (attempt {attempt+1}), retrying in {wait_time}s")
+                    time.sleep(wait_time)
+                else:
+                    logger.warning(f"[{job_id}] Genome extraction failed for tid {r['tid']} after {max_retries+1} attempts: {e}")
+                    break
+            except Exception as e:
+                logger.warning(f"[{job_id}] Genome extraction failed for tid {r['tid']}: {e}")
+                break
+
+        time.sleep(2)
 
     update_research_job(job_id,
                         total_genomes_extracted=already_done + extracted,

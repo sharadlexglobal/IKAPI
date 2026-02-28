@@ -27,6 +27,9 @@ from genome_config import (
     get_question_schema_summary
 )
 
+import logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s", stream=sys.stderr)
+
 app = Flask(__name__)
 
 API_HOST = "api.indiankanoon.org"

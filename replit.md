@@ -183,7 +183,7 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 ## AI Models & Costs
 
 - **Claude Haiku** (`claude-3-haiku-20240307`): Smart Search query conversion (~$0.001/query), pipeline query generation (~$0.001/batch), relevance filtering (~$0.005/batch)
-- **Claude Sonnet 4** (`claude-sonnet-4-6`): Genome extraction & question extraction (max_tokens=30000, timeout=300s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
+- **Claude Sonnet 4** (`claude-sonnet-4-6`): Genome extraction & question extraction (max_tokens=30000, timeout=600s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
 - **Gemini 2.5 Flash**: Analysis tab summarization (billed to Replit credits)
 
 ### Pipeline Cost Tracking
@@ -248,7 +248,10 @@ Cost breakdown stored in `cost_breakdown_json` (JSONB) on each research job. Das
 - IK API rate limit: 2s delay between requests
 - Claude rate limit: exponential backoff on 429s
 - Webhook callback: 3 retries with exponential backoff
-- Genome extraction is the bottleneck (30-60s per judgment x 30 judgments)
+- Genome extraction is the bottleneck (3-5 min per judgment x 35 judgments with rate limit retries)
+- Genome extraction has retry logic: 2 retries with exponential backoff on timeout/connection errors
+- JSON repair for truncated API responses: auto-detects max_tokens truncation and repairs JSON
+- Question extraction limited to top 40 questions via prompt constraint (reduces output size)
 - Caching is critical: cached genomes from prior runs save 80% of cost
 
 ## Notes
