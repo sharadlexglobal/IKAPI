@@ -247,7 +247,7 @@ function openDoc(docid) {
                 docBody.appendChild(p);
                 return;
             }
-            docTitle.textContent = data.title || "Document";
+            docTitle.innerHTML = data.title || "Document";
             docBody.innerHTML = data.doc || "<p>No content available.</p>";
         })
         .catch(function (err) {

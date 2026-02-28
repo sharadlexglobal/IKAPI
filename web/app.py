@@ -15,6 +15,24 @@ UNSAFE_TAGS = {"script", "style", "iframe", "object", "embed", "form", "input", 
 
 DATE_PATTERN = re.compile(r"^\d{1,2}-\d{1,2}-\d{4}$")
 
+
+def is_valid_date(date_str):
+    if not DATE_PATTERN.match(date_str):
+        return False
+    parts = date_str.split("-")
+    day, month, year = int(parts[0]), int(parts[1]), int(parts[2])
+    if month < 1 or month > 12:
+        return False
+    if day < 1 or day > 31:
+        return False
+    if month in (4, 6, 9, 11) and day > 30:
+        return False
+    if month == 2:
+        leap = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+        if day > (29 if leap else 28):
+            return False
+    return True
+
 VALID_DOCTYPES = {
     "", "supremecourt", "judgments", "highcourts", "tribunals", "laws",
     "delhi", "bombay", "kolkata", "chennai", "allahabad", "andhra",
@@ -154,11 +172,11 @@ def api_search():
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid page number"}), 400
 
-    if fromdate and not DATE_PATTERN.match(fromdate):
-        return jsonify({"error": "Invalid fromdate format. Use DD-MM-YYYY."}), 400
+    if fromdate and not is_valid_date(fromdate):
+        return jsonify({"error": "Invalid from date. Use a valid date in DD-MM-YYYY format."}), 400
 
-    if todate and not DATE_PATTERN.match(todate):
-        return jsonify({"error": "Invalid todate format. Use DD-MM-YYYY."}), 400
+    if todate and not is_valid_date(todate):
+        return jsonify({"error": "Invalid to date. Use a valid date in DD-MM-YYYY format."}), 400
 
     if doctype and doctype not in VALID_DOCTYPES:
         return jsonify({"error": "Invalid court/document type."}), 400
@@ -253,11 +271,11 @@ def api_smart_search():
             doctype = ""
 
         fromdate = result.get("fromdate", "")
-        if fromdate and not DATE_PATTERN.match(fromdate):
+        if fromdate and not is_valid_date(fromdate):
             fromdate = ""
 
         todate = result.get("todate", "")
-        if todate and not DATE_PATTERN.match(todate):
+        if todate and not is_valid_date(todate):
             todate = ""
 
         sortby = result.get("sortby", "")
