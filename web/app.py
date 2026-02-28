@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import http.client
 import urllib.parse
@@ -8,9 +9,17 @@ from bs4 import BeautifulSoup
 app = Flask(__name__)
 
 API_HOST = "api.indiankanoon.org"
-API_TOKEN = os.environ.get("IK_API_TOKEN", "")
 
 UNSAFE_TAGS = {"script", "style", "iframe", "object", "embed", "form", "input", "textarea", "button", "link", "meta"}
+
+DATE_PATTERN = re.compile(r"^\d{1,2}-\d{1,2}-\d{4}$")
+
+
+def get_api_token():
+    token = os.environ.get("IK_API_TOKEN", "")
+    if not token:
+        raise ValueError("IK_API_TOKEN is not configured. Please set it in Replit Secrets.")
+    return token
 
 
 def sanitize_html(html_str):
@@ -29,17 +38,30 @@ def sanitize_html(html_str):
 
 
 def call_ik_api(url):
+    token = get_api_token()
     headers = {
-        "Authorization": f"Token {API_TOKEN}",
+        "Authorization": f"Token {token}",
         "Accept": "application/json",
     }
     connection = http.client.HTTPSConnection(API_HOST)
-    connection.request("POST", url, headers=headers)
-    response = connection.getresponse()
-    data = response.read()
-    if isinstance(data, bytes):
-        data = data.decode("utf8")
-    return data
+    try:
+        connection.request("POST", url, headers=headers)
+        response = connection.getresponse()
+        data = response.read()
+        if isinstance(data, bytes):
+            data = data.decode("utf8")
+        return data
+    finally:
+        connection.close()
+
+
+def parse_total_from_found(found_str):
+    if not found_str:
+        return 0
+    match = re.search(r"of\s+([\d,]+)", found_str)
+    if match:
+        return int(match.group(1).replace(",", ""))
+    return 0
 
 
 @app.route("/")
@@ -50,7 +72,7 @@ def index():
 @app.route("/api/search")
 def api_search():
     q = request.args.get("q", "").strip()
-    page = request.args.get("page", "0")
+    page_str = request.args.get("page", "0")
     doctype = request.args.get("doctype", "").strip()
     fromdate = request.args.get("fromdate", "").strip()
     todate = request.args.get("todate", "").strip()
@@ -58,6 +80,17 @@ def api_search():
 
     if not q:
         return jsonify({"error": "Query is required"}), 400
+
+    try:
+        page = max(0, int(page_str))
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid page number"}), 400
+
+    if fromdate and not DATE_PATTERN.match(fromdate):
+        return jsonify({"error": "Invalid fromdate format. Use DD-MM-YYYY."}), 400
+
+    if todate and not DATE_PATTERN.match(todate):
+        return jsonify({"error": "Invalid todate format. Use DD-MM-YYYY."}), 400
 
     form_input = q
     if doctype:
@@ -75,6 +108,8 @@ def api_search():
     try:
         raw = call_ik_api(url)
         data = json.loads(raw)
+        total = parse_total_from_found(data.get("found", ""))
+        data["total"] = total
         if "docs" in data:
             for doc in data["docs"]:
                 if "headline" in doc:
@@ -82,6 +117,8 @@ def api_search():
                 if "title" in doc:
                     doc["title"] = sanitize_html(doc["title"])
         return jsonify(data)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 503
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -96,6 +133,8 @@ def api_doc(docid):
         if "title" in data:
             data["title"] = sanitize_html(data["title"])
         return jsonify(data)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 503
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

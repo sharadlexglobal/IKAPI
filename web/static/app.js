@@ -1,6 +1,7 @@
 let currentQuery = "";
 let currentPage = 0;
-let totalFound = "";
+let totalResults = 0;
+const PAGE_SIZE = 10;
 
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -58,23 +59,31 @@ function doSearch(page) {
     resultsArea.innerHTML =
         '<div class="loading"><div class="spinner"></div><p>Searching Indian legal database...</p></div>';
 
-    fetch(`/api/search?${params}`)
-        .then((r) => r.json())
-        .then((data) => {
+    fetch("/api/search?" + params)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
             searchBtn.disabled = false;
             searchBtn.textContent = "Search";
             renderResults(data);
         })
-        .catch((err) => {
+        .catch(function (err) {
             searchBtn.disabled = false;
             searchBtn.textContent = "Search";
-            resultsArea.innerHTML = `<div class="error-msg">Something went wrong: ${err.message}</div>`;
+            var el = document.createElement("div");
+            el.className = "error-msg";
+            el.textContent = "Something went wrong: " + err.message;
+            resultsArea.innerHTML = "";
+            resultsArea.appendChild(el);
         });
 }
 
 function renderResults(data) {
     if (data.error || data.errmsg) {
-        resultsArea.innerHTML = `<div class="error-msg">${data.error || data.errmsg}</div>`;
+        var el = document.createElement("div");
+        el.className = "error-msg";
+        el.textContent = data.error || data.errmsg;
+        resultsArea.innerHTML = "";
+        resultsArea.appendChild(el);
         return;
     }
 
@@ -84,48 +93,52 @@ function renderResults(data) {
         return;
     }
 
-    totalFound = data.found || "";
+    totalResults = data.total || 0;
+    var totalPages = Math.ceil(totalResults / PAGE_SIZE);
 
-    let html = `<div class="results-info">Showing <strong>${totalFound}</strong> for "<strong>${escapeHtml(currentQuery)}</strong>"</div>`;
+    var html = '<div class="results-info">Showing <strong>' +
+        escapeHtml(data.found || "") +
+        '</strong> for "<strong>' +
+        escapeHtml(currentQuery) +
+        '</strong>"</div>';
 
-    for (const doc of data.docs) {
-        html += `
-      <div class="result-card" onclick="openDoc(${doc.tid})">
-        <div class="result-title">${doc.title || "Untitled"}</div>
-        <div class="result-meta">
-          <span>${doc.docsource || ""}</span>
-          <span>${doc.publishdate || ""}</span>
-          ${doc.numcites ? `<span>Cites: ${doc.numcites}</span>` : ""}
-          ${doc.numcitedby ? `<span>Cited by: ${doc.numcitedby}</span>` : ""}
-        </div>
-        <div class="result-snippet">${doc.headline || ""}</div>
-      </div>`;
+    for (var i = 0; i < data.docs.length; i++) {
+        var doc = data.docs[i];
+        html += '<div class="result-card" onclick="openDoc(' + doc.tid + ')">' +
+            '<div class="result-title">' + (doc.title || "Untitled") + '</div>' +
+            '<div class="result-meta">' +
+            '<span>' + escapeHtml(doc.docsource || "") + '</span>' +
+            '<span>' + escapeHtml(doc.publishdate || "") + '</span>' +
+            (doc.numcites ? '<span>Cites: ' + doc.numcites + '</span>' : '') +
+            (doc.numcitedby ? '<span>Cited by: ' + doc.numcitedby + '</span>' : '') +
+            '</div>' +
+            '<div class="result-snippet">' + (doc.headline || "") + '</div>' +
+            '</div>';
     }
 
-    html += renderPagination(data.docs.length);
+    html += renderPagination(totalPages);
     resultsArea.innerHTML = html;
 }
 
-function renderPagination(docCount) {
-    let html = '<div class="pagination">';
+function renderPagination(totalPages) {
+    if (totalPages <= 1) return "";
+
+    var html = '<div class="pagination">';
 
     if (currentPage > 0) {
-        html += `<button class="page-btn" onclick="doSearch(${currentPage - 1})">Previous</button>`;
+        html += '<button class="page-btn" onclick="doSearch(' + (currentPage - 1) + ')">Previous</button>';
     }
 
-    const start = Math.max(0, currentPage - 3);
-    const end = currentPage + 4;
+    var start = Math.max(0, currentPage - 3);
+    var end = Math.min(totalPages, currentPage + 4);
 
-    for (let i = start; i < end; i++) {
-        if (i < currentPage || docCount === 10) {
-            html += `<button class="page-btn ${i === currentPage ? "active" : ""}" onclick="doSearch(${i})">${i + 1}</button>`;
-        } else if (i === currentPage) {
-            html += `<button class="page-btn active">${i + 1}</button>`;
-        }
+    for (var i = start; i < end; i++) {
+        html += '<button class="page-btn ' + (i === currentPage ? "active" : "") +
+            '" onclick="doSearch(' + i + ')">' + (i + 1) + '</button>';
     }
 
-    if (docCount === 10) {
-        html += `<button class="page-btn" onclick="doSearch(${currentPage + 1})">Next</button>`;
+    if (currentPage < totalPages - 1) {
+        html += '<button class="page-btn" onclick="doSearch(' + (currentPage + 1) + ')">Next</button>';
     }
 
     html += "</div>";
@@ -134,33 +147,41 @@ function renderPagination(docCount) {
 
 function openDoc(docid) {
     docOverlay.classList.add("active");
+    document.body.style.overflow = "hidden";
     docTitle.textContent = "Loading...";
     docBody.innerHTML =
         '<div class="loading"><div class="spinner"></div><p>Fetching document...</p></div>';
 
-    fetch(`/api/doc/${docid}`)
-        .then((r) => r.json())
-        .then((data) => {
+    fetch("/api/doc/" + docid)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
             if (data.error || data.errmsg) {
                 docTitle.textContent = "Error";
-                docBody.innerHTML = `<p>${data.error || data.errmsg}</p>`;
+                var p = document.createElement("p");
+                p.textContent = data.error || data.errmsg;
+                docBody.innerHTML = "";
+                docBody.appendChild(p);
                 return;
             }
             docTitle.textContent = data.title || "Document";
             docBody.innerHTML = data.doc || "<p>No content available.</p>";
         })
-        .catch((err) => {
+        .catch(function (err) {
             docTitle.textContent = "Error";
-            docBody.innerHTML = `<p>${err.message}</p>`;
+            var p = document.createElement("p");
+            p.textContent = err.message;
+            docBody.innerHTML = "";
+            docBody.appendChild(p);
         });
 }
 
 function closeDoc() {
     docOverlay.classList.remove("active");
+    document.body.style.overflow = "";
 }
 
 function escapeHtml(text) {
-    const el = document.createElement("span");
+    var el = document.createElement("span");
     el.textContent = text;
     return el.innerHTML;
 }
