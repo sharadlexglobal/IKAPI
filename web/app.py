@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
 import re
 import json
 import http.client
@@ -6,6 +8,13 @@ import urllib.parse
 from flask import Flask, render_template, request, jsonify
 from bs4 import BeautifulSoup
 import anthropic
+from db import (
+    init_db, get_cached_judgment, save_judgment_metadata, save_judgment_full_text,
+    save_search_query, get_saved_queries, get_judgments_for_query,
+    get_judgments_by_tids, get_prompt_templates, save_prompt_template,
+    update_prompt_template, delete_prompt_template, seed_default_templates
+)
+from gemini_service import summarize_judgments, estimate_tokens
 
 app = Flask(__name__)
 
@@ -186,6 +195,48 @@ def parse_total_from_found(found_str):
     return 0
 
 
+def parse_publish_date(date_str):
+    if not date_str:
+        return None
+    try:
+        import datetime
+        for fmt in ("%d %B, %Y", "%B %d, %Y", "%d-%m-%Y", "%Y-%m-%d"):
+            try:
+                return datetime.datetime.strptime(date_str.strip(), fmt).date()
+            except ValueError:
+                continue
+    except Exception:
+        pass
+    return None
+
+
+def cache_search_results(docs, query_text, doctype, fromdate, todate, sortby, total):
+    try:
+        for doc in docs:
+            tid = doc.get("tid")
+            if tid:
+                save_judgment_metadata(
+                    tid=tid,
+                    title=doc.get("title", "Untitled"),
+                    doctype=doc.get("doctype", ""),
+                    court_source=doc.get("docsource", ""),
+                    publish_date=parse_publish_date(doc.get("publishdate", "")),
+                    num_cites=doc.get("numcites", 0) or 0,
+                    num_cited_by=doc.get("numcitedby", 0) or 0,
+                )
+        save_search_query(
+            query_text=query_text,
+            doctype_filter=doctype,
+            from_date=fromdate,
+            to_date=todate,
+            sort_by=sortby,
+            total_results=total,
+            result_docs=docs,
+        )
+    except Exception as e:
+        app.logger.warning(f"Failed to cache search results: {e}")
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -217,8 +268,11 @@ def api_search():
     if doctype and doctype not in VALID_DOCTYPES:
         return jsonify({"error": "Invalid court/document type."}), 400
 
-    if sortby and sortby not in ("mostrecent", "leastrecent"):
+    if sortby and sortby not in ("mostrecent", "leastrecent", "mostcited"):
         return jsonify({"error": "Invalid sort option."}), 400
+
+    if sortby == "mostcited":
+        return _most_cited_search(q, doctype, fromdate, todate)
 
     form_input = q
     if doctype:
@@ -244,7 +298,65 @@ def api_search():
                     doc["headline"] = sanitize_html(doc["headline"])
                 if "title" in doc:
                     doc["title"] = sanitize_html(doc["title"])
+            cache_search_results(data["docs"], q, doctype, fromdate, todate, sortby, total)
         return jsonify(data)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def _most_cited_search(q, doctype, fromdate, todate):
+    form_input = q
+    if doctype:
+        form_input += f" doctypes: {doctype}"
+    if fromdate:
+        form_input += f" fromdate: {fromdate}"
+    if todate:
+        form_input += f" todate: {todate}"
+
+    all_docs = {}
+    real_total = 0
+
+    try:
+        for page in range(5):
+            encoded = urllib.parse.quote_plus(form_input)
+            url = f"/search/?formInput={encoded}&pagenum={page}"
+            raw = call_ik_api(url)
+            data = json.loads(raw)
+
+            if page == 0:
+                real_total = parse_total_from_found(data.get("found", ""))
+                found_str = data.get("found", "")
+
+            docs = data.get("docs", [])
+            if not docs:
+                break
+
+            for doc in docs:
+                tid = doc.get("tid")
+                if tid and tid not in all_docs:
+                    if "headline" in doc:
+                        doc["headline"] = sanitize_html(doc["headline"])
+                    if "title" in doc:
+                        doc["title"] = sanitize_html(doc["title"])
+                    all_docs[tid] = doc
+
+        sorted_docs = sorted(
+            all_docs.values(),
+            key=lambda d: d.get("numcitedby", 0) or 0,
+            reverse=True
+        )
+        top_docs = sorted_docs[:10]
+
+        cache_search_results(list(all_docs.values()), q, doctype, fromdate, todate, "mostcited", real_total)
+
+        return jsonify({
+            "docs": top_docs,
+            "found": found_str if real_total else "",
+            "total": real_total,
+            "mostcited_note": f"Sorted by most cited within top {len(all_docs)} results",
+        })
     except ValueError as e:
         return jsonify({"error": str(e)}), 503
     except Exception as e:
@@ -254,15 +366,53 @@ def api_search():
 @app.route("/api/doc/<int:docid>")
 def api_doc(docid):
     try:
+        cached = get_cached_judgment(docid)
+        if cached:
+            return jsonify({
+                "doc": cached["full_text_html"],
+                "title": cached["title"],
+                "cached": True,
+            })
+    except Exception as e:
+        app.logger.warning(f"Cache lookup failed for {docid}: {e}")
+
+    try:
         raw = call_ik_api(f"/doc/{docid}/")
         data = json.loads(raw)
         if "doc" in data:
             data["doc"] = sanitize_html(data["doc"])
         if "title" in data:
             data["title"] = sanitize_html(data["title"])
+
+        try:
+            save_judgment_full_text(docid, data.get("title", ""), data.get("doc", ""))
+        except Exception as e:
+            app.logger.warning(f"Failed to cache doc {docid}: {e}")
+
+        data["cached"] = False
         return jsonify(data)
     except ValueError as e:
         return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/save-doc/<int:docid>", methods=["POST"])
+def api_save_doc(docid):
+    try:
+        cached = get_cached_judgment(docid)
+        if cached:
+            return jsonify({"success": True, "message": "Already cached"})
+    except Exception:
+        pass
+
+    try:
+        raw = call_ik_api(f"/doc/{docid}/")
+        data = json.loads(raw)
+        doc_html = sanitize_html(data.get("doc", ""))
+        title = sanitize_html(data.get("title", ""))
+        save_judgment_full_text(docid, title, doc_html)
+        return jsonify({"success": True, "message": "Saved"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -349,6 +499,195 @@ def api_smart_search():
         return jsonify({"error": f"AI service error: {str(e)}"}), 502
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/saved-queries")
+def api_saved_queries():
+    try:
+        queries = get_saved_queries()
+        result = []
+        for q in queries:
+            result.append({
+                "id": q["id"],
+                "query_text": q["query_text"],
+                "doctype_filter": q["doctype_filter"] or "",
+                "total_results": q["total_results"] or 0,
+                "result_count": q["result_count"],
+                "searched_at": q["searched_at"].isoformat() if q["searched_at"] else "",
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/query-judgments/<int:query_id>")
+def api_query_judgments(query_id):
+    try:
+        judgments = get_judgments_for_query(query_id)
+        result = []
+        for j in judgments:
+            result.append({
+                "tid": j["tid"],
+                "title": j["title"] or "Untitled",
+                "doctype": j["doctype"] or "",
+                "court_source": j["court_source"] or "",
+                "publish_date": j["publish_date"].isoformat() if j["publish_date"] else "",
+                "num_cited_by": j["num_cited_by"] or 0,
+                "has_full_text": not j["metadata_only"],
+                "position": j["position"],
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prompt-templates")
+def api_get_templates():
+    try:
+        templates = get_prompt_templates()
+        result = []
+        for t in templates:
+            result.append({
+                "id": t["id"],
+                "name": t["name"],
+                "prompt_text": t["prompt_text"],
+                "created_at": t["created_at"].isoformat() if t["created_at"] else "",
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prompt-templates", methods=["POST"])
+def api_create_template():
+    body = request.get_json(silent=True)
+    if not body or not body.get("name") or not body.get("prompt_text"):
+        return jsonify({"error": "Name and prompt text are required"}), 400
+    try:
+        t = save_prompt_template(body["name"], body["prompt_text"])
+        return jsonify({
+            "id": t["id"],
+            "name": t["name"],
+            "prompt_text": t["prompt_text"],
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prompt-templates/<int:tid>", methods=["PUT"])
+def api_update_template(tid):
+    body = request.get_json(silent=True)
+    if not body or not body.get("name") or not body.get("prompt_text"):
+        return jsonify({"error": "Name and prompt text are required"}), 400
+    try:
+        t = update_prompt_template(tid, body["name"], body["prompt_text"])
+        if not t:
+            return jsonify({"error": "Template not found"}), 404
+        return jsonify({
+            "id": t["id"],
+            "name": t["name"],
+            "prompt_text": t["prompt_text"],
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/prompt-templates/<int:tid>", methods=["DELETE"])
+def api_delete_template(tid):
+    try:
+        deleted = delete_prompt_template(tid)
+        if not deleted:
+            return jsonify({"error": "Template not found"}), 404
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analyze", methods=["POST"])
+def api_analyze():
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+
+    prompt_template_id = body.get("prompt_template_id")
+    custom_prompt = body.get("custom_prompt", "")
+    tids = body.get("tids", [])
+    search_query_id = body.get("search_query_id")
+
+    if not tids and not search_query_id:
+        return jsonify({"error": "Provide tids or search_query_id"}), 400
+
+    if not prompt_template_id and not custom_prompt:
+        return jsonify({"error": "Provide prompt_template_id or custom_prompt"}), 400
+
+    try:
+        prompt_text = custom_prompt
+        if prompt_template_id and not custom_prompt:
+            templates = get_prompt_templates()
+            tmpl = next((t for t in templates if t["id"] == prompt_template_id), None)
+            if not tmpl:
+                return jsonify({"error": "Template not found"}), 404
+            prompt_text = tmpl["prompt_text"]
+
+        if search_query_id and not tids:
+            judgments = get_judgments_for_query(search_query_id)
+            tids = [j["tid"] for j in judgments]
+
+        if not tids:
+            return jsonify({"error": "No judgments found"}), 400
+
+        judgment_texts = []
+        missing_tids = []
+        existing = get_judgments_by_tids(tids)
+        existing_map = {j["tid"]: j for j in existing}
+
+        for tid in tids:
+            j = existing_map.get(tid)
+            if j and not j["metadata_only"] and j["full_text_html"]:
+                soup = BeautifulSoup(j["full_text_html"], "html.parser")
+                text = soup.get_text(separator="\n", strip=True)
+                judgment_texts.append(f"[{j['title']}]\n{text}")
+            else:
+                missing_tids.append(tid)
+
+        for tid in missing_tids:
+            try:
+                raw = call_ik_api(f"/doc/{tid}/")
+                data = json.loads(raw)
+                doc_html = sanitize_html(data.get("doc", ""))
+                title = sanitize_html(data.get("title", ""))
+                save_judgment_full_text(tid, title, doc_html)
+                soup = BeautifulSoup(doc_html, "html.parser")
+                text = soup.get_text(separator="\n", strip=True)
+                judgment_texts.append(f"[{title}]\n{text}")
+            except Exception as e:
+                app.logger.warning(f"Failed to fetch doc {tid} for analysis: {e}")
+
+        if not judgment_texts:
+            return jsonify({"error": "Could not retrieve any judgment texts"}), 400
+
+        total_chars = sum(len(t) for t in judgment_texts)
+        estimated_tokens = total_chars // 4
+
+        result = summarize_judgments(judgment_texts, prompt_text)
+
+        return jsonify({
+            "analysis": result,
+            "judgments_analyzed": len(judgment_texts),
+            "estimated_tokens": estimated_tokens,
+        })
+    except Exception as e:
+        error_msg = str(e)
+        if "FREE_CLOUD_BUDGET_EXCEEDED" in error_msg:
+            return jsonify({"error": "Cloud budget exceeded. Please check your Replit credits."}), 402
+        return jsonify({"error": error_msg}), 500
+
+
+try:
+    init_db()
+    seed_default_templates()
+except Exception as e:
+    print(f"Warning: Could not initialize database: {e}")
 
 
 if __name__ == "__main__":
