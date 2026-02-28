@@ -20,27 +20,86 @@
                 <input type="text" id="searchInput" class="search-input"
                        placeholder="Search judgments, e.g. &quot;right to privacy&quot;, &quot;freedom of speech&quot;..."
                        autofocus>
+                <button id="smartSearchBtn" class="smart-btn" title="AI Smart Search: converts your natural language into precise legal search">Smart Search</button>
                 <button id="searchBtn" class="search-btn">Search</button>
             </div>
-            <button id="filtersToggle" class="filters-toggle">Show filters</button>
+            <div id="smartStatus" class="smart-status"></div>
+            <div class="toolbar-row">
+                <button id="filtersToggle" class="filters-toggle">Show filters</button>
+                <button id="tipsToggle" class="filters-toggle">Search tips &amp; examples</button>
+            </div>
+
             <div id="filtersPanel" class="filters">
                 <div class="filter-group">
                     <label for="filterDoctype">Court / Document Type</label>
                     <select id="filterDoctype">
-                        <option value="">All Courts</option>
-                        <option value="supremecourt">Supreme Court</option>
-                        <option value="judgments">All Courts (SC, HC, District)</option>
-                        <option value="delhi">Delhi High Court</option>
-                        <option value="bombay">Bombay High Court</option>
-                        <option value="kolkata">Kolkata High Court</option>
-                        <option value="chennai">Madras High Court</option>
-                        <option value="allahabad">Allahabad High Court</option>
-                        <option value="kerala">Kerala High Court</option>
-                        <option value="gujarat">Gujarat High Court</option>
-                        <option value="karnataka">Karnataka High Court</option>
-                        <option value="highcourts">All High Courts</option>
-                        <option value="tribunals">All Tribunals</option>
-                        <option value="laws">Central Acts and Rules</option>
+                        <option value="">All Courts &amp; Documents</option>
+
+                        <optgroup label="Aggregators">
+                            <option value="judgments">All Courts (SC, HC, District)</option>
+                            <option value="highcourts">All High Courts</option>
+                            <option value="tribunals">All Tribunals</option>
+                            <option value="laws">Central Acts and Rules</option>
+                        </optgroup>
+
+                        <optgroup label="Supreme Court">
+                            <option value="supremecourt">Supreme Court of India</option>
+                        </optgroup>
+
+                        <optgroup label="High Courts">
+                            <option value="allahabad">Allahabad High Court</option>
+                            <option value="andhra">Andhra Pradesh High Court</option>
+                            <option value="bombay">Bombay High Court</option>
+                            <option value="chattisgarh">Chhattisgarh High Court</option>
+                            <option value="chennai">Madras High Court (Chennai)</option>
+                            <option value="delhi">Delhi High Court</option>
+                            <option value="gauhati">Gauhati High Court</option>
+                            <option value="gujarat">Gujarat High Court</option>
+                            <option value="himachal_pradesh">Himachal Pradesh High Court</option>
+                            <option value="jammu">Jammu High Court</option>
+                            <option value="jharkhand">Jharkhand High Court</option>
+                            <option value="jodhpur">Rajasthan High Court (Jodhpur)</option>
+                            <option value="karnataka">Karnataka High Court</option>
+                            <option value="kerala">Kerala High Court</option>
+                            <option value="kolkata">Calcutta High Court (Kolkata)</option>
+                            <option value="kolkata_app">Calcutta High Court - Appellate Side</option>
+                            <option value="lucknow">Allahabad High Court (Lucknow Bench)</option>
+                            <option value="madhyapradesh">Madhya Pradesh High Court</option>
+                            <option value="meghalaya">Meghalaya High Court</option>
+                            <option value="orissa">Orissa High Court</option>
+                            <option value="patna">Patna High Court</option>
+                            <option value="patna_orders">Patna High Court - Orders</option>
+                            <option value="punjab">Punjab &amp; Haryana High Court</option>
+                            <option value="rajasthan">Rajasthan High Court</option>
+                            <option value="sikkim">Sikkim High Court</option>
+                            <option value="srinagar">J&amp;K High Court (Srinagar)</option>
+                            <option value="uttaranchal">Uttarakhand High Court</option>
+                        </optgroup>
+
+                        <optgroup label="District Courts">
+                            <option value="delhidc">Delhi District Courts</option>
+                        </optgroup>
+
+                        <optgroup label="Tribunals">
+                            <option value="aptel">APTEL (Appellate Tribunal for Electricity)</option>
+                            <option value="cat">CAT (Central Administrative Tribunal)</option>
+                            <option value="cci">CCI (Competition Commission of India)</option>
+                            <option value="cegat">CESTAT (Customs, Excise &amp; Service Tax)</option>
+                            <option value="cerc">CERC (Central Electricity Regulatory Commission)</option>
+                            <option value="cic">CIC (Central Information Commission)</option>
+                            <option value="clb">CLB (Company Law Board)</option>
+                            <option value="consumer">Consumer Courts (NCDRC)</option>
+                            <option value="copyrightboard">Copyright Board</option>
+                            <option value="drat">DRAT (Debts Recovery Appellate Tribunal)</option>
+                            <option value="greentribunal">NGT (National Green Tribunal)</option>
+                            <option value="ipab">IPAB (Intellectual Property Appellate Board)</option>
+                            <option value="itat">ITAT (Income Tax Appellate Tribunal)</option>
+                            <option value="mrtp">MRTP Commission</option>
+                            <option value="sebisat">SAT (Securities Appellate Tribunal)</option>
+                            <option value="stt">Settlement Commission (Tax)</option>
+                            <option value="tdsat">TDSAT (Telecom Disputes Settlement)</option>
+                            <option value="trademark">Trademark Registry</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -60,12 +119,108 @@
                     <input type="text" id="filterTo" placeholder="e.g. 31-12-2024">
                 </div>
             </div>
+
+            <div id="tipsPanel" class="tips-panel">
+                <div class="tips-grid">
+                    <div class="tip-section">
+                        <h4>Search Operators</h4>
+                        <div class="tip-item">
+                            <span class="tip-label">Exact phrase</span>
+                            <code>"freedom of speech"</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">AND (implicit)</span>
+                            <code>murder kidnapping</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">AND (explicit)</span>
+                            <code>murder ANDD kidnapping</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">OR</span>
+                            <code>murder ORR kidnapping</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">NOT</span>
+                            <code>murder ANDD NOTT kidnapping</code>
+                        </div>
+                    </div>
+                    <div class="tip-section">
+                        <h4>Advanced Filters (in query)</h4>
+                        <div class="tip-item">
+                            <span class="tip-label">By title</span>
+                            <code>title: kesavananda</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">By judge (author)</span>
+                            <code>author: chandrachud</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">By bench</span>
+                            <code>bench: arijit pasayat</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">By citation</span>
+                            <code>cite: 1993 AIR</code>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-label">Court in query</span>
+                            <code>doctypes: supremecourt</code>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="examples-heading">Click an example to try it</h4>
+                <div class="examples-grid">
+                    <button class="example-btn" data-query="&quot;right to privacy&quot;">
+                        "right to privacy"
+                    </button>
+                    <button class="example-btn" data-query="&quot;freedom of speech&quot;">
+                        "freedom of speech"
+                    </button>
+                    <button class="example-btn" data-query="murder ORR culpable homicide">
+                        murder ORR culpable homicide
+                    </button>
+                    <button class="example-btn" data-query="title: kesavananda">
+                        title: kesavananda
+                    </button>
+                    <button class="example-btn" data-query="author: chandrachud">
+                        author: chandrachud
+                    </button>
+                    <button class="example-btn" data-query="&quot;right to information&quot; ANDD NOTT &quot;official secrets&quot;">
+                        RTI ANDD NOTT "official secrets"
+                    </button>
+                    <button class="example-btn" data-query="bench: arijit pasayat">
+                        bench: arijit pasayat
+                    </button>
+                    <button class="example-btn" data-query="cite: 1993 AIR">
+                        cite: 1993 AIR
+                    </button>
+                    <button class="example-btn" data-query="&quot;section 498a&quot; ORR &quot;domestic violence&quot;">
+                        Section 498A ORR domestic violence
+                    </button>
+                    <button class="example-btn" data-query="&quot;fundamental rights&quot; ANDD &quot;article 21&quot;">
+                        fundamental rights ANDD article 21
+                    </button>
+                    <button class="example-btn" data-query="&quot;bail application&quot; ANDD &quot;NDPS Act&quot;">
+                        bail application ANDD NDPS Act
+                    </button>
+                    <button class="example-btn" data-query="&quot;environmental clearance&quot;">
+                        "environmental clearance"
+                    </button>
+                </div>
+
+                <div class="smart-tip">
+                    <strong>Smart Search:</strong> Don't know the exact syntax? Just type in plain language and click <em>Smart Search</em>. AI will convert your query into the right format. For example: "supreme court cases about land acquisition by Justice Chandrachud from 2020"
+                </div>
+            </div>
         </div>
 
         <div id="resultsArea">
             <div class="empty-state">
                 <h3>Search Indian Legal Documents</h3>
                 <p>Enter a query above to search through judgments, laws, and tribunal orders.</p>
+                <p class="empty-hint">Try clicking "Search tips &amp; examples" for help crafting your query, or use "Smart Search" to search in plain language.</p>
             </div>
         </div>
     </div>

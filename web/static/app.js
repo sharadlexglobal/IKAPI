@@ -1,52 +1,136 @@
 let currentQuery = "";
 let currentPage = 0;
 let totalResults = 0;
-const PAGE_SIZE = 10;
+var PAGE_SIZE = 10;
 
-const searchInput = document.getElementById("searchInput");
-const searchBtn = document.getElementById("searchBtn");
-const filtersToggle = document.getElementById("filtersToggle");
-const filtersPanel = document.getElementById("filtersPanel");
-const resultsArea = document.getElementById("resultsArea");
-const docOverlay = document.getElementById("docOverlay");
-const docTitle = document.getElementById("docTitle");
-const docBody = document.getElementById("docBody");
-const docClose = document.getElementById("docClose");
+var searchInput = document.getElementById("searchInput");
+var searchBtn = document.getElementById("searchBtn");
+var smartSearchBtn = document.getElementById("smartSearchBtn");
+var smartStatus = document.getElementById("smartStatus");
+var filtersToggle = document.getElementById("filtersToggle");
+var filtersPanel = document.getElementById("filtersPanel");
+var tipsToggle = document.getElementById("tipsToggle");
+var tipsPanel = document.getElementById("tipsPanel");
+var resultsArea = document.getElementById("resultsArea");
+var docOverlay = document.getElementById("docOverlay");
+var docTitle = document.getElementById("docTitle");
+var docBody = document.getElementById("docBody");
+var docClose = document.getElementById("docClose");
 
-searchBtn.addEventListener("click", () => doSearch(0));
-searchInput.addEventListener("keydown", (e) => {
+searchBtn.addEventListener("click", function () { doSearch(0); });
+searchInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") doSearch(0);
 });
 
-filtersToggle.addEventListener("click", () => {
+smartSearchBtn.addEventListener("click", doSmartSearch);
+
+filtersToggle.addEventListener("click", function () {
     filtersPanel.classList.toggle("active");
     filtersToggle.textContent = filtersPanel.classList.contains("active")
         ? "Hide filters"
         : "Show filters";
 });
 
+tipsToggle.addEventListener("click", function () {
+    tipsPanel.classList.toggle("active");
+    tipsToggle.textContent = tipsPanel.classList.contains("active")
+        ? "Hide tips"
+        : "Search tips & examples";
+});
+
+document.querySelectorAll(".example-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+        searchInput.value = btn.getAttribute("data-query");
+        searchInput.focus();
+    });
+});
+
 docClose.addEventListener("click", closeDoc);
-docOverlay.addEventListener("click", (e) => {
+docOverlay.addEventListener("click", function (e) {
     if (e.target === docOverlay) closeDoc();
 });
 
-document.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") closeDoc();
 });
 
+function doSmartSearch() {
+    var q = searchInput.value.trim();
+    if (!q) return;
+
+    smartSearchBtn.disabled = true;
+    searchBtn.disabled = true;
+    smartSearchBtn.textContent = "Thinking...";
+    smartStatus.textContent = "AI is interpreting your query...";
+    smartStatus.className = "smart-status active";
+
+    fetch("/api/smart-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q })
+    })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            smartSearchBtn.disabled = false;
+            searchBtn.disabled = false;
+            smartSearchBtn.textContent = "Smart Search";
+
+            if (data.error) {
+                smartStatus.textContent = "Error: " + data.error;
+                smartStatus.className = "smart-status active error";
+                return;
+            }
+
+            searchInput.value = data.query || q;
+
+            if (data.doctype) {
+                document.getElementById("filterDoctype").value = data.doctype;
+            }
+            if (data.fromdate) {
+                document.getElementById("filterFrom").value = data.fromdate;
+            }
+            if (data.todate) {
+                document.getElementById("filterTo").value = data.todate;
+            }
+            if (data.sortby) {
+                document.getElementById("filterSort").value = data.sortby;
+            }
+
+            if (data.doctype || data.fromdate || data.todate || data.sortby) {
+                filtersPanel.classList.add("active");
+                filtersToggle.textContent = "Hide filters";
+            }
+
+            smartStatus.textContent = "Query formatted! Review and click Search to execute.";
+            smartStatus.className = "smart-status active success";
+
+            searchInput.focus();
+        })
+        .catch(function (err) {
+            smartSearchBtn.disabled = false;
+            searchBtn.disabled = false;
+            smartSearchBtn.textContent = "Smart Search";
+            smartStatus.textContent = "Something went wrong: " + err.message;
+            smartStatus.className = "smart-status active error";
+        });
+}
+
 function doSearch(page) {
-    const q = searchInput.value.trim();
+    var q = searchInput.value.trim();
     if (!q) return;
 
     currentQuery = q;
     currentPage = page;
 
-    const params = new URLSearchParams({ q, page });
+    smartStatus.textContent = "";
+    smartStatus.className = "smart-status";
 
-    const doctype = document.getElementById("filterDoctype").value.trim();
-    const fromdate = document.getElementById("filterFrom").value.trim();
-    const todate = document.getElementById("filterTo").value.trim();
-    const sortby = document.getElementById("filterSort").value;
+    var params = new URLSearchParams({ q: q, page: page });
+
+    var doctype = document.getElementById("filterDoctype").value.trim();
+    var fromdate = document.getElementById("filterFrom").value.trim();
+    var todate = document.getElementById("filterTo").value.trim();
+    var sortby = document.getElementById("filterSort").value;
 
     if (doctype) params.set("doctype", doctype);
     if (fromdate) params.set("fromdate", fromdate);
