@@ -1,0 +1,32 @@
+modules = ["java-graalvm22.3", "python-3.12", "bash"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = """
+echo 'IKAPI is ready! Use the Shell to run commands:
+  Python: python python/ikapi.py --help
+  Java: java -jar java/target/ikapi-1.0.0.jar --help'"""
+
+[workflows.workflow.metadata]
+outputType = "console"
