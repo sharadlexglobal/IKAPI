@@ -144,7 +144,10 @@ Generate the complete research memo now. Respond with ONLY valid JSON."""
             response_text = response_text[4:].strip()
 
     memo = json.loads(response_text)
-    return memo
+    usage = {}
+    if hasattr(message, "usage"):
+        usage = {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens, "model": model}
+    return memo, usage
 
 
 def _prepare_genome_summaries(genomes):

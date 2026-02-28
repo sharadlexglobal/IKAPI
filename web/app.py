@@ -1052,6 +1052,14 @@ def api_pipeline_status(job_id):
             else:
                 s["status"] = "PENDING"
 
+        cost_usd = job.get("cost_estimate_usd") or 0
+        cost_breakdown = job.get("cost_breakdown_json")
+        if isinstance(cost_breakdown, str):
+            try:
+                cost_breakdown = json.loads(cost_breakdown)
+            except Exception:
+                cost_breakdown = {}
+
         result = {
             "job_id": str(job["id"]),
             "status": job["status"],
@@ -1064,6 +1072,11 @@ def api_pipeline_status(job_id):
                 "total_results": job.get("total_results_found", 0),
                 "relevant_judgments": job.get("total_relevant_judgments", 0),
                 "genomes_extracted": job.get("total_genomes_extracted", 0),
+            },
+            "cost": {
+                "total_usd": round(cost_usd, 4),
+                "total_inr": round(cost_usd * 95, 2),
+                "breakdown": cost_breakdown or {},
             },
             "citation": job.get("citation", ""),
             "pleading_type": job.get("pleading_type", ""),
@@ -1147,7 +1160,8 @@ def api_pipeline_list():
                 "total_searches": j.get("total_searches_completed", 0),
                 "relevant_judgments": j.get("total_relevant_judgments", 0),
                 "genomes_extracted": j.get("total_genomes_extracted", 0),
-                "cost_estimate": j.get("cost_estimate_usd", 0),
+                "cost_usd": round(j.get("cost_estimate_usd") or 0, 4),
+                "cost_inr": round((j.get("cost_estimate_usd") or 0) * 95, 2),
                 "created_at": j["created_at"].isoformat() if j.get("created_at") else "",
                 "started_at": j["started_at"].isoformat() if j.get("started_at") else "",
                 "completed_at": j["completed_at"].isoformat() if j.get("completed_at") else "",

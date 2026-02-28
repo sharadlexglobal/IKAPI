@@ -161,6 +161,9 @@ def init_db():
                 CREATE INDEX IF NOT EXISTS idx_pipeline_results_job ON pipeline_results(job_id);
                 CREATE INDEX IF NOT EXISTS idx_pipeline_results_relevant ON pipeline_results(job_id, is_relevant);
             """)
+            cur.execute("""
+                ALTER TABLE research_jobs ADD COLUMN IF NOT EXISTS cost_breakdown_json JSONB DEFAULT '{}';
+            """)
     finally:
         conn.close()
 
@@ -488,7 +491,7 @@ def update_research_job(job_id, **kwargs):
             vals = []
             for k, v in kwargs.items():
                 sets.append(f"{k} = %s")
-                if k in ("reliefs_sought", "research_memo") and isinstance(v, (dict, list)):
+                if k in ("reliefs_sought", "research_memo", "cost_breakdown_json") and isinstance(v, (dict, list)):
                     vals.append(json.dumps(v))
                 else:
                     vals.append(v)
@@ -506,7 +509,7 @@ def get_all_research_jobs(limit=50):
                 SELECT id, status, citation, client_name, pleading_type, court,
                        total_questions, total_queries_generated, total_searches_completed,
                        total_relevant_judgments, total_genomes_extracted,
-                       cost_estimate_usd, current_step,
+                       cost_estimate_usd, cost_breakdown_json, current_step,
                        created_at, started_at, completed_at, failed_at, error_message,
                        questions_completed_at, queries_completed_at, searches_completed_at,
                        filtering_completed_at, fetching_completed_at, genomes_completed_at,

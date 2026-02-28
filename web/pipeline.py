@@ -10,6 +10,7 @@ import threading
 import time
 import traceback
 from datetime import datetime
+from cost_tracker import PipelineCostTracker
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,15 @@ MAX_COST_USD = 75.0
 _active_jobs = {}
 
 
+def _check_cost_limit(job_id, cost_tracker):
+    if cost_tracker.get_total_usd() >= MAX_COST_USD:
+        from db import update_research_job
+        _save_costs(job_id, cost_tracker)
+        update_research_job(job_id, status="FAILED", failed_at=datetime.now(),
+                            error_message=f"Cost limit exceeded: ${cost_tracker.get_total_usd():.2f} >= ${MAX_COST_USD:.2f} (₹{cost_tracker.get_total_inr():.2f}). Resume with retry after review.")
+        raise RuntimeError(f"Cost limit ${MAX_COST_USD} exceeded")
+
+
 def start_pipeline(job_id):
     t = threading.Thread(target=_run_pipeline, args=(str(job_id),), daemon=True)
     t.name = f"pipeline-{job_id}"
@@ -43,6 +53,7 @@ def start_pipeline(job_id):
 
 def _run_pipeline(job_id):
     from db import get_research_job, update_research_job
+    cost_tracker = PipelineCostTracker()
     try:
         job = get_research_job(job_id)
         if not job:
@@ -52,51 +63,52 @@ def _run_pipeline(job_id):
         update_research_job(job_id, status="EXTRACTING_QUESTIONS",
                             started_at=datetime.now(), current_step="EXTRACTING_QUESTIONS")
 
-        _step_extract_questions(job_id, job)
+        _step_extract_questions(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
-        _step_generate_queries(job_id, job)
+        _step_generate_queries(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
-        _step_search(job_id, job)
+        _step_search(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
-        _step_filter(job_id, job)
+        _step_filter(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
-        _step_fetch_docs(job_id, job)
+        _step_fetch_docs(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
-        _step_extract_genomes(job_id, job)
+        _step_extract_genomes(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
-        _step_synthesize(job_id, job)
+        _step_synthesize(job_id, job, cost_tracker)
 
         job = get_research_job(job_id)
         if job["status"] == "FAILED":
             return
 
+        _save_costs(job_id, cost_tracker)
         update_research_job(job_id, status="COMPLETED",
                             completed_at=datetime.now(), current_step="COMPLETED")
-        logger.info(f"Pipeline {job_id} COMPLETED")
+        logger.info(f"Pipeline {job_id} COMPLETED — Total cost: {cost_tracker.get_total_usd():.4f} USD (₹{cost_tracker.get_total_inr():.2f})")
 
         _deliver_result(job_id)
 
@@ -112,7 +124,14 @@ def _run_pipeline(job_id):
         _active_jobs.pop(str(job_id), None)
 
 
-def _step_extract_questions(job_id, job):
+def _save_costs(job_id, cost_tracker):
+    from db import update_research_job
+    update_research_job(job_id,
+                        cost_estimate_usd=cost_tracker.get_total_usd(),
+                        cost_breakdown_json=cost_tracker.get_breakdown())
+
+
+def _step_extract_questions(job_id, job, cost_tracker):
     from db import update_research_job, get_question_extraction, save_question_extraction
     from genome_config import (
         APIConfig, build_question_extractor_prompt, get_question_schema_summary,
@@ -166,6 +185,11 @@ def _step_extract_questions(job_id, job):
             timeout=APIConfig.timeout(),
         )
 
+        if hasattr(message, "usage"):
+            cost_tracker.add_claude_cost("question_extraction", APIConfig.model(),
+                                          message.usage.input_tokens, message.usage.output_tokens)
+            _save_costs(job_id, cost_tracker)
+
         response_text = message.content[0].text
         cleaned = strip_markdown_fences(response_text)
         questions_data = json.loads(cleaned)
@@ -188,12 +212,13 @@ def _step_extract_questions(job_id, job):
         logger.info(f"[{job_id}] Extracted {total_q} questions")
 
     except Exception as e:
+        _save_costs(job_id, cost_tracker)
         update_research_job(job_id, status="FAILED", failed_at=datetime.now(),
                             error_message=f"Question extraction failed: {str(e)[:500]}")
         raise
 
 
-def _step_generate_queries(job_id, job):
+def _step_generate_queries(job_id, job, cost_tracker):
     from db import (update_research_job, get_question_extraction,
                     save_pipeline_query, get_pipeline_queries)
     from query_generator import generate_queries_batch, deduplicate_queries
@@ -258,7 +283,11 @@ def _step_generate_queries(job_id, job):
             {"question_id": q["id"], "text": q["text"], "category": q["category"]}
             for q in batch
         ]
-        results = generate_queries_batch(batch_input, case_context)
+        results, usage = generate_queries_batch(batch_input, case_context)
+
+        if usage:
+            cost_tracker.add_claude_cost("query_generation", usage.get("model", "claude-3-haiku-20240307"),
+                                          usage.get("input_tokens", 0), usage.get("output_tokens", 0))
 
         for q in batch:
             q_queries = results.get(q["id"], {}).get("queries", [])
@@ -278,6 +307,7 @@ def _step_generate_queries(job_id, job):
 
         time.sleep(0.5)
 
+    _save_costs(job_id, cost_tracker)
     update_research_job(job_id,
                         total_queries_generated=len(all_generated),
                         queries_completed_at=datetime.now(),
@@ -286,7 +316,7 @@ def _step_generate_queries(job_id, job):
     logger.info(f"[{job_id}] Generated {len(all_generated)} queries")
 
 
-def _step_search(job_id, job):
+def _step_search(job_id, job, cost_tracker):
     from db import (update_research_job, get_pipeline_queries,
                     save_pipeline_result, update_pipeline_query,
                     save_judgment_metadata)
@@ -344,6 +374,8 @@ def _step_search(job_id, job):
             finally:
                 connection.close()
 
+            cost_tracker.add_ik_search(1)
+
             data = json.loads(raw)
             docs = data.get("docs", [])
 
@@ -387,6 +419,7 @@ def _step_search(job_id, job):
         time.sleep(IK_SEARCH_DELAY)
 
     total_results = _count_pipeline_results(job_id)
+    _save_costs(job_id, cost_tracker)
     update_research_job(job_id,
                         total_searches_completed=completed,
                         total_results_found=total_results,
@@ -396,7 +429,7 @@ def _step_search(job_id, job):
     logger.info(f"[{job_id}] Searches done: {completed}, unique results: {total_results}")
 
 
-def _step_filter(job_id, job):
+def _step_filter(job_id, job, cost_tracker):
     from db import (update_research_job, get_pipeline_results, bulk_update_relevance)
     import anthropic
 
@@ -462,6 +495,11 @@ RESPOND WITH ONLY THIS JSON (no markdown):
                 messages=[{"role": "user", "content": prompt}],
                 timeout=60,
             )
+
+            if hasattr(message, "usage"):
+                cost_tracker.add_claude_cost("relevance_filtering", "claude-3-haiku-20240307",
+                                              message.usage.input_tokens, message.usage.output_tokens)
+
             response_text = message.content[0].text.strip()
             if response_text.startswith("```"):
                 response_text = response_text.strip("`").strip()
@@ -501,6 +539,7 @@ RESPOND WITH ONLY THIS JSON (no markdown):
         bulk_update_relevance(job_id, exclude_updates)
         relevant = relevant[:MAX_RELEVANT_JUDGMENTS]
 
+    _save_costs(job_id, cost_tracker)
     update_research_job(job_id,
                         total_relevant_judgments=len(relevant),
                         filtering_completed_at=datetime.now(),
@@ -509,7 +548,7 @@ RESPOND WITH ONLY THIS JSON (no markdown):
     logger.info(f"[{job_id}] Filtering done: {len(relevant)} relevant out of {len(all_results)}")
 
 
-def _step_fetch_docs(job_id, job):
+def _step_fetch_docs(job_id, job, cost_tracker):
     from db import (update_research_job, get_pipeline_results,
                     get_cached_judgment, save_judgment_full_text)
     from app import call_ik_api, sanitize_html
@@ -535,11 +574,13 @@ def _step_fetch_docs(job_id, job):
             title = sanitize_html(data.get("title", ""))
             save_judgment_full_text(r["tid"], title, doc_html)
             fetched += 1
+            cost_tracker.add_ik_document(1)
         except Exception as e:
             logger.warning(f"[{job_id}] Failed to fetch doc {r['tid']}: {e}")
 
         time.sleep(IK_SEARCH_DELAY)
 
+    _save_costs(job_id, cost_tracker)
     update_research_job(job_id,
                         fetching_completed_at=datetime.now(),
                         current_step="EXTRACTING_GENOMES",
@@ -547,7 +588,7 @@ def _step_fetch_docs(job_id, job):
     logger.info(f"[{job_id}] Fetched {fetched} documents")
 
 
-def _step_extract_genomes(job_id, job):
+def _step_extract_genomes(job_id, job, cost_tracker):
     from db import (update_research_job, get_pipeline_results,
                     get_cached_genome, get_cached_judgment, save_genome,
                     update_pipeline_result)
@@ -609,6 +650,11 @@ def _step_extract_genomes(job_id, job):
                 timeout=APIConfig.timeout(),
             )
 
+            if hasattr(message, "usage"):
+                cost_tracker.add_claude_cost("genome_extraction", APIConfig.model(),
+                                              message.usage.input_tokens, message.usage.output_tokens)
+                _check_cost_limit(job_id, cost_tracker)
+
             response_text = message.content[0].text
             cleaned = strip_markdown_fences(response_text)
             genome_data = json.loads(cleaned)
@@ -628,6 +674,7 @@ def _step_extract_genomes(job_id, job):
             extracted += 1
             logger.info(f"[{job_id}] Genome extracted for tid {r['tid']} ({extracted}/{len(to_extract)})")
 
+            _save_costs(job_id, cost_tracker)
             update_research_job(job_id, total_genomes_extracted=already_done + extracted)
 
         except anthropic.RateLimitError:
@@ -648,7 +695,7 @@ def _step_extract_genomes(job_id, job):
     logger.info(f"[{job_id}] Genome extraction done: {extracted} new + {already_done} cached")
 
 
-def _step_synthesize(job_id, job):
+def _step_synthesize(job_id, job, cost_tracker):
     from db import (update_research_job, get_pipeline_results,
                     get_cached_genome, get_question_extraction)
     from synthesis import synthesize_research
@@ -708,12 +755,17 @@ def _step_synthesize(job_id, job):
             case_context["reliefs_sought"] = []
 
     try:
-        memo = synthesize_research(
+        memo, usage = synthesize_research(
             pleading_text=job["pleading_text"],
             case_context=case_context,
             genomes=genomes,
             questions_data=q_data,
         )
+
+        if usage:
+            cost_tracker.add_claude_cost("synthesis", usage.get("model", "claude-sonnet-4-20250514"),
+                                          usage.get("input_tokens", 0), usage.get("output_tokens", 0))
+        _save_costs(job_id, cost_tracker)
 
         update_research_job(job_id,
                             research_memo=memo,
@@ -721,6 +773,7 @@ def _step_synthesize(job_id, job):
         logger.info(f"[{job_id}] Synthesis complete")
 
     except Exception as e:
+        _save_costs(job_id, cost_tracker)
         update_research_job(job_id, status="FAILED", failed_at=datetime.now(),
                             error_message=f"Synthesis failed: {str(e)[:500]}")
         raise
@@ -739,6 +792,14 @@ def _deliver_result(job_id):
     if isinstance(memo, str):
         memo = json.loads(memo)
 
+    cost_usd = job.get("cost_estimate_usd") or 0
+    cost_breakdown = job.get("cost_breakdown_json")
+    if isinstance(cost_breakdown, str):
+        try:
+            cost_breakdown = json.loads(cost_breakdown)
+        except Exception:
+            cost_breakdown = {}
+
     payload = {
         "job_id": str(job_id),
         "status": "COMPLETED",
@@ -749,7 +810,12 @@ def _deliver_result(job_id):
             "judgments_found": job.get("total_results_found", 0),
             "relevant_judgments": job.get("total_relevant_judgments", 0),
             "genomes_extracted": job.get("total_genomes_extracted", 0),
-        }
+        },
+        "cost": {
+            "total_usd": round(cost_usd, 4),
+            "total_inr": round(cost_usd * 95, 2),
+            "breakdown": cost_breakdown or {},
+        },
     }
 
     if job.get("webhook_secret"):

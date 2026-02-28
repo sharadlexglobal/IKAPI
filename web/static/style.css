@@ -1829,6 +1829,77 @@ body {
     margin-top: 2px;
 }
 
+.cost-stat-card {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+    border-color: #86efac !important;
+}
+
+.cost-stat-card .stat-value {
+    color: #15803d !important;
+}
+
+.cost-display {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.cost-breakdown-section {
+    margin-bottom: 24px;
+}
+
+.cost-breakdown-section h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e3a5f;
+    margin-bottom: 10px;
+}
+
+.cost-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.cost-breakdown-table th {
+    background: #f4f6f8;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #1e3a5f;
+    border-bottom: 2px solid #e8ecf0;
+}
+
+.cost-breakdown-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #f0f2f4;
+    color: #2d3436;
+}
+
+.cost-breakdown-table tr:last-child td {
+    border-bottom: none;
+}
+
+.cost-total-row {
+    background: #f0fdf4;
+    font-weight: 600;
+}
+
+.cost-total-row td {
+    border-top: 2px solid #86efac !important;
+    color: #15803d;
+}
+
+.cost-rate-note {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 6px;
+    text-align: right;
+}
+
 .pipeline-error-box {
     background: #f8d7da;
     border: 1px solid #f5c6cb;

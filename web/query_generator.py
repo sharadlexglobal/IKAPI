@@ -158,14 +158,17 @@ QUESTIONS:
                 response_text = response_text[4:].strip()
 
         data = json.loads(response_text)
-        return data.get("results", {})
+        usage = {}
+        if hasattr(message, "usage"):
+            usage = {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens, "model": "claude-3-haiku-20240307"}
+        return data.get("results", {}), usage
     except Exception as e:
         logger.warning(f"Batch query gen failed: {e}, falling back to individual")
         results = {}
         for q in questions:
             queries = _fallback_query(q["text"], q["category"])
             results[q["question_id"]] = {"queries": queries}
-        return results
+        return results, {}
 
 
 def _fallback_query(question_text, category):

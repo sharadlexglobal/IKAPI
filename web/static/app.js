@@ -1206,6 +1206,7 @@ function loadPipelineJobs() {
                 html += '<span class="pipeline-status-badge status-' + safeJobStatus + '">' + escapeHtml((j.status || "").replace(/_/g, " ")) + '</span>';
                 if (j.relevant_judgments) html += '<div class="job-stats">' + j.relevant_judgments + ' judgments</div>';
                 if (j.genomes_extracted) html += '<div class="job-stats">' + j.genomes_extracted + ' genomes</div>';
+                if (j.cost_inr > 0) html += '<div class="job-stats cost-display">\u20B9' + j.cost_inr.toFixed(2) + ' ($' + j.cost_usd.toFixed(4) + ')</div>';
                 html += '</div>';
                 html += '</div>';
             });
@@ -1247,6 +1248,8 @@ function viewPipelineJob(jobId) {
     document.getElementById("pipelineMemoSection").style.display = "none";
     document.getElementById("pipelineMemoContent").innerHTML = "";
     document.getElementById("pipelineErrorBox").style.display = "none";
+    var costBd = document.getElementById("pipelineCostBreakdown");
+    if (costBd) { costBd.innerHTML = ""; costBd.style.display = "none"; }
     fetchPipelineStatus(jobId);
     startPipelinePolling(jobId);
 }
@@ -1344,7 +1347,55 @@ function renderPipelineDetail(data) {
     statItems.forEach(function (s) {
         statsHtml += '<div class="pipeline-stat-card"><span class="stat-value">' + s.value + '</span><span class="stat-label">' + s.label + '</span></div>';
     });
+
+    var costData = data.cost || {};
+    var costInr = costData.total_inr || 0;
+    var costUsd = costData.total_usd || 0;
+    if (costInr > 0 || costUsd > 0) {
+        statsHtml += '<div class="pipeline-stat-card cost-stat-card"><span class="stat-value">\u20B9' + costInr.toFixed(2) + '</span><span class="stat-label">Cost ($' + costUsd.toFixed(4) + ')</span></div>';
+    }
+
     document.getElementById("pipelineStatsGrid").innerHTML = statsHtml;
+
+    var costBreakdownEl = document.getElementById("pipelineCostBreakdown");
+    if (costBreakdownEl) {
+        var bd = costData.breakdown || {};
+        if (costInr > 0) {
+            var bdHtml = '<div class="cost-breakdown-section"><h5>Cost Breakdown</h5><table class="cost-breakdown-table"><thead><tr><th>Step</th><th>Type</th><th>Details</th><th>Cost (INR)</th><th>Cost (USD)</th></tr></thead><tbody>';
+            var stepOrder = ["question_extraction", "query_generation", "ik_search", "relevance_filtering", "doc_fetching", "genome_extraction", "synthesis"];
+            var stepLabels = {
+                "question_extraction": "Question Extraction",
+                "query_generation": "Query Generation",
+                "ik_search": "IK Search",
+                "relevance_filtering": "Relevance Filtering",
+                "doc_fetching": "Doc Fetching",
+                "genome_extraction": "Genome Extraction",
+                "synthesis": "Synthesis"
+            };
+            stepOrder.forEach(function (key) {
+                var step = bd[key];
+                if (!step) return;
+                var stepTotal = step.step_total_usd || 0;
+                if (stepTotal <= 0 && !(step.search_count > 0 || step.document_count > 0)) return;
+                var typeStr = step.claude_usd ? "Claude API" : "IK API";
+                var detailParts = [];
+                if (step.input_tokens) detailParts.push(step.input_tokens.toLocaleString() + " in");
+                if (step.output_tokens) detailParts.push(step.output_tokens.toLocaleString() + " out");
+                if (step.api_calls) detailParts.push(step.api_calls + " calls");
+                if (step.search_count) detailParts.push(step.search_count + " searches");
+                if (step.document_count) detailParts.push(step.document_count + " docs");
+                if (step.model) detailParts.push(step.model.replace("claude-", "").replace("-20240307", "").replace("-20250514", ""));
+                bdHtml += '<tr><td>' + (stepLabels[key] || key) + '</td><td>' + typeStr + '</td><td>' + detailParts.join(", ") + '</td><td>\u20B9' + (step.step_total_inr || 0).toFixed(2) + '</td><td>$' + stepTotal.toFixed(4) + '</td></tr>';
+            });
+            bdHtml += '<tr class="cost-total-row"><td colspan="3"><strong>Total</strong></td><td><strong>\u20B9' + costInr.toFixed(2) + '</strong></td><td><strong>$' + costUsd.toFixed(4) + '</strong></td></tr>';
+            bdHtml += '</tbody></table><div class="cost-rate-note">Exchange rate: 1 USD = \u20B995.00</div></div>';
+            costBreakdownEl.innerHTML = bdHtml;
+            costBreakdownEl.style.display = "";
+        } else {
+            costBreakdownEl.innerHTML = "";
+            costBreakdownEl.style.display = "none";
+        }
+    }
 
     var errorBox = document.getElementById("pipelineErrorBox");
     if (data.error_message) {

@@ -14,6 +14,7 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── pipeline.py         # Pipeline orchestrator (7-step autonomous research)
 │   ├── synthesis.py        # Dual-perspective research memo synthesis
 │   ├── query_generator.py  # Question-to-IK-search-query converter
+│   ├── cost_tracker.py     # Pipeline cost tracking (Claude API + IK API, USD/INR)
 │   ├── templates/
 │   │   └── index.html       # Search + Analysis + Genome Lab + Pipeline page
 │   └── static/
@@ -128,7 +129,7 @@ COMPLETED / FAILED
 - `prompt_templates` — reusable Gemini prompt templates (3 defaults seeded)
 - `judgment_genomes` — tid (FK→judgments, UNIQUE), genome_json (JSONB), schema_version, extraction_model, certification_level, overall_durability_score
 - `question_extractions` — pleading_text_hash (UNIQUE), pleading_type, citation, questions_json (JSONB), question_count, extraction_model
-- `research_jobs` — UUID PK, status, pleading_text, case context fields, step counters, research_memo (JSONB), cost_estimate_usd, step timestamps
+- `research_jobs` — UUID PK, status, pleading_text, case context fields, step counters, research_memo (JSONB), cost_estimate_usd, cost_breakdown_json (JSONB), step timestamps
 - `pipeline_queries` — job_id (FK), question_id, generated_ik_query, search_completed, results_count
 - `pipeline_results` — job_id (FK), query_id (FK), tid, relevance_score, is_relevant, genome_extracted, UNIQUE(job_id, tid)
 
@@ -185,15 +186,38 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - **Claude Sonnet 4** (`claude-sonnet-4-20250514`): Genome extraction & question extraction (max_tokens=30000, timeout=300s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
 - **Gemini 2.5 Flash**: Analysis tab summarization (billed to Replit credits)
 
-### Pipeline Cost Breakdown (per run)
-| Step | Model | Estimated Cost |
-|------|-------|---------------|
+### Pipeline Cost Tracking
+
+Real-time cost tracking implemented via `web/cost_tracker.py`. Costs are tracked per-step and updated to the database incrementally during pipeline execution. Exchange rate: **1 USD = 95 INR**.
+
+**Claude API Pricing:**
+| Model | Input (per 1M tokens) | Output (per 1M tokens) |
+|-------|----------------------|------------------------|
+| Claude 3 Haiku | $0.25 | $1.25 |
+| Claude Sonnet 4 | $3.00 | $15.00 |
+
+**IK API Pricing:**
+| Request Type | Cost (INR) | Cost (USD) |
+|-------------|-----------|-----------|
+| Search | ₹0.50 | $0.0053 |
+| Document | ₹0.20 | $0.0021 |
+| Original Document | ₹0.50 | $0.0053 |
+| Document Fragment | ₹0.05 | $0.0005 |
+| Document Metainfo | ₹0.02 | $0.0002 |
+
+**Estimated Cost Per Pipeline Run:**
+| Step | Model/API | Estimated Cost |
+|------|-----------|---------------|
 | Question Extraction | Sonnet 4 | $1-2 |
 | Query Generation | Haiku | $0.06 |
+| IK Searches | IK API | ~$0.30 (60 searches) |
 | Relevance Filtering | Haiku | $1.50 |
+| Doc Fetching | IK API | ~$0.07 (35 docs) |
 | Genome Extraction | Sonnet 4 | $15-60 |
 | Synthesis | Sonnet 4 | $2-5 |
 | **Total** | | **$20-70** |
+
+Cost breakdown stored in `cost_breakdown_json` (JSONB) on each research job. Dashboard shows real-time cost with per-step details in both USD and INR.
 
 ## Integrations
 
