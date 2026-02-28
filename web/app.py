@@ -16,7 +16,9 @@ from db import (
     update_prompt_template, delete_prompt_template, seed_default_templates,
     get_cached_genome, save_genome, get_all_genomes,
     get_cached_judgments_with_fulltext,
-    save_question_extraction, get_question_extraction
+    save_question_extraction, get_question_extraction,
+    create_research_job, get_research_job, update_research_job,
+    get_all_research_jobs, get_pipeline_queries, get_pipeline_results
 )
 from gemini_service import summarize_judgments, estimate_tokens
 from genome_config import (
@@ -952,6 +954,214 @@ def api_questions_extract():
         return jsonify({"error": f"Claude API error: {str(e)}"}), 502
     except Exception as e:
         app.logger.error(f"Question extraction failed: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+VALID_PLEADING_TYPES = {
+    "WRIT_PETITION", "BAIL_APPLICATION", "ANTICIPATORY_BAIL", "CIVIL_SUIT",
+    "APPEAL_MEMO", "SPECIAL_LEAVE_PETITION", "CRIMINAL_COMPLAINT",
+    "WRITTEN_STATEMENT", "COUNTER_AFFIDAVIT", "REVISION_PETITION",
+    "REVIEW_PETITION", "CURATIVE_PETITION", "APPLICATION_UNDER_SPECIFIC_STATUTE",
+    "ARBITRATION_PETITION", "COMPANY_PETITION", "EXECUTION_APPLICATION",
+    "DISCHARGE_APPLICATION", "QUASHING_PETITION", "TRANSFER_PETITION", "OTHER"
+}
+
+PIPELINE_API_KEY = os.environ.get("PIPELINE_API_KEY", "")
+
+
+def _check_pipeline_auth():
+    if not PIPELINE_API_KEY:
+        return True
+    provided = request.headers.get("X-API-Key", "")
+    return provided == PIPELINE_API_KEY
+
+
+@app.route("/api/pipeline/submit", methods=["POST"])
+def api_pipeline_submit():
+    if not _check_pipeline_auth():
+        return jsonify({"error": "Invalid API key"}), 401
+
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+
+    pleading_text = body.get("pleading_text", "").strip()
+    if not pleading_text or len(pleading_text) < 200:
+        return jsonify({"error": "pleading_text is required (minimum 200 characters)"}), 400
+
+    pleading_type = body.get("pleading_type", "OTHER")
+    if pleading_type not in VALID_PLEADING_TYPES:
+        pleading_type = "OTHER"
+
+    if not APIConfig.is_configured():
+        return jsonify({"error": "ANTHROPIC_API_KEY is not configured on server"}), 503
+
+    try:
+        job = create_research_job(
+            pleading_text=pleading_text,
+            pleading_type=pleading_type,
+            citation=body.get("citation", ""),
+            client_name=body.get("client_name", ""),
+            client_side=body.get("client_side", ""),
+            opposite_party=body.get("opposite_party", ""),
+            court=body.get("court", ""),
+            reliefs_sought=body.get("reliefs_sought"),
+            callback_url=body.get("callback_url"),
+            webhook_secret=body.get("webhook_secret"),
+            priority=body.get("priority", "NORMAL"),
+        )
+
+        from pipeline import start_pipeline
+        start_pipeline(job["id"])
+
+        return jsonify({
+            "job_id": str(job["id"]),
+            "status": "RECEIVED",
+            "message": "Pipeline started. Use /api/pipeline/status/<job_id> to track progress.",
+            "estimated_time_minutes": "15-45",
+        }), 202
+
+    except Exception as e:
+        app.logger.error(f"Pipeline submit failed: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/pipeline/status/<job_id>")
+def api_pipeline_status(job_id):
+    try:
+        job = get_research_job(job_id)
+        if not job:
+            return jsonify({"error": "Job not found"}), 404
+
+        steps = [
+            {"name": "EXTRACTING_QUESTIONS", "label": "Extract Questions", "completed_at": job.get("questions_completed_at")},
+            {"name": "GENERATING_QUERIES", "label": "Generate Queries", "completed_at": job.get("queries_completed_at")},
+            {"name": "SEARCHING", "label": "Search IK", "completed_at": job.get("searches_completed_at")},
+            {"name": "FILTERING", "label": "Filter Relevance", "completed_at": job.get("filtering_completed_at")},
+            {"name": "FETCHING_DOCS", "label": "Fetch Documents", "completed_at": job.get("fetching_completed_at")},
+            {"name": "EXTRACTING_GENOMES", "label": "Extract Genomes", "completed_at": job.get("genomes_completed_at")},
+            {"name": "SYNTHESIZING", "label": "Synthesize Memo", "completed_at": job.get("synthesis_completed_at")},
+        ]
+
+        for s in steps:
+            if s["completed_at"]:
+                s["completed_at"] = s["completed_at"].isoformat()
+                s["status"] = "COMPLETED"
+            elif job.get("current_step") == s["name"]:
+                s["status"] = "IN_PROGRESS"
+            else:
+                s["status"] = "PENDING"
+
+        result = {
+            "job_id": str(job["id"]),
+            "status": job["status"],
+            "current_step": job.get("current_step"),
+            "steps": steps,
+            "stats": {
+                "total_questions": job.get("total_questions", 0),
+                "total_queries": job.get("total_queries_generated", 0),
+                "total_searches": job.get("total_searches_completed", 0),
+                "total_results": job.get("total_results_found", 0),
+                "relevant_judgments": job.get("total_relevant_judgments", 0),
+                "genomes_extracted": job.get("total_genomes_extracted", 0),
+            },
+            "citation": job.get("citation", ""),
+            "pleading_type": job.get("pleading_type", ""),
+            "created_at": job["created_at"].isoformat() if job.get("created_at") else "",
+            "started_at": job["started_at"].isoformat() if job.get("started_at") else "",
+            "completed_at": job["completed_at"].isoformat() if job.get("completed_at") else "",
+            "error_message": job.get("error_message"),
+        }
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/pipeline/result/<job_id>")
+def api_pipeline_result(job_id):
+    try:
+        job = get_research_job(job_id)
+        if not job:
+            return jsonify({"error": "Job not found"}), 404
+
+        if job["status"] != "COMPLETED":
+            return jsonify({
+                "error": f"Job not yet completed. Current status: {job['status']}",
+                "status": job["status"],
+                "current_step": job.get("current_step"),
+            }), 202
+
+        memo = job.get("research_memo")
+        if isinstance(memo, str):
+            memo = json.loads(memo)
+
+        return jsonify({
+            "job_id": str(job["id"]),
+            "status": "COMPLETED",
+            "research_memo": memo,
+            "stats": {
+                "total_questions": job.get("total_questions", 0),
+                "queries_executed": job.get("total_queries_generated", 0),
+                "judgments_found": job.get("total_results_found", 0),
+                "relevant_judgments": job.get("total_relevant_judgments", 0),
+                "genomes_extracted": job.get("total_genomes_extracted", 0),
+            },
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/pipeline/retry/<job_id>", methods=["POST"])
+def api_pipeline_retry(job_id):
+    if not _check_pipeline_auth():
+        return jsonify({"error": "Invalid API key"}), 401
+
+    try:
+        from pipeline import resume_pipeline
+        success, msg = resume_pipeline(job_id)
+        if success:
+            return jsonify({"job_id": job_id, "status": "RESUMED", "message": msg})
+        return jsonify({"error": msg}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/pipeline/list")
+def api_pipeline_list():
+    try:
+        jobs = get_all_research_jobs()
+        result = []
+        for j in jobs:
+            result.append({
+                "job_id": str(j["id"]),
+                "status": j["status"],
+                "citation": j.get("citation", ""),
+                "client_name": j.get("client_name", ""),
+                "pleading_type": j.get("pleading_type", ""),
+                "court": j.get("court", ""),
+                "current_step": j.get("current_step"),
+                "total_questions": j.get("total_questions", 0),
+                "total_queries": j.get("total_queries_generated", 0),
+                "total_searches": j.get("total_searches_completed", 0),
+                "relevant_judgments": j.get("total_relevant_judgments", 0),
+                "genomes_extracted": j.get("total_genomes_extracted", 0),
+                "cost_estimate": j.get("cost_estimate_usd", 0),
+                "created_at": j["created_at"].isoformat() if j.get("created_at") else "",
+                "started_at": j["started_at"].isoformat() if j.get("started_at") else "",
+                "completed_at": j["completed_at"].isoformat() if j.get("completed_at") else "",
+                "error_message": j.get("error_message"),
+                "questions_completed_at": j["questions_completed_at"].isoformat() if j.get("questions_completed_at") else None,
+                "queries_completed_at": j["queries_completed_at"].isoformat() if j.get("queries_completed_at") else None,
+                "searches_completed_at": j["searches_completed_at"].isoformat() if j.get("searches_completed_at") else None,
+                "filtering_completed_at": j["filtering_completed_at"].isoformat() if j.get("filtering_completed_at") else None,
+                "fetching_completed_at": j["fetching_completed_at"].isoformat() if j.get("fetching_completed_at") else None,
+                "genomes_completed_at": j["genomes_completed_at"].isoformat() if j.get("genomes_completed_at") else None,
+                "synthesis_completed_at": j["synthesis_completed_at"].isoformat() if j.get("synthesis_completed_at") else None,
+            })
+        return jsonify(result)
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 

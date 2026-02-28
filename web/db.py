@@ -85,6 +85,81 @@ def init_db():
                     extracted_at TIMESTAMP DEFAULT NOW(),
                     UNIQUE(pleading_text_hash)
                 );
+
+                CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+                CREATE TABLE IF NOT EXISTS research_jobs (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    status TEXT NOT NULL DEFAULT 'RECEIVED',
+                    pleading_text TEXT NOT NULL,
+                    pleading_type TEXT,
+                    citation TEXT,
+                    client_name TEXT,
+                    client_side TEXT,
+                    opposite_party TEXT,
+                    court TEXT,
+                    reliefs_sought JSONB,
+                    callback_url TEXT,
+                    webhook_secret TEXT,
+                    priority TEXT DEFAULT 'NORMAL',
+                    question_extraction_id INT,
+                    total_questions INT DEFAULT 0,
+                    total_queries_generated INT DEFAULT 0,
+                    total_searches_completed INT DEFAULT 0,
+                    total_results_found INT DEFAULT 0,
+                    total_relevant_judgments INT DEFAULT 0,
+                    total_genomes_extracted INT DEFAULT 0,
+                    research_memo JSONB,
+                    cost_estimate_usd FLOAT DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    started_at TIMESTAMP,
+                    completed_at TIMESTAMP,
+                    failed_at TIMESTAMP,
+                    error_message TEXT,
+                    current_step TEXT,
+                    questions_completed_at TIMESTAMP,
+                    queries_completed_at TIMESTAMP,
+                    searches_completed_at TIMESTAMP,
+                    filtering_completed_at TIMESTAMP,
+                    fetching_completed_at TIMESTAMP,
+                    genomes_completed_at TIMESTAMP,
+                    synthesis_completed_at TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_research_jobs_status ON research_jobs(status);
+
+                CREATE TABLE IF NOT EXISTS pipeline_queries (
+                    id SERIAL PRIMARY KEY,
+                    job_id UUID REFERENCES research_jobs(id) ON DELETE CASCADE,
+                    question_id TEXT,
+                    question_text TEXT,
+                    question_category TEXT,
+                    question_importance TEXT,
+                    generated_ik_query TEXT,
+                    ik_doctype TEXT DEFAULT '',
+                    ik_sort TEXT DEFAULT '',
+                    search_completed BOOLEAN DEFAULT FALSE,
+                    results_count INT DEFAULT 0,
+                    relevant_count INT DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+                CREATE INDEX IF NOT EXISTS idx_pipeline_queries_job ON pipeline_queries(job_id);
+
+                CREATE TABLE IF NOT EXISTS pipeline_results (
+                    id SERIAL PRIMARY KEY,
+                    job_id UUID REFERENCES research_jobs(id) ON DELETE CASCADE,
+                    query_id INT REFERENCES pipeline_queries(id),
+                    tid BIGINT,
+                    title TEXT,
+                    headline TEXT,
+                    relevance_score FLOAT DEFAULT 0,
+                    relevance_reasoning TEXT,
+                    is_relevant BOOLEAN DEFAULT FALSE,
+                    genome_extracted BOOLEAN DEFAULT FALSE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    UNIQUE(job_id, tid)
+                );
+                CREATE INDEX IF NOT EXISTS idx_pipeline_results_job ON pipeline_results(job_id);
+                CREATE INDEX IF NOT EXISTS idx_pipeline_results_relevant ON pipeline_results(job_id, is_relevant);
             """)
     finally:
         conn.close()
@@ -367,6 +442,183 @@ def get_question_extraction(text_hash):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT * FROM question_extractions WHERE pleading_text_hash = %s", (text_hash,))
             return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def create_research_job(pleading_text, pleading_type=None, citation=None,
+                        client_name=None, client_side=None, opposite_party=None,
+                        court=None, reliefs_sought=None, callback_url=None,
+                        webhook_secret=None, priority="NORMAL"):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO research_jobs (pleading_text, pleading_type, citation,
+                    client_name, client_side, opposite_party, court, reliefs_sought,
+                    callback_url, webhook_secret, priority)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING *
+            """, (pleading_text, pleading_type, citation,
+                  client_name, client_side, opposite_party, court,
+                  json.dumps(reliefs_sought) if reliefs_sought else None,
+                  callback_url, webhook_secret, priority))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_research_job(job_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM research_jobs WHERE id = %s", (str(job_id),))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def update_research_job(job_id, **kwargs):
+    if not kwargs:
+        return
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            sets = []
+            vals = []
+            for k, v in kwargs.items():
+                sets.append(f"{k} = %s")
+                if k in ("reliefs_sought", "research_memo") and isinstance(v, (dict, list)):
+                    vals.append(json.dumps(v))
+                else:
+                    vals.append(v)
+            vals.append(str(job_id))
+            cur.execute(f"UPDATE research_jobs SET {', '.join(sets)} WHERE id = %s", vals)
+    finally:
+        conn.close()
+
+
+def get_all_research_jobs(limit=50):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT id, status, citation, client_name, pleading_type, court,
+                       total_questions, total_queries_generated, total_searches_completed,
+                       total_relevant_judgments, total_genomes_extracted,
+                       cost_estimate_usd, current_step,
+                       created_at, started_at, completed_at, failed_at, error_message,
+                       questions_completed_at, queries_completed_at, searches_completed_at,
+                       filtering_completed_at, fetching_completed_at, genomes_completed_at,
+                       synthesis_completed_at
+                FROM research_jobs ORDER BY created_at DESC LIMIT %s
+            """, (limit,))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def save_pipeline_query(job_id, question_id, question_text, question_category,
+                         question_importance, generated_ik_query, ik_doctype="", ik_sort=""):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO pipeline_queries (job_id, question_id, question_text,
+                    question_category, question_importance, generated_ik_query, ik_doctype, ik_sort)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING *
+            """, (str(job_id), question_id, question_text, question_category,
+                  question_importance, generated_ik_query, ik_doctype, ik_sort))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_pipeline_queries(job_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM pipeline_queries WHERE job_id = %s ORDER BY id",
+                        (str(job_id),))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def update_pipeline_query(query_id, **kwargs):
+    if not kwargs:
+        return
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            sets = []
+            vals = []
+            for k, v in kwargs.items():
+                sets.append(f"{k} = %s")
+                vals.append(v)
+            vals.append(query_id)
+            cur.execute(f"UPDATE pipeline_queries SET {', '.join(sets)} WHERE id = %s", vals)
+    finally:
+        conn.close()
+
+
+def save_pipeline_result(job_id, query_id, tid, title, headline=""):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO pipeline_results (job_id, query_id, tid, title, headline)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (job_id, tid) DO NOTHING
+                RETURNING *
+            """, (str(job_id), query_id, tid, title, headline))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_pipeline_results(job_id, relevant_only=False):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = "SELECT * FROM pipeline_results WHERE job_id = %s"
+            if relevant_only:
+                query += " AND is_relevant = TRUE"
+            query += " ORDER BY relevance_score DESC"
+            cur.execute(query, (str(job_id),))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def update_pipeline_result(result_id, **kwargs):
+    if not kwargs:
+        return
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            sets = []
+            vals = []
+            for k, v in kwargs.items():
+                sets.append(f"{k} = %s")
+                vals.append(v)
+            vals.append(result_id)
+            cur.execute(f"UPDATE pipeline_results SET {', '.join(sets)} WHERE id = %s", vals)
+    finally:
+        conn.close()
+
+
+def bulk_update_relevance(job_id, relevance_data):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            for tid, score, reasoning, is_relevant in relevance_data:
+                cur.execute("""
+                    UPDATE pipeline_results
+                    SET relevance_score = %s, relevance_reasoning = %s, is_relevant = %s
+                    WHERE job_id = %s AND tid = %s
+                """, (score, reasoning, is_relevant, str(job_id), tid))
     finally:
         conn.close()
 

@@ -15,6 +15,7 @@
                 <button class="nav-tab active" data-view="search">Search</button>
                 <button class="nav-tab" data-view="analysis">Analysis</button>
                 <button class="nav-tab" data-view="genomeLab">Genome Lab</button>
+                <button class="nav-tab" data-view="pipeline">Pipeline</button>
             </div>
         </div>
     </div>
@@ -375,6 +376,130 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pipelineView" class="view-panel">
+        <div class="container pipeline-container">
+            <div class="pipeline-header-row">
+                <h2>Research Pipeline</h2>
+                <button id="newPipelineBtn" class="pipeline-submit-btn">Submit Pleading</button>
+            </div>
+
+            <div id="pipelineJobsList" class="pipeline-jobs-list">
+                <div class="empty-state">
+                    <h3>No Research Jobs</h3>
+                    <p>Submit a pleading to start an autonomous legal research pipeline.</p>
+                </div>
+            </div>
+
+            <div id="pipelineDetail" class="pipeline-detail" style="display:none;">
+                <button id="pipelineBackBtn" class="btn-sm pipeline-back-btn">Back to Jobs</button>
+                <div class="pipeline-detail-header">
+                    <div>
+                        <h3 id="pipelineDetailTitle"></h3>
+                        <div class="pipeline-detail-meta" id="pipelineDetailMeta"></div>
+                    </div>
+                    <div class="pipeline-detail-actions">
+                        <span id="pipelineDetailStatus" class="pipeline-status-badge"></span>
+                        <button id="pipelineRetryBtn" class="btn-sm btn-danger" style="display:none;">Retry</button>
+                    </div>
+                </div>
+
+                <div class="pipeline-steps-bar" id="pipelineStepsBar"></div>
+
+                <div class="pipeline-stats-grid" id="pipelineStatsGrid"></div>
+
+                <div id="pipelineErrorBox" class="pipeline-error-box" style="display:none;"></div>
+
+                <div id="pipelineMemoSection" class="pipeline-memo-section" style="display:none;">
+                    <div class="pipeline-memo-header">
+                        <h3>Research Memo</h3>
+                        <button id="downloadMemoBtn" class="btn-sm">Download JSON</button>
+                    </div>
+                    <div id="pipelineMemoContent" class="pipeline-memo-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pipelineSubmitModal" class="modal-overlay">
+        <div class="modal-panel pipeline-modal">
+            <div class="modal-header">
+                <h3>Submit Pleading for Research</h3>
+                <button id="pipelineModalClose" class="doc-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="pipeline-form-grid">
+                    <div class="analysis-section pipeline-form-full">
+                        <label for="plPleadingType">Pleading Type</label>
+                        <select id="plPleadingType">
+                            <option value="WRIT_PETITION">Writ Petition</option>
+                            <option value="BAIL_APPLICATION">Bail Application</option>
+                            <option value="ANTICIPATORY_BAIL">Anticipatory Bail</option>
+                            <option value="CIVIL_SUIT">Civil Suit</option>
+                            <option value="APPEAL_MEMO">Appeal Memo</option>
+                            <option value="SPECIAL_LEAVE_PETITION">Special Leave Petition (SLP)</option>
+                            <option value="CRIMINAL_COMPLAINT">Criminal Complaint</option>
+                            <option value="WRITTEN_STATEMENT">Written Statement</option>
+                            <option value="COUNTER_AFFIDAVIT">Counter Affidavit</option>
+                            <option value="REVISION_PETITION">Revision Petition</option>
+                            <option value="REVIEW_PETITION">Review Petition</option>
+                            <option value="CURATIVE_PETITION">Curative Petition</option>
+                            <option value="QUASHING_PETITION">Quashing Petition (S.482)</option>
+                            <option value="ARBITRATION_PETITION">Arbitration Petition</option>
+                            <option value="COMPANY_PETITION">Company Petition</option>
+                            <option value="TRANSFER_PETITION">Transfer Petition</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                    <div class="analysis-section">
+                        <label for="plCitation">Case Citation</label>
+                        <input type="text" id="plCitation" class="search-input" placeholder="e.g. Bhandari vs Canara Bank, WP No. 1234/2026">
+                    </div>
+                    <div class="analysis-section">
+                        <label for="plCourt">Court</label>
+                        <input type="text" id="plCourt" class="search-input" placeholder="e.g. Delhi High Court">
+                    </div>
+                    <div class="analysis-section">
+                        <label for="plClientName">Client Name</label>
+                        <input type="text" id="plClientName" class="search-input" placeholder="e.g. Bhandari">
+                    </div>
+                    <div class="analysis-section">
+                        <label for="plClientSide">Client Side</label>
+                        <select id="plClientSide">
+                            <option value="PETITIONER">Petitioner</option>
+                            <option value="RESPONDENT">Respondent</option>
+                            <option value="APPELLANT">Appellant</option>
+                            <option value="COMPLAINANT">Complainant</option>
+                            <option value="ACCUSED">Accused</option>
+                            <option value="PLAINTIFF">Plaintiff</option>
+                            <option value="DEFENDANT">Defendant</option>
+                        </select>
+                    </div>
+                    <div class="analysis-section">
+                        <label for="plOpposite">Opposite Party</label>
+                        <input type="text" id="plOpposite" class="search-input" placeholder="e.g. Canara Bank">
+                    </div>
+                    <div class="analysis-section pipeline-form-full">
+                        <label for="plReliefs">Reliefs Sought (one per line)</label>
+                        <textarea id="plReliefs" class="genome-textarea" rows="3" placeholder="Quashing of order dated...&#10;Mandamus directing..."></textarea>
+                    </div>
+                    <div class="analysis-section pipeline-form-full">
+                        <label for="plText">Pleading Text (minimum 200 characters)</label>
+                        <textarea id="plText" class="genome-textarea" rows="10" placeholder="Paste the full pleading text here..."></textarea>
+                        <div class="pl-char-count" id="plCharCount">0 characters</div>
+                    </div>
+                    <div class="analysis-section pipeline-form-full">
+                        <label for="plCallbackUrl">Callback URL (optional)</label>
+                        <input type="text" id="plCallbackUrl" class="search-input" placeholder="https://example.com/webhook/research-complete">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="pipelineSubmitBtn" class="analyze-btn" disabled>Submit for Research</button>
+                <button id="pipelineCancelBtn" class="btn-sm">Cancel</button>
             </div>
         </div>
     </div>

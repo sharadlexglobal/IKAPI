@@ -1,6 +1,6 @@
 # CourtCraft.ai - Indian Legal Search & Analysis
 
-A web application for searching Indian legal judgments, laws, and tribunal orders using the Indian Kanoon API. Includes AI-powered Smart Search via Claude Haiku, judgment caching with PostgreSQL, most-cited sorting, Gemini AI analysis, and the Genome Lab for deep judgment extraction and litigation research question generation.
+A web application for searching Indian legal judgments, laws, and tribunal orders using the Indian Kanoon API. Includes AI-powered Smart Search via Claude Haiku, judgment caching with PostgreSQL, most-cited sorting, Gemini AI analysis, Genome Lab for deep judgment extraction, litigation research question generation, and an autonomous end-to-end research pipeline.
 
 ## Project Structure
 
@@ -11,11 +11,14 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── db.py               # PostgreSQL database layer
 │   ├── gemini_service.py   # Gemini AI summarization service
 │   ├── genome_config.py    # Judgment Genome & Question Extractor prompts/config
+│   ├── pipeline.py         # Pipeline orchestrator (7-step autonomous research)
+│   ├── synthesis.py        # Dual-perspective research memo synthesis
+│   ├── query_generator.py  # Question-to-IK-search-query converter
 │   ├── templates/
-│   │   └── index.html       # Search + Analysis + Genome Lab page template
+│   │   └── index.html       # Search + Analysis + Genome Lab + Pipeline page
 │   └── static/
 │       ├── style.css        # Styles
-│       ├── app.js           # Frontend logic (search, analysis, genome lab)
+│       ├── app.js           # Frontend logic (search, analysis, genome lab, pipeline)
 │       └── judgment_genome_schema_v3.1.json  # Genome JSON schema reference
 ├── python/
 │   ├── ikapi.py             # Python CLI tool
@@ -74,6 +77,38 @@ Two sub-tabs for deep legal analysis:
 - Hash-based caching (SHA256 of pleading text)
 - Download questions as JSON
 
+### Pipeline Tab (Autonomous Research)
+Full end-to-end legal research pipeline. Submit a pleading and the system autonomously:
+
+1. **Extracts Questions** — Claude Sonnet 4 generates 80-120 research questions from pleading
+2. **Generates Queries** — Claude Haiku converts prioritized questions to IK search queries (batch 12)
+3. **Searches IK** — Executes queries against Indian Kanoon API (2s rate limit)
+4. **Filters Relevance** — Claude Haiku scores each judgment 0-10 for relevance (batch 15, threshold 6.0)
+5. **Fetches Documents** — Downloads full text for relevant judgments (max 35)
+6. **Extracts Genomes** — Claude Sonnet 4 extracts 6-dimension genome per judgment
+7. **Synthesizes Memo** — Claude Sonnet 4 produces dual-perspective research memo
+
+**Pipeline Dashboard Features:**
+- Job list with status badges and mini step progress bars
+- Click-to-view detailed progress with animated step bar
+- Real-time polling (5s interval) during active jobs
+- Stats grid showing questions, queries, results, relevant judgments, genomes
+- Error display with retry button for failed jobs
+- Research memo viewer with advocate/opponent/judicial perspectives
+- Issue-wise analysis, citation matrix, research gaps, action items
+- Clickable judgment references (opens doc viewer)
+- Submit pleading form with all case context fields
+- Download memo as JSON
+
+**Pipeline State Machine:**
+```
+RECEIVED → EXTRACTING_QUESTIONS → GENERATING_QUERIES → SEARCHING →
+FILTERING → FETCHING_DOCS → EXTRACTING_GENOMES → SYNTHESIZING →
+COMPLETED / FAILED
+```
+
+**Cost per run:** ~$20-70 (genome extraction is 80% of cost; cached genomes save significantly)
+
 ### Judgment Caching
 - PostgreSQL database caches judgment metadata from search results
 - Full document text cached on first view (avoids repeat IK API calls)
@@ -91,10 +126,13 @@ Two sub-tabs for deep legal analysis:
 - `search_queries` — logged search queries with filters and total results
 - `search_query_results` — links queries to judgment tids with position
 - `prompt_templates` — reusable Gemini prompt templates (3 defaults seeded)
-- `judgment_genomes` — tid (FK→judgments, UNIQUE), genome_json (JSONB), schema_version, extraction_model, extraction_date, document_id, certification_level, overall_durability_score
-- `question_extractions` — pleading_text_hash (UNIQUE), pleading_type, citation, questions_json (JSONB), question_count, extraction_model, extracted_at
+- `judgment_genomes` — tid (FK→judgments, UNIQUE), genome_json (JSONB), schema_version, extraction_model, certification_level, overall_durability_score
+- `question_extractions` — pleading_text_hash (UNIQUE), pleading_type, citation, questions_json (JSONB), question_count, extraction_model
+- `research_jobs` — UUID PK, status, pleading_text, case context fields, step counters, research_memo (JSONB), cost_estimate_usd, step timestamps
+- `pipeline_queries` — job_id (FK), question_id, generated_ik_query, search_completed, results_count
+- `pipeline_results` — job_id (FK), query_id (FK), tid, relevance_score, is_relevant, genome_extracted, UNIQUE(job_id, tid)
 
-Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_search_queries_text`, `idx_genomes_tid`
+Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_search_queries_text`, `idx_genomes_tid`, `idx_research_jobs_status`, `idx_pipeline_queries_job`, `idx_pipeline_results_job`, `idx_pipeline_results_relevant`
 
 ## API Endpoints
 
@@ -120,24 +158,42 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - `GET /api/genome/list` — List all extracted genomes with metadata
 - `POST /api/questions/extract` — Extract research questions `{"pleading_text":"...","pleading_type":"WRIT_PETITION","citation":"..."}`
 
+### Pipeline (Autonomous Research)
+- `POST /api/pipeline/submit` — Submit pleading for research (returns job_id). Auth: `X-API-Key` header if PIPELINE_API_KEY env var set
+- `GET /api/pipeline/status/<job_id>` — Get current pipeline status with step progress
+- `GET /api/pipeline/result/<job_id>` — Get completed research memo
+- `POST /api/pipeline/retry/<job_id>` — Resume failed pipeline from last step
+- `GET /api/pipeline/list` — List all research jobs with metadata
+
 ## Environment Variables
 
 - `DATABASE_URL` — PostgreSQL connection string (auto-configured by Replit)
 - `IK_API_TOKEN` — Indian Kanoon API token (stored as secret)
-- `ANTHROPIC_API_KEY` — Anthropic API key for Claude (Smart Search + Genome Lab)
+- `ANTHROPIC_API_KEY` — Anthropic API key for Claude (Smart Search + Genome Lab + Pipeline)
 - `AI_INTEGRATIONS_GEMINI_BASE_URL` — Gemini API base URL (auto-configured by Replit AI Integrations)
 - `AI_INTEGRATIONS_GEMINI_API_KEY` — Gemini API key placeholder (auto-configured by Replit AI Integrations)
+- `PIPELINE_API_KEY` — Optional API key for pipeline webhook authentication
 
 ## Dependencies
 
-- **Python**: flask, gunicorn, beautifulsoup4, anthropic, psycopg2-binary, google-genai, tenacity
+- **Python**: flask, gunicorn, beautifulsoup4, anthropic, psycopg2-binary, google-genai, tenacity, requests
 - **Java**: Maven project with argparse4j, json, opencsv, jsoup
 
 ## AI Models & Costs
 
-- **Claude Haiku** (`claude-3-haiku-20240307`): Smart Search query conversion (~$0.001/query)
-- **Claude Sonnet 4** (`claude-sonnet-4-20250514`): Genome extraction & question extraction (max_tokens=30000, timeout=300s, ~$0.50-2.00/extraction)
+- **Claude Haiku** (`claude-3-haiku-20240307`): Smart Search query conversion (~$0.001/query), pipeline query generation (~$0.001/batch), relevance filtering (~$0.005/batch)
+- **Claude Sonnet 4** (`claude-sonnet-4-20250514`): Genome extraction & question extraction (max_tokens=30000, timeout=300s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
 - **Gemini 2.5 Flash**: Analysis tab summarization (billed to Replit credits)
+
+### Pipeline Cost Breakdown (per run)
+| Step | Model | Estimated Cost |
+|------|-------|---------------|
+| Question Extraction | Sonnet 4 | $1-2 |
+| Query Generation | Haiku | $0.06 |
+| Relevance Filtering | Haiku | $1.50 |
+| Genome Extraction | Sonnet 4 | $15-60 |
+| Synthesis | Sonnet 4 | $2-5 |
+| **Total** | | **$20-70** |
 
 ## Integrations
 
@@ -155,6 +211,21 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - All error messages use DOM textContent to prevent XSS
 - Input validation for dates (DD-MM-YYYY) and page numbers
 - Smart Search validates doctype against whitelist, date format, and sort values
+- Pipeline webhook: optional API key authentication via X-API-Key header
+- Webhook callback: optional HMAC-SHA256 signature via X-Webhook-Signature header
+- Pleading text minimum 200 characters, pleading_type validated against whitelist
+
+## Pipeline Architecture Notes
+
+- Pipeline runs as daemon thread (background processing)
+- Each step is idempotent — re-running skips completed work
+- Failed pipelines can resume from the failed step via retry endpoint
+- MAX_QUESTIONS_TO_PROCESS=50, MAX_RELEVANT_JUDGMENTS=35, RELEVANCE_THRESHOLD=6.0
+- IK API rate limit: 2s delay between requests
+- Claude rate limit: exponential backoff on 429s
+- Webhook callback: 3 retries with exponential backoff
+- Genome extraction is the bottleneck (30-60s per judgment x 30 judgments)
+- Caching is critical: cached genomes from prior runs save 80% of cost
 
 ## Notes
 
@@ -169,3 +240,4 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - Python 3.12 required for google-genai package compatibility
 - Genome extraction uses Claude Sonnet 4 with 6-dimension schema (v3.1.0) — prompts in genome_config.py
 - Question extraction uses hash-based caching (SHA256 of pleading text, first 32 hex chars)
+- Pipeline orchestrator imports from app.py (call_ik_api, sanitize_html) — avoid circular imports by using lazy imports

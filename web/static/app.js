@@ -60,6 +60,7 @@ document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
         closeDoc();
         closeTemplateModal();
+        if (typeof closePipelineModal === "function") closePipelineModal();
     }
 });
 
@@ -76,6 +77,9 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
         }
         if (view === "genomeLab") {
             loadCachedJudgments();
+        }
+        if (view === "pipeline") {
+            loadPipelineJobs();
         }
     });
 });
@@ -1157,4 +1161,461 @@ document.getElementById("docExtractGenomeBtn").addEventListener("click", functio
         document.getElementById("genomeCachedSelect").value = String(_currentDocTid);
         updateGenomeExtractState();
     }, 500);
+});
+
+var _pipelinePollingTimer = null;
+var _currentPipelineJobId = null;
+var _currentMemoData = null;
+
+var PIPELINE_STEPS_DEF = [
+    { name: "EXTRACTING_QUESTIONS", label: "Questions" },
+    { name: "GENERATING_QUERIES", label: "Queries" },
+    { name: "SEARCHING", label: "Search" },
+    { name: "FILTERING", label: "Filter" },
+    { name: "FETCHING_DOCS", label: "Fetch" },
+    { name: "EXTRACTING_GENOMES", label: "Genomes" },
+    { name: "SYNTHESIZING", label: "Synthesis" }
+];
+
+function loadPipelineJobs() {
+    fetch("/api/pipeline/list")
+        .then(function (r) { return r.json(); })
+        .then(function (jobs) {
+            var container = document.getElementById("pipelineJobsList");
+            if (!jobs || jobs.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No Research Jobs</h3><p>Submit a pleading to start an autonomous legal research pipeline.</p></div>';
+                return;
+            }
+            var html = "";
+            jobs.forEach(function (j) {
+                var title = j.citation || j.client_name || "Untitled Research";
+                var timeStr = j.created_at ? new Date(j.created_at).toLocaleString() : "";
+                var miniSteps = renderMiniSteps(j);
+                html += '<div class="pipeline-job-card" onclick="viewPipelineJob(\'' + j.job_id + '\')">';
+                html += '<div class="pipeline-job-info">';
+                html += '<h4>' + escapeHtml(title) + '</h4>';
+                html += '<div class="job-meta">';
+                if (j.pleading_type) html += '<span>' + j.pleading_type.replace(/_/g, " ") + '</span>';
+                if (j.court) html += '<span>' + escapeHtml(j.court) + '</span>';
+                html += '<span>' + timeStr + '</span>';
+                html += '</div>';
+                html += miniSteps;
+                html += '</div>';
+                html += '<div class="pipeline-job-right">';
+                var safeJobStatus = (j.status || "").replace(/[^A-Z_]/g, "");
+                html += '<span class="pipeline-status-badge status-' + safeJobStatus + '">' + escapeHtml((j.status || "").replace(/_/g, " ")) + '</span>';
+                if (j.relevant_judgments) html += '<div class="job-stats">' + j.relevant_judgments + ' judgments</div>';
+                if (j.genomes_extracted) html += '<div class="job-stats">' + j.genomes_extracted + ' genomes</div>';
+                html += '</div>';
+                html += '</div>';
+            });
+            container.innerHTML = html;
+        })
+        .catch(function (e) {
+            console.error("Failed to load pipeline jobs:", e);
+        });
+}
+
+function renderMiniSteps(job) {
+    var html = '<div class="pipeline-mini-steps">';
+    var stepTimestamps = [
+        job.questions_completed_at, job.queries_completed_at, job.searches_completed_at,
+        job.filtering_completed_at, job.fetching_completed_at, job.genomes_completed_at,
+        job.synthesis_completed_at
+    ];
+    for (var i = 0; i < 7; i++) {
+        var cls = "pipeline-mini-step";
+        if (stepTimestamps[i]) {
+            cls += " mini-done";
+        } else if (job.current_step === PIPELINE_STEPS_DEF[i].name) {
+            cls += " mini-active";
+        } else if (job.status === "FAILED" && job.current_step === PIPELINE_STEPS_DEF[i].name) {
+            cls += " mini-failed";
+        }
+        html += '<div class="' + cls + '"></div>';
+    }
+    html += '</div>';
+    return html;
+}
+
+function viewPipelineJob(jobId) {
+    _currentPipelineJobId = jobId;
+    _currentMemoData = null;
+    document.getElementById("pipelineJobsList").style.display = "none";
+    document.getElementById("pipelineDetail").style.display = "block";
+    document.querySelector(".pipeline-header-row").style.display = "none";
+    document.getElementById("pipelineMemoSection").style.display = "none";
+    document.getElementById("pipelineMemoContent").innerHTML = "";
+    document.getElementById("pipelineErrorBox").style.display = "none";
+    fetchPipelineStatus(jobId);
+    startPipelinePolling(jobId);
+}
+
+function closePipelineDetail() {
+    stopPipelinePolling();
+    _currentPipelineJobId = null;
+    document.getElementById("pipelineJobsList").style.display = "";
+    document.getElementById("pipelineDetail").style.display = "none";
+    document.querySelector(".pipeline-header-row").style.display = "";
+    loadPipelineJobs();
+}
+
+document.getElementById("pipelineBackBtn").addEventListener("click", closePipelineDetail);
+
+function fetchPipelineStatus(jobId) {
+    fetch("/api/pipeline/status/" + jobId)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.error) return;
+            renderPipelineDetail(data);
+            if (data.status === "COMPLETED" || data.status === "FAILED") {
+                stopPipelinePolling();
+                if (data.status === "COMPLETED") {
+                    loadPipelineMemo(jobId);
+                }
+            }
+        })
+        .catch(function (e) { console.error("Pipeline status fetch failed:", e); });
+}
+
+function startPipelinePolling(jobId) {
+    stopPipelinePolling();
+    _pipelinePollingTimer = setInterval(function () {
+        fetchPipelineStatus(jobId);
+    }, 5000);
+}
+
+function stopPipelinePolling() {
+    if (_pipelinePollingTimer) {
+        clearInterval(_pipelinePollingTimer);
+        _pipelinePollingTimer = null;
+    }
+}
+
+function renderPipelineDetail(data) {
+    var title = data.citation || "Research Job";
+    document.getElementById("pipelineDetailTitle").textContent = title;
+
+    var meta = "";
+    if (data.pleading_type) meta += '<span>' + escapeHtml(data.pleading_type.replace(/_/g, " ")) + '</span>';
+    if (data.created_at) meta += '<span>Started: ' + new Date(data.created_at).toLocaleString() + '</span>';
+    if (data.completed_at) meta += '<span>Completed: ' + new Date(data.completed_at).toLocaleString() + '</span>';
+    document.getElementById("pipelineDetailMeta").innerHTML = meta;
+
+    var safeStatus = (data.status || "").replace(/[^A-Z_]/g, "");
+    var statusEl = document.getElementById("pipelineDetailStatus");
+    statusEl.className = "pipeline-status-badge status-" + safeStatus;
+    statusEl.textContent = (data.status || "").replace(/_/g, " ");
+
+    var retryBtn = document.getElementById("pipelineRetryBtn");
+    retryBtn.style.display = data.status === "FAILED" ? "" : "none";
+
+    var stepsHtml = "";
+    var steps = data.steps || [];
+    steps.forEach(function (s) {
+        var cls = "pipeline-step";
+        if (s.status === "COMPLETED") cls += " step-done";
+        else if (s.status === "IN_PROGRESS") cls += " step-active";
+        else if (data.status === "FAILED" && data.current_step === s.name) cls += " step-failed";
+        else cls += " step-pending";
+
+        var countText = "";
+        if (s.name === "EXTRACTING_QUESTIONS" && data.stats.total_questions) countText = data.stats.total_questions + " found";
+        if (s.name === "GENERATING_QUERIES" && data.stats.total_queries) countText = data.stats.total_queries + " queries";
+        if (s.name === "SEARCHING" && data.stats.total_searches) countText = data.stats.total_searches + " done";
+        if (s.name === "FILTERING" && (data.stats.total_results || data.stats.relevant_judgments)) countText = (data.stats.relevant_judgments || 0) + "/" + (data.stats.total_results || 0);
+        if (s.name === "EXTRACTING_GENOMES" && data.stats.genomes_extracted) countText = data.stats.genomes_extracted + " done";
+
+        stepsHtml += '<div class="' + cls + '">';
+        stepsHtml += '<span class="step-label">' + s.label + '</span>';
+        if (countText) stepsHtml += '<span class="step-count">' + countText + '</span>';
+        stepsHtml += '</div>';
+    });
+    document.getElementById("pipelineStepsBar").innerHTML = stepsHtml;
+
+    var statsHtml = "";
+    var statItems = [
+        { value: data.stats.total_questions || 0, label: "Questions" },
+        { value: data.stats.total_queries || 0, label: "Queries" },
+        { value: data.stats.total_results || 0, label: "Results" },
+        { value: data.stats.relevant_judgments || 0, label: "Relevant" },
+        { value: data.stats.genomes_extracted || 0, label: "Genomes" }
+    ];
+    statItems.forEach(function (s) {
+        statsHtml += '<div class="pipeline-stat-card"><span class="stat-value">' + s.value + '</span><span class="stat-label">' + s.label + '</span></div>';
+    });
+    document.getElementById("pipelineStatsGrid").innerHTML = statsHtml;
+
+    var errorBox = document.getElementById("pipelineErrorBox");
+    if (data.error_message) {
+        errorBox.innerHTML = '<strong>Error:</strong> ' + escapeHtml(data.error_message);
+        errorBox.style.display = "";
+    } else {
+        errorBox.style.display = "none";
+    }
+}
+
+function loadPipelineMemo(jobId) {
+    fetch("/api/pipeline/result/" + jobId)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (!data.research_memo) return;
+            _currentMemoData = data.research_memo;
+            document.getElementById("pipelineMemoSection").style.display = "";
+            renderMemo(data.research_memo);
+        })
+        .catch(function (e) { console.error("Failed to load memo:", e); });
+}
+
+function renderMemo(memo) {
+    var container = document.getElementById("pipelineMemoContent");
+    var html = "";
+
+    if (memo.executive_summary) {
+        html += '<div class="memo-executive">' + escapeHtml(memo.executive_summary).replace(/\n/g, "<br>") + '</div>';
+    }
+
+    if (memo.overall_case_strength) {
+        html += '<div class="memo-strength ' + memo.overall_case_strength + '">' + memo.overall_case_strength.replace(/_/g, " ") + '</div>';
+    }
+
+    if (memo.advocate_perspective) {
+        html += '<div class="memo-section"><h4>Advocate Perspective</h4>';
+        var ap = memo.advocate_perspective;
+        if (ap.strongest_arguments) {
+            ap.strongest_arguments.forEach(function (arg) {
+                html += '<div class="memo-argument-card">';
+                html += '<h5>' + escapeHtml(arg.argument || "") + '<span class="confidence-tag ' + (arg.confidence || "") + '">' + (arg.confidence || "") + '</span></h5>';
+                if (arg.supporting_judgments) {
+                    arg.supporting_judgments.forEach(function (j) {
+                        html += '<div class="memo-judgment-ref"><span class="tid-link" onclick="openDoc(' + j.tid + ')">' + escapeHtml(j.case_name || "TID " + j.tid) + '</span>';
+                        if (j.why_helpful) html += ' — ' + escapeHtml(j.why_helpful);
+                        if (j.durability_score) html += ' (Durability: ' + j.durability_score + '/10)';
+                        html += '</div>';
+                    });
+                }
+                html += '</div>';
+            });
+        }
+        if (ap.recommended_citation_strategy) {
+            html += '<p style="margin-top:10px;font-size:13px;color:#636e72;"><strong>Citation Strategy:</strong> ' + escapeHtml(ap.recommended_citation_strategy) + '</p>';
+        }
+        html += '</div>';
+    }
+
+    if (memo.opponent_perspective) {
+        html += '<div class="memo-section"><h4>Opponent Perspective</h4>';
+        var op = memo.opponent_perspective;
+        if (op.likely_counter_arguments) {
+            op.likely_counter_arguments.forEach(function (arg) {
+                html += '<div class="memo-argument-card opponent">';
+                html += '<h5>' + escapeHtml(arg.argument || "") + '<span class="confidence-tag ' + (arg.severity || "") + '">' + (arg.severity || "") + '</span></h5>';
+                if (arg.dangerous_judgments) {
+                    arg.dangerous_judgments.forEach(function (j) {
+                        html += '<div class="memo-judgment-ref"><span class="tid-link" onclick="openDoc(' + j.tid + ')">' + escapeHtml(j.case_name || "TID " + j.tid) + '</span>';
+                        if (j.how_opponent_will_use) html += ' — ' + escapeHtml(j.how_opponent_will_use);
+                        html += '</div>';
+                        if (j.counter_strategy) html += '<div class="memo-judgment-ref" style="color:#155724;">Counter: ' + escapeHtml(j.counter_strategy) + '</div>';
+                    });
+                }
+                html += '</div>';
+            });
+        }
+        if (op.weakest_points_in_pleading && op.weakest_points_in_pleading.length) {
+            html += '<div style="margin-top:12px;"><strong style="font-size:13px;">Weakest Points:</strong>';
+            op.weakest_points_in_pleading.forEach(function (p) {
+                html += '<div class="memo-gap-item">' + escapeHtml(p) + '</div>';
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+
+    if (memo.judicial_perspective) {
+        html += '<div class="memo-section"><h4>Judicial Perspective</h4>';
+        var jp = memo.judicial_perspective;
+        if (jp.likely_first_questions && jp.likely_first_questions.length) {
+            html += '<strong style="font-size:13px;">Likely First Questions from Bench:</strong>';
+            jp.likely_first_questions.forEach(function (q) {
+                html += '<div class="memo-action-item">' + escapeHtml(q) + '</div>';
+            });
+        }
+        if (jp.what_will_persuade_bench) {
+            html += '<p style="margin-top:10px;font-size:13px;"><strong>What Will Persuade:</strong> ' + escapeHtml(jp.what_will_persuade_bench) + '</p>';
+        }
+        html += '</div>';
+    }
+
+    if (memo.issue_wise_analysis && memo.issue_wise_analysis.length) {
+        html += '<div class="memo-section"><h4>Issue-Wise Analysis</h4>';
+        memo.issue_wise_analysis.forEach(function (issue) {
+            html += '<div class="memo-issue-card">';
+            html += '<div class="issue-header"><h5>' + escapeHtml(issue.issue || "") + '</h5>';
+            html += '<div class="memo-issue-badges">';
+            if (issue.gate_question) html += '<span class="risk-badge" style="background:#fff3cd;color:#856404;">GATE</span>';
+            if (issue.risk_level) html += '<span class="risk-badge ' + issue.risk_level + '">' + issue.risk_level + '</span>';
+            if (issue.likely_outcome) html += '<span class="risk-badge" style="background:#e8f0fe;color:#1a56db;">' + issue.likely_outcome + '</span>';
+            html += '</div></div>';
+            if (issue.for_petitioner && issue.for_petitioner.argument_chain) {
+                html += '<div style="font-size:13px;margin-bottom:8px;"><strong>For Petitioner:</strong> ' + escapeHtml(issue.for_petitioner.argument_chain) + '</div>';
+            }
+            if (issue.for_respondent && issue.for_respondent.argument_chain) {
+                html += '<div style="font-size:13px;"><strong>For Respondent:</strong> ' + escapeHtml(issue.for_respondent.argument_chain) + '</div>';
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    if (memo.citation_matrix) {
+        html += '<div class="memo-section"><h4>Citation Matrix</h4>';
+        html += '<table class="memo-citation-table"><thead><tr><th>Category</th><th>Case</th><th>Notes</th></tr></thead><tbody>';
+        var cm = memo.citation_matrix;
+        if (cm.must_cite) cm.must_cite.forEach(function (c) {
+            html += '<tr><td style="color:#155724;font-weight:600;">Must Cite</td><td><span class="tid-link" onclick="openDoc(' + c.tid + ')">' + escapeHtml(c.case_name || "TID " + c.tid) + '</span></td><td>' + escapeHtml(c.reason || "") + '</td></tr>';
+        });
+        if (cm.good_to_cite) cm.good_to_cite.forEach(function (c) {
+            html += '<tr><td style="color:#0369a1;">Good to Cite</td><td><span class="tid-link" onclick="openDoc(' + c.tid + ')">' + escapeHtml(c.case_name || "TID " + c.tid) + '</span></td><td>' + escapeHtml(c.reason || "") + '</td></tr>';
+        });
+        if (cm.cite_with_caution) cm.cite_with_caution.forEach(function (c) {
+            html += '<tr><td style="color:#856404;">Caution</td><td><span class="tid-link" onclick="openDoc(' + c.tid + ')">' + escapeHtml(c.case_name || "TID " + c.tid) + '</span></td><td>' + escapeHtml(c.risk || "") + '</td></tr>';
+        });
+        if (cm.opponent_will_cite) cm.opponent_will_cite.forEach(function (c) {
+            html += '<tr><td style="color:#721c24;">Opponent</td><td><span class="tid-link" onclick="openDoc(' + c.tid + ')">' + escapeHtml(c.case_name || "TID " + c.tid) + '</span></td><td>' + escapeHtml(c.counter || "") + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+    }
+
+    if (memo.research_gaps && memo.research_gaps.length) {
+        html += '<div class="memo-section"><h4>Research Gaps</h4>';
+        memo.research_gaps.forEach(function (g) {
+            html += '<div class="memo-gap-item">' + escapeHtml(g) + '</div>';
+        });
+        html += '</div>';
+    }
+
+    if (memo.action_items && memo.action_items.length) {
+        html += '<div class="memo-section"><h4>Action Items</h4>';
+        memo.action_items.forEach(function (a) {
+            html += '<div class="memo-action-item">' + escapeHtml(a) + '</div>';
+        });
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+document.getElementById("downloadMemoBtn").addEventListener("click", function () {
+    if (!_currentMemoData) return;
+    var blob = new Blob([JSON.stringify(_currentMemoData, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "research_memo.json";
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById("newPipelineBtn").addEventListener("click", function () {
+    document.getElementById("pipelineSubmitModal").classList.add("active");
+});
+
+document.getElementById("pipelineModalClose").addEventListener("click", closePipelineModal);
+document.getElementById("pipelineCancelBtn").addEventListener("click", closePipelineModal);
+
+document.getElementById("pipelineSubmitModal").addEventListener("click", function (e) {
+    if (e.target === this) closePipelineModal();
+});
+
+function closePipelineModal() {
+    document.getElementById("pipelineSubmitModal").classList.remove("active");
+}
+
+var plTextInput = document.getElementById("plText");
+var plCharCount = document.getElementById("plCharCount");
+var pipelineSubmitBtn = document.getElementById("pipelineSubmitBtn");
+
+plTextInput.addEventListener("input", function () {
+    var len = plTextInput.value.length;
+    plCharCount.textContent = len + " characters";
+    pipelineSubmitBtn.disabled = len < 200;
+});
+
+pipelineSubmitBtn.addEventListener("click", function () {
+    var text = plTextInput.value.trim();
+    if (text.length < 200) return;
+
+    var reliefLines = document.getElementById("plReliefs").value.trim();
+    var reliefs = reliefLines ? reliefLines.split("\n").filter(function (l) { return l.trim(); }) : [];
+
+    var payload = {
+        pleading_text: text,
+        pleading_type: document.getElementById("plPleadingType").value,
+        citation: document.getElementById("plCitation").value.trim(),
+        court: document.getElementById("plCourt").value.trim(),
+        client_name: document.getElementById("plClientName").value.trim(),
+        client_side: document.getElementById("plClientSide").value,
+        opposite_party: document.getElementById("plOpposite").value.trim(),
+        reliefs_sought: reliefs,
+        callback_url: document.getElementById("plCallbackUrl").value.trim() || undefined
+    };
+
+    pipelineSubmitBtn.disabled = true;
+    pipelineSubmitBtn.textContent = "Submitting...";
+
+    fetch("/api/pipeline/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.error) {
+                alert("Error: " + data.error);
+                pipelineSubmitBtn.disabled = false;
+                pipelineSubmitBtn.textContent = "Submit for Research";
+                return;
+            }
+            closePipelineModal();
+            plTextInput.value = "";
+            plCharCount.textContent = "0 characters";
+            pipelineSubmitBtn.disabled = true;
+            pipelineSubmitBtn.textContent = "Submit for Research";
+            document.getElementById("plCitation").value = "";
+            document.getElementById("plCourt").value = "";
+            document.getElementById("plClientName").value = "";
+            document.getElementById("plOpposite").value = "";
+            document.getElementById("plReliefs").value = "";
+            document.getElementById("plCallbackUrl").value = "";
+            viewPipelineJob(data.job_id);
+        })
+        .catch(function (e) {
+            alert("Submission failed: " + e.message);
+            pipelineSubmitBtn.disabled = false;
+            pipelineSubmitBtn.textContent = "Submit for Research";
+        });
+});
+
+document.getElementById("pipelineRetryBtn").addEventListener("click", function () {
+    if (!_currentPipelineJobId) return;
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "Retrying...";
+    fetch("/api/pipeline/retry/" + _currentPipelineJobId, { method: "POST" })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            btn.disabled = false;
+            btn.textContent = "Retry";
+            if (data.error) {
+                alert("Retry failed: " + data.error);
+                return;
+            }
+            startPipelinePolling(_currentPipelineJobId);
+            fetchPipelineStatus(_currentPipelineJobId);
+        })
+        .catch(function (e) {
+            btn.disabled = false;
+            btn.textContent = "Retry";
+            alert("Retry failed: " + e.message);
+        });
 });
