@@ -618,18 +618,23 @@ def search_genomes(query_text):
         conn.close()
 
 
-def ensure_judgment_exists(tid, title, court_source=None):
+def ensure_judgment_exists(tid, title, court_source=None, doctype=None):
     conn = get_db_connection()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT tid FROM judgments WHERE tid = %s", (tid,))
-            if cur.fetchone():
+            existing = cur.fetchone()
+            if existing:
+                if doctype:
+                    cur.execute("UPDATE judgments SET doctype = %s WHERE tid = %s AND (doctype IS NULL OR doctype = '')", (doctype, tid))
+                if court_source:
+                    cur.execute("UPDATE judgments SET court_source = %s WHERE tid = %s AND court_source IS NULL", (court_source, tid))
                 return True
             cur.execute("""
-                INSERT INTO judgments (tid, title, court_source, metadata_only)
-                VALUES (%s, %s, %s, TRUE)
+                INSERT INTO judgments (tid, title, court_source, doctype, metadata_only)
+                VALUES (%s, %s, %s, %s, TRUE)
                 ON CONFLICT (tid) DO NOTHING
-            """, (tid, title, court_source))
+            """, (tid, title, court_source, doctype))
             return True
     finally:
         conn.close()

@@ -934,10 +934,11 @@ def api_genome_import():
             "message": f"A genome already exists for TID {tid}. Set overwrite=true to replace it.",
             "existing_title": existing.get("genome_json", {}).get("extraction_metadata", {}).get("judgment_citation", str(tid)) if isinstance(existing.get("genome_json"), dict) else str(tid)
         }), 409
+    doctype = body.get("doctype", "")
     if not title:
         meta = genome_json.get("extraction_metadata", {})
         title = meta.get("judgment_citation", "") or f"Imported Genome (TID {tid})"
-    ensure_judgment_exists(tid, title, court or None)
+    ensure_judgment_exists(tid, title, court or None, doctype=doctype or None)
     schema_ver = genome_json.get("schema_version", "3.1.0")
     doc_id = genome_json.get("document_id")
     cert_level = None

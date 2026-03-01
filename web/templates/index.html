@@ -397,7 +397,28 @@
                         </div>
                         <div class="analysis-section">
                             <label for="importCourtInput">Court</label>
-                            <input type="text" id="importCourtInput" class="search-input" placeholder="e.g. Supreme Court of India">
+                            <select id="importCourtSelect" class="search-input" style="margin-bottom:6px;">
+                                <option value="">-- Select Court --</option>
+                                <option value="Supreme Court of India">Supreme Court of India</option>
+                                <optgroup label="High Courts">
+                                    <option value="Delhi High Court">Delhi High Court</option>
+                                    <option value="Bombay High Court">Bombay High Court</option>
+                                    <option value="Madras High Court">Madras High Court</option>
+                                    <option value="Calcutta High Court">Calcutta High Court</option>
+                                    <option value="Karnataka High Court">Karnataka High Court</option>
+                                    <option value="Allahabad High Court">Allahabad High Court</option>
+                                </optgroup>
+                                <optgroup label="Delhi District Courts">
+                                    <option value="delhidc:Saket District Court">Saket District Court, Delhi</option>
+                                    <option value="delhidc:Patiala House Court">Patiala House Court, Delhi</option>
+                                    <option value="delhidc:Tis Hazari Court">Tis Hazari Court, Delhi</option>
+                                    <option value="delhidc:Rohini Court">Rohini Court, Delhi</option>
+                                    <option value="delhidc:Dwarka Court">Dwarka Court, Delhi</option>
+                                    <option value="delhidc:Karkardooma Court">Karkardooma Court, Delhi</option>
+                                </optgroup>
+                                <option value="custom">Other (type below)</option>
+                            </select>
+                            <input type="text" id="importCourtInput" class="search-input" placeholder="Or type court name manually" style="display:none;">
                         </div>
                         <div class="analysis-section">
                             <label for="importModelInput">Extraction Model (optional)</label>

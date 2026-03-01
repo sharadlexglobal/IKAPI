@@ -1732,21 +1732,40 @@ function showImportValidation(valid, errors) {
     }
 }
 
+document.getElementById("importCourtSelect").addEventListener("change", function () {
+    var customInput = document.getElementById("importCourtInput");
+    if (this.value === "custom") {
+        customInput.style.display = "";
+        customInput.focus();
+    } else {
+        customInput.style.display = "none";
+        customInput.value = "";
+    }
+});
+
+function getImportCourt() {
+    var sel = document.getElementById("importCourtSelect").value;
+    if (sel === "custom") return { court: document.getElementById("importCourtInput").value.trim(), doctype: "" };
+    if (!sel) return { court: "", doctype: "" };
+    if (sel.startsWith("delhidc:")) return { court: sel.substring(8), doctype: "delhidc" };
+    return { court: sel, doctype: "" };
+}
+
 document.getElementById("importGenomeBtn").addEventListener("click", function () {
     if (!_importValidated) return;
     var raw = document.getElementById("importGenomeText").value.trim();
     var tid = document.getElementById("importTidInput").value.trim();
     var title = document.getElementById("importTitleInput").value.trim();
-    var court = document.getElementById("importCourtInput").value.trim();
+    var courtInfo = getImportCourt();
     var model = document.getElementById("importModelInput").value.trim() || "manual-import";
     var btn = this;
     btn.disabled = true;
     btn.textContent = "Saving...";
     document.getElementById("importProgress").style.display = "block";
-    submitGenomeImport(raw, tid, title, court, model, false, btn);
+    submitGenomeImport(raw, tid, title, courtInfo.court, model, false, btn, courtInfo.doctype);
 });
 
-function submitGenomeImport(raw, tid, title, court, model, overwrite, btn) {
+function submitGenomeImport(raw, tid, title, court, model, overwrite, btn, doctype) {
     fetch("/api/genome/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1756,7 +1775,8 @@ function submitGenomeImport(raw, tid, title, court, model, overwrite, btn) {
             title: title,
             court: court,
             extraction_model: model,
-            overwrite: overwrite
+            overwrite: overwrite,
+            doctype: doctype || ""
         })
     })
     .then(function (r) { return r.json().then(function(d) { return {status: r.status, data: d}; }); })
@@ -1770,7 +1790,7 @@ function submitGenomeImport(raw, tid, title, court, model, overwrite, btn) {
                 btn.disabled = true;
                 btn.textContent = "Overwriting...";
                 document.getElementById("importProgress").style.display = "block";
-                submitGenomeImport(raw, tid, title, court, model, true, btn);
+                submitGenomeImport(raw, tid, title, court, model, true, btn, doctype);
             } else {
                 btn.disabled = false;
                 showImportValidation(false, [data.message]);
@@ -1784,6 +1804,7 @@ function submitGenomeImport(raw, tid, title, court, model, overwrite, btn) {
             btn.disabled = false;
             return;
         }
+        var dcNote = doctype === "delhidc" ? '<p class="validation-ready">Also visible in the District Court tab.</p>' : '';
         var panel = document.getElementById("importValidationResult");
         panel.innerHTML = '<div class="validation-success">' +
             '<h3>\u2713 Genome Saved Successfully</h3>' +
@@ -1791,11 +1812,14 @@ function submitGenomeImport(raw, tid, title, court, model, overwrite, btn) {
             '<p>Title: ' + escapeHtml(data.title) + '</p>' +
             '<p>' + escapeHtml(data.message) + '</p>' +
             '<p class="validation-ready">You can view it in the Genome Database tab.</p>' +
+            dcNote +
             '</div>';
         document.getElementById("importGenomeText").value = "";
         document.getElementById("importTidInput").value = "";
         document.getElementById("importTitleInput").value = "";
+        document.getElementById("importCourtSelect").value = "";
         document.getElementById("importCourtInput").value = "";
+        document.getElementById("importCourtInput").style.display = "none";
         _importValidated = false;
     })
     .catch(function (e) {
