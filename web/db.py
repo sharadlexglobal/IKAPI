@@ -1439,3 +1439,24 @@ def seed_default_templates():
                     )
     finally:
         conn.close()
+
+
+def get_fetched_dc_judgments(limit=50):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT j.tid, j.title, j.court_source, j.publish_date,
+                       LENGTH(j.full_text_html) as html_length,
+                       CASE WHEN g.tid IS NOT NULL THEN TRUE ELSE FALSE END as has_genome,
+                       g.overall_durability_score
+                FROM judgments j
+                LEFT JOIN judgment_genomes g ON j.tid = g.tid
+                WHERE j.full_text_html IS NOT NULL
+                  AND j.doctype = 'delhidc'
+                ORDER BY j.fetched_at DESC NULLS LAST
+                LIMIT %s
+            """, (limit,))
+            return cur.fetchall()
+    finally:
+        conn.close()

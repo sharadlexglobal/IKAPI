@@ -654,10 +654,19 @@
                     </div>
                 </div>
                 <div class="dc-main">
-                    <div id="dcWelcome" class="empty-state">
-                        <h3>Judge Profiling System</h3>
-                        <p>Select a judge to view their profile, orders, and behavioral analysis.</p>
-                        <p class="empty-hint">Start by selecting a court and adding judges. Import their orders to build behavioral profiles.</p>
+                    <div id="dcWelcome">
+                        <div class="empty-state" style="margin-bottom:16px;">
+                            <h3>Judge Profiling System</h3>
+                            <p>Select a judge to view their profile, orders, and behavioral analysis.</p>
+                            <p class="empty-hint">Start by selecting a court and adding judges. Import their orders to build behavioral profiles.</p>
+                        </div>
+                        <div id="dcFetchedSection" class="dc-fetched-section" style="display:none;">
+                            <div class="dc-fetched-header">
+                                <h3>Fetched Delhi DC Judgments</h3>
+                                <button id="dcRefreshFetchedBtn" class="btn-sm">Refresh</button>
+                            </div>
+                            <div id="dcFetchedList" class="dc-fetched-list"></div>
+                        </div>
                     </div>
                     <div id="dcJudgeProfile" style="display:none;">
                         <div class="dc-judge-header" id="dcJudgeHeader"></div>

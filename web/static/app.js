@@ -2894,6 +2894,9 @@ function initDistrictCourt() {
     });
 
     document.getElementById("dcSaveOrderBtn").addEventListener("click", saveDcOrder);
+
+    document.getElementById("dcRefreshFetchedBtn").addEventListener("click", loadDcFetchedJudgments);
+    loadDcFetchedJudgments();
 }
 
 function loadDcCourts(city) {
@@ -3023,6 +3026,54 @@ function saveDcOrder() {
         loadDcOrders(_dcActiveJudge);
         loadDcJudges(_dcActiveCourt);
     });
+}
+
+function loadDcFetchedJudgments() {
+    var section = document.getElementById("dcFetchedSection");
+    var listDiv = document.getElementById("dcFetchedList");
+    listDiv.innerHTML = '<div class="empty-state"><p>Loading...</p></div>';
+
+    fetch("/api/district/fetched-judgments")
+        .then(function (r) { return r.json(); })
+        .then(function (judgments) {
+            if (!judgments.length) {
+                section.style.display = "none";
+                return;
+            }
+            section.style.display = "";
+            var html = '<table class="dc-orders-table"><thead><tr>' +
+                '<th>TID</th><th>Case Title</th><th>Text Size</th><th>Genome</th><th>Actions</th>' +
+                '</tr></thead><tbody>';
+            judgments.forEach(function (j) {
+                var sizeKb = Math.round((j.html_length || 0) / 1024);
+                var genomeBadge = j.has_genome
+                    ? '<span class="dc-case-type-badge dc-type-final">Genome ' + (j.durability_score || '?') + '/10</span>'
+                    : '<span class="dc-case-type-badge dc-type-misc">No Genome</span>';
+                html += '<tr>' +
+                    '<td><a href="#" class="dc-tid-link" data-tid="' + j.tid + '">' + j.tid + '</a></td>' +
+                    '<td>' + escapeHtml((j.title || '').substring(0, 80)) + '</td>' +
+                    '<td>' + sizeKb + ' KB</td>' +
+                    '<td>' + genomeBadge + '</td>' +
+                    '<td><button class="btn-sm dc-view-doc-btn" data-tid="' + j.tid + '">View</button></td>' +
+                    '</tr>';
+            });
+            html += '</tbody></table>';
+            listDiv.innerHTML = html;
+
+            listDiv.querySelectorAll(".dc-tid-link, .dc-view-doc-btn").forEach(function (el) {
+                el.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var tid = this.getAttribute("data-tid");
+                    fetch("/api/doc/" + tid)
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            document.getElementById("docTitle").textContent = data.title || "TID " + tid;
+                            document.getElementById("docBody").innerHTML = data.doc || "<p>No content</p>";
+                            document.getElementById("docOverlay").style.display = "";
+                        });
+                });
+            });
+        });
 }
 
 document.querySelectorAll(".nav-tab").forEach(function (tab) {

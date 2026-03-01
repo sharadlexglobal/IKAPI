@@ -29,7 +29,7 @@ from db import (
     get_conflict_scan,
     get_district_courts, get_district_judges, get_district_judge,
     add_district_judge, add_district_order, get_district_orders,
-    get_judge_profile,
+    get_judge_profile, get_fetched_dc_judgments,
 )
 from gemini_service import summarize_judgments, estimate_tokens
 from genome_config import (
@@ -1796,6 +1796,26 @@ def api_judge_profile(judge_id):
 @app.route("/api/district/judges/<int:judge_id>/analyze", methods=["POST"])
 def api_analyze_judge(judge_id):
     return jsonify({"error": "Judge analysis is coming soon. Import more orders first."}), 501
+
+
+@app.route("/api/district/fetched-judgments")
+def api_district_fetched_judgments():
+    try:
+        rows = get_fetched_dc_judgments(limit=50)
+        result = []
+        for r in rows:
+            result.append({
+                "tid": r["tid"],
+                "title": r["title"],
+                "court_source": r.get("court_source"),
+                "publish_date": r.get("publish_date"),
+                "html_length": r.get("html_length", 0),
+                "has_genome": r.get("has_genome", False),
+                "durability_score": r.get("overall_durability_score"),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 try:
