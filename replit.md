@@ -27,7 +27,10 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   └── static/
 │       ├── style.css        # Styles
 │       ├── app.js           # Frontend logic (search, analysis, genome lab, pipeline)
-│       └── judgment_genome_schema_v3.1.json  # Genome JSON schema reference
+│       ├── judgment_genome_schema_v3.1.json  # Genome JSON schema reference
+│       ├── genome_master_prompt_v3.1.md     # Master LLM prompt for genome extraction (GPT/Claude/Gemini)
+│       ├── genome_extraction_prompt.md      # Shorter extraction prompt (legacy)
+│       └── genome_template_v3.1.json        # Filled JSON template example
 ├── python/
 │   ├── ikapi.py             # Python CLI tool
 │   └── requirements.txt     # Original requirements
