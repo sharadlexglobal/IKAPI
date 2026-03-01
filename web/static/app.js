@@ -2231,6 +2231,13 @@ function taxonomySearch(query) {
 
 
 function showGenomeFromDb(tid) {
+    document.querySelectorAll(".nav-tab").forEach(function (t) { t.classList.remove("active"); });
+    var genomTab = document.querySelector('[data-view="genomeLab"]');
+    if (genomTab) genomTab.classList.add("active");
+    document.querySelectorAll(".view-panel").forEach(function (p) { p.classList.remove("active"); });
+    var glPanel = document.getElementById("genomeLab");
+    if (glPanel) glPanel.classList.add("active");
+
     var genomeSubTabs = document.querySelectorAll(".genome-sub-tab");
     genomeSubTabs.forEach(function (t) { t.classList.remove("active"); });
     var dbTab = document.querySelector('[data-subtab="genomeDatabase"]');
@@ -2239,22 +2246,7 @@ function showGenomeFromDb(tid) {
     var dbPanel = document.getElementById("genomeDatabasePanel");
     if (dbPanel) dbPanel.classList.add("active");
 
-    var list = document.getElementById("genomeDbList");
-    var viewer = document.getElementById("genomeDbViewer");
-    if (list) list.style.display = "none";
-    if (viewer) viewer.style.display = "";
-
-    fetch("/api/genome/" + tid)
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.error) {
-                alert("Could not load genome: " + data.error);
-                return;
-            }
-            if (typeof renderGenomeInContainer === "function") {
-                renderGenomeInContainer(data, "genomeDb");
-            }
-        });
+    openGenomeDbViewer(tid);
 }
 
 var taxonomySearchBtn = document.getElementById("taxonomySearchBtn");
@@ -3073,12 +3065,16 @@ function loadDcFetchedJudgments() {
                 var genomeBadge = j.has_genome
                     ? '<span class="dc-case-type-badge dc-type-final">Genome ' + (j.durability_score || '?') + '/10</span>'
                     : '<span class="dc-case-type-badge dc-type-misc">No Genome</span>';
+                var actions = '<button class="btn-sm dc-view-doc-btn" data-tid="' + j.tid + '">Document</button>';
+                if (j.has_genome) {
+                    actions += ' <button class="btn-sm dc-view-genome-btn" data-tid="' + j.tid + '" style="background:#27ae60;color:#fff;">Genome</button>';
+                }
                 html += '<tr>' +
                     '<td><a href="#" class="dc-tid-link" data-tid="' + j.tid + '">' + j.tid + '</a></td>' +
                     '<td>' + escapeHtml((j.title || '').substring(0, 80)) + '</td>' +
                     '<td>' + sizeKb + ' KB</td>' +
                     '<td>' + genomeBadge + '</td>' +
-                    '<td><button class="btn-sm dc-view-doc-btn" data-tid="' + j.tid + '">View</button></td>' +
+                    '<td>' + actions + '</td>' +
                     '</tr>';
             });
             html += '</tbody></table>';
@@ -3095,6 +3091,13 @@ function loadDcFetchedJudgments() {
                             document.getElementById("docBody").innerHTML = data.doc || "<p>No content</p>";
                             document.getElementById("docOverlay").classList.add("active");
                         });
+                });
+            });
+            listDiv.querySelectorAll(".dc-view-genome-btn").forEach(function (el) {
+                el.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var tid = this.getAttribute("data-tid");
+                    showGenomeFromDb(tid);
                 });
             });
         });
