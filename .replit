@@ -18,6 +18,10 @@ author = "agent"
 task = "workflow.run"
 args = "Start application"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "DC Genome Extraction"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -29,6 +33,17 @@ outputType = "webview"
 task = "shell.exec"
 args = "python web/app.py"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "DC Genome Extraction"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd web && python3 -u extract_dc_genomes.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 5000
