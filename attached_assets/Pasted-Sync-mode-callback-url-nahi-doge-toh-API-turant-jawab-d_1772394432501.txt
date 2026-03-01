@@ -1,0 +1,51 @@
+Sync mode — callback_url nahi doge toh API turant jawab deta hai.
+
+BHEJO (CourtCraft → External API):
+
+{
+  "pleading_text": "[Full plain text of all document sections]",
+  "pleading_type": "WRIT_PETITION",
+  "court": "Rajasthan High Court, Jodhpur",
+  "client_name": "M/s ABC Enterprises Pvt. Ltd.",
+  "reliefs_sought": "[J_001] Writ maintainability under Art.226 when DRAT remedy exists\n[LIM_003] Limitation period for Chamber Appeal under S.20 RDB Act\n[INT_002] Stay of auction proceedings — three-fold test\n[OPP_004] Pre-deposit waiver under S.21 RDB Act",
+  "max_judgments": 20
+}
+AAYEGA (External API → CourtCraft, same request mein 200 OK):
+
+{
+  "success": true,
+  "execution_time_seconds": 42.3,
+  "drafted_paragraphs": {
+    "drafted_paragraphs": [
+      {
+        "paragraph_number": 1,
+        "text": "It is humbly submitted that the present writ petition is maintainable...",
+        "proposition": "Writ maintainable despite alternative remedy where natural justice violated",
+        "cases_cited": ["Whirlpool Corporation v. Registrar of Trade Marks (1998) 8 SCC 1"],
+        "confidence": "HIGH"
+      },
+      {
+        "paragraph_number": 2,
+        "text": "Without prejudice to the above, the filing is within limitation...",
+        "proposition": "Liberty granted by court resets limitation period",
+        "cases_cited": ["Maqbool Alam Khan v. Khodaija Bibi AIR 1966 SC 1194"],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "drafting_notes": "2 paragraphs drafted. Verify citations before filing."
+  },
+  "relevant_extracts": [
+    {
+      "tid": 189234,
+      "title": "Whirlpool Corporation v. Registrar of Trade Marks",
+      "metadata": { "court": "Supreme Court of India", "date": "1998-10-26", "cited_by": 4821 },
+      "relevant_paragraphs": [{ "para_num": 15, "text": "Under Article 226..." }]
+    }
+  ],
+  "queries_used": [
+    { "query": "\"Article 226\" ANDD \"alternative remedy\" ANDD DRAT", "doctype": "highcourt" }
+  ],
+  "total_judgments_found": 11,
+  "token_usage": { "total_input_tokens": 62400, "total_output_tokens": 1240, "total_cost_usd": 0.23 }
+}
+Bas. Ek request, ek response, sab ek hi mein. Async wala jugaad nahi chahiye.
