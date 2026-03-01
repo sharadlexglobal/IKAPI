@@ -421,6 +421,8 @@ def _step_search(job_id, job, cost_tracker):
     token = get_api_token()
     completed = len(queries) - len(pending)
 
+    IK_PAGES_PER_QUERY = 3
+
     for pq in pending:
         ik_query = pq["generated_ik_query"]
         if not ik_query:
@@ -434,51 +436,61 @@ def _step_search(job_id, job, cost_tracker):
             form_input += f" doctypes: {doctype}"
 
         encoded = urllib.parse.quote_plus(form_input)
-        url = f"/search/?formInput={encoded}&pagenum=0"
 
         try:
             headers = {"Authorization": f"Token {token}", "Accept": "application/json"}
-            connection = http.client.HTTPSConnection(API_HOST, timeout=30)
-            try:
-                connection.request("POST", url, headers=headers)
-                response = connection.getresponse()
-                raw = response.read().decode("utf8")
-                if response.status >= 400:
-                    logger.warning(f"[{job_id}] Search failed for query '{ik_query}': HTTP {response.status}")
-                    update_pipeline_query(pq["id"], search_completed=True, results_count=0)
-                    completed += 1
-                    time.sleep(IK_SEARCH_DELAY)
-                    continue
-            finally:
-                connection.close()
-
-            cost_tracker.add_ik_search(1)
-
-            data = json.loads(raw)
-            docs = data.get("docs", [])
-
             result_count = 0
-            for doc in docs:
-                tid = doc.get("tid")
-                if not tid:
-                    continue
-                title = sanitize_html(doc.get("title", "Untitled"))
-                headline = sanitize_html(doc.get("headline", ""))
 
+            for pagenum in range(IK_PAGES_PER_QUERY):
+                url = f"/search/?formInput={encoded}&pagenum={pagenum}"
+
+                connection = http.client.HTTPSConnection(API_HOST, timeout=30)
                 try:
-                    save_judgment_metadata(
-                        tid=tid, title=title,
-                        doctype=doc.get("doctype", ""),
-                        court_source=doc.get("docsource", ""),
-                        publish_date=parse_publish_date(doc.get("publishdate", "")),
-                        num_cites=doc.get("numcites", 0) or 0,
-                        num_cited_by=doc.get("numcitedby", 0) or 0,
-                    )
-                except Exception:
-                    pass
+                    connection.request("POST", url, headers=headers)
+                    response = connection.getresponse()
+                    raw = response.read().decode("utf8")
+                    if response.status >= 400:
+                        if pagenum == 0:
+                            logger.warning(f"[{job_id}] Search failed for query '{ik_query}': HTTP {response.status}")
+                        break
+                finally:
+                    connection.close()
 
-                save_pipeline_result(job_id, pq["id"], tid, title, headline)
-                result_count += 1
+                cost_tracker.add_ik_search(1)
+
+                data = json.loads(raw)
+                docs = data.get("docs", [])
+
+                if not docs:
+                    break
+
+                for doc in docs:
+                    tid = doc.get("tid")
+                    if not tid:
+                        continue
+                    title = sanitize_html(doc.get("title", "Untitled"))
+                    headline = sanitize_html(doc.get("headline", ""))
+
+                    try:
+                        save_judgment_metadata(
+                            tid=tid, title=title,
+                            doctype=doc.get("doctype", ""),
+                            court_source=doc.get("docsource", ""),
+                            publish_date=parse_publish_date(doc.get("publishdate", "")),
+                            num_cites=doc.get("numcites", 0) or 0,
+                            num_cited_by=doc.get("numcitedby", 0) or 0,
+                        )
+                    except Exception:
+                        pass
+
+                    save_pipeline_result(job_id, pq["id"], tid, title, headline)
+                    result_count += 1
+
+                if len(docs) < 10:
+                    break
+
+                if pagenum < IK_PAGES_PER_QUERY - 1:
+                    time.sleep(IK_SEARCH_DELAY)
 
             update_pipeline_query(pq["id"], search_completed=True, results_count=result_count)
             completed += 1

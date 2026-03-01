@@ -83,7 +83,7 @@ Full end-to-end legal research pipeline. Submit a pleading and the system autono
 
 1. **Extracts Questions** — Claude Sonnet 4 generates 80-120 research questions from pleading
 2. **Generates Queries** — Claude Haiku converts prioritized questions to IK search queries (batch 12)
-3. **Searches IK** — Executes queries against Indian Kanoon API (2s rate limit)
+3. **Searches IK** — Executes queries against Indian Kanoon API (3 pages / up to 30 results per query, 2s rate limit)
 4. **Filters Relevance** — Claude Opus 4.6 with adaptive thinking scores each judgment 0-10 for relevance (streaming, batch 15, threshold 6.0)
 5. **Fetches Documents** — Downloads full text for relevant judgments (max 35)
 6. **Extracts Genomes** — Claude Sonnet 4 extracts 6-dimension genome per judgment
