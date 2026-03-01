@@ -507,11 +507,71 @@ def _step_search(job_id, job, cost_tracker):
     logger.info(f"[{job_id}] Searches done: {completed}, unique results: {total_results}")
 
 
+OPUS_RELEVANCE_MODEL = "claude-opus-4-6"
+OPUS_RELEVANCE_BATCH_SIZE = 15
+OPUS_RELEVANCE_TIMEOUT = 300
+OPUS_RELEVANCE_MAX_RETRIES = 2
+
+
+def _opus_streaming_relevance(client, prompt, timeout=OPUS_RELEVANCE_TIMEOUT):
+    collected_text = ""
+    input_tokens = 0
+    output_tokens = 0
+
+    with client.messages.stream(
+        model=OPUS_RELEVANCE_MODEL,
+        max_tokens=8000,
+        thinking={"type": "adaptive"},
+        messages=[{"role": "user", "content": prompt}],
+        timeout=timeout,
+    ) as stream:
+        for event in stream:
+            if event.type == "content_block_delta":
+                if hasattr(event.delta, "text"):
+                    collected_text += event.delta.text
+
+    try:
+        final_message = stream.get_final_message()
+        if hasattr(final_message, "usage"):
+            input_tokens = final_message.usage.input_tokens
+            output_tokens = final_message.usage.output_tokens
+    except Exception:
+        pass
+
+    return collected_text, input_tokens, output_tokens
+
+
+def _extract_json_from_response(text):
+    cleaned = text.strip()
+    if cleaned.startswith("```"):
+        import re
+        match = re.search(r"```(?:json)?\s*([\s\S]*?)```", cleaned)
+        if match:
+            cleaned = match.group(1).strip()
+
+    first_brace = cleaned.find("{")
+    if first_brace == -1:
+        raise ValueError("No JSON object found in response")
+
+    last_brace = cleaned.rfind("}")
+    if last_brace == -1:
+        raise ValueError("No closing brace found in response")
+
+    candidate = cleaned[first_brace:last_brace + 1]
+    try:
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        pass
+
+    repaired = _repair_truncated_json(candidate)
+    return json.loads(repaired)
+
+
 def _step_filter(job_id, job, cost_tracker):
     from db import (update_research_job, get_pipeline_results, bulk_update_relevance)
     import anthropic
 
-    logger.info(f"[{job_id}] Step 4: Relevance filtering")
+    logger.info(f"[{job_id}] Step 4: Relevance filtering (Opus 4.6 with thinking)")
 
     all_results = get_pipeline_results(job_id)
     unscored = [r for r in all_results if r["relevance_score"] == 0 and not r["is_relevant"]]
@@ -535,7 +595,7 @@ def _step_filter(job_id, job, cost_tracker):
         return
 
     client = anthropic.Anthropic(api_key=api_key)
-    batch_size = 15
+    batch_size = OPUS_RELEVANCE_BATCH_SIZE
 
     for i in range(0, len(unscored), batch_size):
         batch = unscored[i:i + batch_size]
@@ -544,11 +604,18 @@ def _step_filter(job_id, job, cost_tracker):
         for idx, r in enumerate(batch):
             title = r["title"] or "Untitled"
             headline = r["headline"] or ""
-            if len(headline) > 200:
-                headline = headline[:200] + "..."
+            if len(headline) > 300:
+                headline = headline[:300] + "..."
             judgment_list += f"\n[{idx + 1}] TID={r['tid']} | {title}\n    {headline}\n"
 
-        prompt = f"""You are a legal research relevance assessor. Score each judgment's relevance to the litigation case below.
+        prompt = f"""You are a Senior Advocate and legal research specialist with deep expertise in Indian law. Your task is to assess the RELEVANCE of each judgment to the litigation case described below.
+
+Think carefully about each judgment. Consider:
+- Whether the judgment deals with the same legal provisions, statutes, or constitutional articles
+- Whether the factual matrix is analogous to the case at hand
+- Whether the legal principles established would be applicable
+- Whether the court level and jurisdiction make it authoritative for this case
+- Whether it could be useful for either the petitioner/applicant OR the respondent/opponent
 
 CASE CONTEXT:
 {case_summary}
@@ -556,56 +623,64 @@ CASE CONTEXT:
 JUDGMENTS TO EVALUATE:
 {judgment_list}
 
-For EACH judgment, score relevance 0-10 and provide a one-line reasoning.
-10 = directly on point, 0 = completely irrelevant.
+For EACH judgment, provide:
+- A relevance score from 0 to 10 (10 = directly on point and authoritative, 7-9 = highly relevant, 4-6 = somewhat relevant, 1-3 = tangentially relevant, 0 = completely irrelevant)
+- A concise reasoning explaining WHY it is or isn't relevant
 
-RESPOND WITH ONLY THIS JSON (no markdown):
+OUTPUT FORMAT — respond with ONLY this JSON (no markdown fences, no explanation before or after):
 {{
   "scores": [
-    {{"tid": <tid_number>, "score": <0-10>, "reasoning": "one line"}}
+    {{"tid": <tid_number>, "score": <0-10>, "reasoning": "concise explanation"}}
   ]
 }}"""
 
-        try:
-            message = client.messages.create(
-                model="claude-3-haiku-20240307",
-                max_tokens=2000,
-                messages=[{"role": "user", "content": prompt}],
-                timeout=60,
-            )
+        scored = False
+        for attempt in range(OPUS_RELEVANCE_MAX_RETRIES + 1):
+            try:
+                response_text, in_tok, out_tok = _opus_streaming_relevance(client, prompt)
 
-            if hasattr(message, "usage"):
-                cost_tracker.add_claude_cost("relevance_filtering", "claude-3-haiku-20240307",
-                                              message.usage.input_tokens, message.usage.output_tokens)
+                cost_tracker.add_claude_cost("relevance_filtering", OPUS_RELEVANCE_MODEL,
+                                             in_tok if in_tok > 0 else 500,
+                                             out_tok if out_tok > 0 else 200)
 
-            response_text = message.content[0].text.strip()
-            if response_text.startswith("```"):
-                response_text = response_text.strip("`").strip()
-                if response_text.startswith("json"):
-                    response_text = response_text[4:].strip()
+                scores_data = _extract_json_from_response(response_text)
+                scores_list = scores_data.get("scores", [])
 
-            scores_data = json.loads(response_text)
-            scores_list = scores_data.get("scores", [])
+                relevance_updates = []
+                for s in scores_list:
+                    tid = s.get("tid")
+                    score = s.get("score", 0)
+                    reasoning = s.get("reasoning", "")
+                    is_relevant = score >= RELEVANCE_THRESHOLD
+                    relevance_updates.append((tid, float(score), reasoning, is_relevant))
 
-            relevance_updates = []
-            for s in scores_list:
-                tid = s.get("tid")
-                score = s.get("score", 0)
-                reasoning = s.get("reasoning", "")
-                is_relevant = score >= RELEVANCE_THRESHOLD
-                relevance_updates.append((tid, float(score), reasoning, is_relevant))
+                if relevance_updates:
+                    bulk_update_relevance(job_id, relevance_updates)
 
-            if relevance_updates:
-                bulk_update_relevance(job_id, relevance_updates)
+                logger.info(f"[{job_id}] Relevance batch {i // batch_size + 1}: scored {len(scores_list)} judgments (in={in_tok}, out={out_tok})")
+                scored = True
+                break
 
-        except Exception as e:
-            logger.warning(f"[{job_id}] Relevance scoring batch failed: {e}")
+            except (json.JSONDecodeError, ValueError) as e:
+                logger.warning(f"[{job_id}] Relevance batch JSON parse failed (attempt {attempt + 1}): {e}")
+                if attempt < OPUS_RELEVANCE_MAX_RETRIES:
+                    time.sleep(2 ** attempt)
+                    continue
+
+            except Exception as e:
+                logger.warning(f"[{job_id}] Relevance scoring batch error (attempt {attempt + 1}): {e}")
+                if attempt < OPUS_RELEVANCE_MAX_RETRIES:
+                    time.sleep(2 ** (attempt + 1))
+                    continue
+
+        if not scored:
+            logger.warning(f"[{job_id}] Relevance batch {i // batch_size + 1}: all retries failed, defaulting")
             relevance_updates = []
             for r in batch:
-                relevance_updates.append((r["tid"], 5.0, "scoring failed, included as default", True))
+                relevance_updates.append((r["tid"], 5.0, "scoring failed after retries, included as default", True))
             bulk_update_relevance(job_id, relevance_updates)
 
-        time.sleep(0.5)
+        time.sleep(1)
 
     all_results = get_pipeline_results(job_id)
     relevant = [r for r in all_results if r["is_relevant"]]

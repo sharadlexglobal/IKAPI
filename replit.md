@@ -84,7 +84,7 @@ Full end-to-end legal research pipeline. Submit a pleading and the system autono
 1. **Extracts Questions** — Claude Sonnet 4 generates 80-120 research questions from pleading
 2. **Generates Queries** — Claude Haiku converts prioritized questions to IK search queries (batch 12)
 3. **Searches IK** — Executes queries against Indian Kanoon API (2s rate limit)
-4. **Filters Relevance** — Claude Haiku scores each judgment 0-10 for relevance (batch 15, threshold 6.0)
+4. **Filters Relevance** — Claude Opus 4.6 with adaptive thinking scores each judgment 0-10 for relevance (streaming, batch 15, threshold 6.0)
 5. **Fetches Documents** — Downloads full text for relevant judgments (max 35)
 6. **Extracts Genomes** — Claude Sonnet 4 extracts 6-dimension genome per judgment
 7. **Synthesizes Memo** — Claude Sonnet 4 produces dual-perspective research memo
@@ -182,7 +182,8 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 
 ## AI Models & Costs
 
-- **Claude Haiku** (`claude-3-haiku-20240307`): Smart Search query conversion (~$0.001/query), pipeline query generation (~$0.001/batch), relevance filtering (~$0.005/batch)
+- **Claude Haiku** (`claude-3-haiku-20240307`): Smart Search query conversion (~$0.001/query), pipeline query generation (~$0.001/batch)
+- **Claude Opus 4.6** (`claude-opus-4-6`): Relevance filtering with adaptive thinking + streaming (~$0.03/batch of 15 judgments). Uses `thinking={"type": "adaptive"}` for deep legal reasoning on relevance scoring.
 - **Claude Sonnet 4** (`claude-sonnet-4-6`): Genome extraction & question extraction (max_tokens=30000, timeout=600s, ~$0.50-2.00/extraction), synthesis (~$2-5/memo)
 - **Gemini 2.5 Flash**: Analysis tab summarization (billed to Replit credits)
 
@@ -194,6 +195,7 @@ Real-time cost tracking implemented via `web/cost_tracker.py`. Costs are tracked
 | Model | Input (per 1M tokens) | Output (per 1M tokens) |
 |-------|----------------------|------------------------|
 | Claude 3 Haiku | $0.25 | $1.25 |
+| Claude Opus 4.6 | $5.00 | $25.00 |
 | Claude Sonnet 4 | $3.00 | $15.00 |
 
 **IK API Pricing:**
@@ -211,7 +213,7 @@ Real-time cost tracking implemented via `web/cost_tracker.py`. Costs are tracked
 | Question Extraction | Sonnet 4 | $1-2 |
 | Query Generation | Haiku | $0.06 |
 | IK Searches | IK API | ~$0.30 (60 searches) |
-| Relevance Filtering | Haiku | $1.50 |
+| Relevance Filtering | Opus 4.6 | $0.50-1.00 |
 | Doc Fetching | IK API | ~$0.07 (35 docs) |
 | Genome Extraction | Sonnet 4 | $15-60 |
 | Synthesis | Sonnet 4 | $2-5 |

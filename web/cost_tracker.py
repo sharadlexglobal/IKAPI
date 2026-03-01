@@ -14,6 +14,10 @@ CLAUDE_PRICING = {
         "input_per_million": 3.00,
         "output_per_million": 15.00,
     },
+    "claude-opus-4-6": {
+        "input_per_million": 5.00,
+        "output_per_million": 25.00,
+    },
 }
 
 IK_PRICING_INR = {
