@@ -186,7 +186,7 @@ def init_db():
                 CREATE INDEX IF NOT EXISTS idx_taxonomy_topics_keywords ON taxonomy_topics USING GIN(keywords);
 
                 CREATE TABLE IF NOT EXISTS genome_categories (
-                    genome_tid BIGINT,
+                    genome_tid BIGINT REFERENCES judgment_genomes(tid) ON DELETE CASCADE,
                     category_id TEXT REFERENCES taxonomy_categories(id) ON DELETE CASCADE,
                     auto_tagged BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT NOW(),
@@ -195,7 +195,7 @@ def init_db():
                 CREATE INDEX IF NOT EXISTS idx_genome_categories_cat ON genome_categories(category_id);
 
                 CREATE TABLE IF NOT EXISTS genome_topics (
-                    genome_tid BIGINT,
+                    genome_tid BIGINT REFERENCES judgment_genomes(tid) ON DELETE CASCADE,
                     topic_id TEXT REFERENCES taxonomy_topics(id) ON DELETE CASCADE,
                     auto_tagged BOOLEAN DEFAULT TRUE,
                     confidence FLOAT DEFAULT 1.0,
@@ -214,6 +214,28 @@ def init_db():
                 );
                 CREATE INDEX IF NOT EXISTS idx_provision_index_aliases ON provision_index USING GIN(aliases);
                 CREATE INDEX IF NOT EXISTS idx_provision_index_category ON provision_index(category_id);
+            """)
+
+            cur.execute("""
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.table_constraints
+                        WHERE constraint_name = 'fk_genome_categories_tid'
+                    ) THEN
+                        ALTER TABLE genome_categories
+                            ADD CONSTRAINT fk_genome_categories_tid
+                            FOREIGN KEY (genome_tid) REFERENCES judgment_genomes(tid) ON DELETE CASCADE;
+                    END IF;
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.table_constraints
+                        WHERE constraint_name = 'fk_genome_topics_tid'
+                    ) THEN
+                        ALTER TABLE genome_topics
+                            ADD CONSTRAINT fk_genome_topics_tid
+                            FOREIGN KEY (genome_tid) REFERENCES judgment_genomes(tid) ON DELETE CASCADE;
+                    END IF;
+                END $$;
             """)
     finally:
         conn.close()
@@ -944,13 +966,14 @@ def search_taxonomy(query_text):
     conn = get_db_connection()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            like = f"%{query_text}%"
+            escaped = query_text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            like = f"%{escaped}%"
             cur.execute("""
                 SELECT 'category' AS result_type, c.id, c.name, c.parent_statute AS detail,
                        COUNT(gc.genome_tid) AS genome_count
                 FROM taxonomy_categories c
                 LEFT JOIN genome_categories gc ON c.id = gc.category_id
-                WHERE c.name ILIKE %s OR c.parent_statute ILIKE %s OR c.description ILIKE %s
+                WHERE c.name ILIKE %s ESCAPE '\\' OR c.parent_statute ILIKE %s ESCAPE '\\' OR c.description ILIKE %s ESCAPE '\\'
                 GROUP BY c.id
                 UNION ALL
                 SELECT 'topic' AS result_type, t.id, t.name, tc.name AS detail,
@@ -958,16 +981,16 @@ def search_taxonomy(query_text):
                 FROM taxonomy_topics t
                 LEFT JOIN taxonomy_categories tc ON t.category_id = tc.id
                 LEFT JOIN genome_topics gt ON t.id = gt.topic_id
-                WHERE t.name ILIKE %s OR t.description ILIKE %s
-                      OR EXISTS (SELECT 1 FROM unnest(t.keywords) kw WHERE kw ILIKE %s)
+                WHERE t.name ILIKE %s ESCAPE '\\' OR t.description ILIKE %s ESCAPE '\\'
+                      OR EXISTS (SELECT 1 FROM unnest(t.keywords) kw WHERE kw ILIKE %s ESCAPE '\\')
                 GROUP BY t.id, tc.name
                 UNION ALL
                 SELECT 'provision' AS result_type, p.id, p.canonical_name AS name,
                        p.parent_statute AS detail, 0 AS genome_count
                 FROM provision_index p
-                WHERE p.canonical_name ILIKE %s OR p.parent_statute ILIKE %s
-                      OR p.id ILIKE %s
-                      OR EXISTS (SELECT 1 FROM unnest(p.aliases) a WHERE a ILIKE %s)
+                WHERE p.canonical_name ILIKE %s ESCAPE '\\' OR p.parent_statute ILIKE %s ESCAPE '\\'
+                      OR p.id ILIKE %s ESCAPE '\\'
+                      OR EXISTS (SELECT 1 FROM unnest(p.aliases) a WHERE a ILIKE %s ESCAPE '\\')
                 ORDER BY genome_count DESC
                 LIMIT 50
             """, (like, like, like, like, like, like, like, like, like, like))

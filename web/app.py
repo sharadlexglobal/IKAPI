@@ -1539,9 +1539,17 @@ def api_taxonomy_stats():
         return jsonify({"error": str(e)}), 500
 
 
+_retag_last_run = [0]
+
 @app.route("/api/taxonomy/retag", methods=["POST"])
 def api_taxonomy_retag():
+    import time as _time
+    now = _time.time()
+    if now - _retag_last_run[0] < 30:
+        remaining = int(30 - (now - _retag_last_run[0]))
+        return jsonify({"error": f"Rate limited. Try again in {remaining} seconds."}), 429
     try:
+        _retag_last_run[0] = now
         from auto_tagger import tag_all_genomes
         result = tag_all_genomes()
         return jsonify(result)

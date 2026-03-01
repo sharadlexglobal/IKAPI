@@ -640,7 +640,6 @@ STATUTE_TO_CATEGORY = {
     "powers of attorney": "CAT_POA",
     "income tax act": "CAT_IT_ACT",
     "state financial corporations": "CAT_SFC",
-    "industrial disputes act": "CAT_NI_ACT",
     "bengal money lenders": "CAT_CONTRACT",
 }
 

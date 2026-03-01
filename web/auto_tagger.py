@@ -95,6 +95,9 @@ def tag_genome(tid, genome_json=None):
 
     combined_text = _extract_text_for_matching(genome_json)
 
+    has_category_match = len(matched_categories) > 0
+    min_confidence = 0.3 if has_category_match else 0.5
+
     matched_topics = []
     all_topics = get_taxonomy_topics()
     for topic in all_topics:
@@ -103,10 +106,9 @@ def tag_genome(tid, genome_json=None):
         if not keywords:
             continue
 
-        if topic_cat and topic_cat not in matched_categories:
+        if has_category_match and topic_cat and topic_cat not in matched_categories:
             continue
 
-        score = 0
         matched_kws = 0
         for kw in keywords:
             if kw.lower() in combined_text:
@@ -116,7 +118,7 @@ def tag_genome(tid, genome_json=None):
             continue
 
         confidence = min(1.0, matched_kws / max(3, len(keywords) * 0.4))
-        if confidence >= 0.3:
+        if confidence >= min_confidence:
             tag_genome_topic(tid, topic["id"], auto_tagged=True, confidence=round(confidence, 2))
             matched_topics.append({"topic_id": topic["id"], "confidence": round(confidence, 2)})
 

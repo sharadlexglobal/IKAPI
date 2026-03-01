@@ -2217,6 +2217,19 @@ function taxonomySearch(query) {
                         loadTaxonomyTopics(id);
                     } else if (type === "topic") {
                         loadTaxonomyGenomes("topic", id, name);
+                    } else if (type === "provision") {
+                        fetch("/api/taxonomy/provisions")
+                            .then(function (r) { return r.json(); })
+                            .then(function (provs) {
+                                var prov = provs.find(function (p) { return p.id === id; });
+                                if (prov && prov.category_id) {
+                                    _taxonomyActiveCat = prov.category_id;
+                                    loadTaxonomyCategories();
+                                    resultsDiv.style.display = "none";
+                                    document.getElementById("taxonomyTopicList").style.display = "";
+                                    loadTaxonomyTopics(prov.category_id);
+                                }
+                            });
                     }
                 });
             });
