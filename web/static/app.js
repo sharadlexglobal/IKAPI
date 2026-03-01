@@ -3093,7 +3093,7 @@ function loadDcFetchedJudgments() {
                         .then(function (data) {
                             document.getElementById("docTitle").textContent = data.title || "TID " + tid;
                             document.getElementById("docBody").innerHTML = data.doc || "<p>No content</p>";
-                            document.getElementById("docOverlay").style.display = "";
+                            document.getElementById("docOverlay").classList.add("active");
                         });
                 });
             });
