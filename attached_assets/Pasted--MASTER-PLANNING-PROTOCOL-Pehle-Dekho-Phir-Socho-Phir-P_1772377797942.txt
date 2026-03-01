@@ -1,0 +1,114 @@
+#  — MASTER PLANNING PROTOCOL
+## "Pehle Dekho, Phir Socho, Phir Plan Banao"
+
+## ⛔ THE PROBLEM THIS SOLVES
+
+You have a terrible habit: **You make plans based on imagination, not reality.**
+
+Here's what you do every time:
+1. User asks to implement something
+2. You make a "plan" based on what you ASSUME the codebase looks like
+3. User says "OK, implement"
+4. You open the files for the FIRST TIME
+5. You discover: "Oh, the structure is different than I assumed"
+6. You start improvising, making half-baked changes
+7. Things break. Time wasted. Money burned.
+
+**This ends now.** From today, you will READ FIRST, PLAN SECOND.
+
+---
+
+## THE RULE
+
+> **You are FORBIDDEN from writing a single line of a plan until you have opened and read every relevant file in the codebase.**
+
+A plan made without reading the code is fiction. Fiction doesn't deploy.
+
+---
+
+## THE 4-STAGE PLANNING PROTOCOL
+
+---
+
+### STAGE 1: UNDERSTAND THE REQUEST (2 minutes)
+
+Before touching any file, clearly state:
+
+```
+📋 TASK UNDERSTANDING:
+What the user wants: [plain language summary]
+What this requires technically: [high-level technical requirements]
+What parts of the app are likely involved: [list of areas/features]
+What I need to investigate before planning: [list of unknowns]
+```
+
+**If anything is unclear, ASK the user now. Do not assume and proceed.**
+
+---
+
+### STAGE 2: CODEBASE INVESTIGATION (The Critical Stage)
+
+**This is the stage you always skip. You will NOT skip it anymore.**
+
+#### Step 2A: Map the Project Structure
+
+Open the project root and understand the full file tree first.
+
+```
+📁 PROJECT STRUCTURE SCAN:
+- Framework: [React/Next.js/Express/etc.]
+- Language: [TypeScript/JavaScript/Python/etc.]
+- Module system: [ESM/CommonJS]
+- Key directories: [list with purpose of each]
+- Entry points: [main files]
+- Config files: [list all config files and their role]
+```
+
+#### Step 2B: Read EVERY Relevant File
+
+**For EACH file that could be involved in or affected by the implementation:**
+
+1. **OPEN the file** — actually read its contents
+2. **Document what you find** — don't just skim, understand the structure
+
+**You must read and document:**
+
+| What to Read | What to Document |
+|-------------|-----------------|
+| **Files you'll need to modify** | Current structure, existing functions, exports, imports, patterns used |
+| **Files that import from files you'll modify** | What they depend on — so you don't break them |
+| **Files that your modified files import from** | Available functions, their signatures, what they return |
+| **Shared types/interfaces/schemas** | Exact field names, types, required vs optional |
+| **API route files** | Existing endpoints, middleware, request/response shapes |
+| **Database models/schemas** | Exact field names, types, relationships, constraints |
+| **Config/env files** | What's available, what's already configured |
+| **Similar existing features** | How the codebase handles similar patterns — follow the same approach |
+| **Test files (if any)** | Existing test patterns to follow |
+| **Package.json / requirements.txt** | What libraries are already installed and available |
+
+#### Step 2C: Document Your Findings
+
+For every file you read, report in this format:
+
+```
+📄 FILE: [path/to/file]
+   Purpose: [what this file does]
+   Key exports: [function names, components, classes]
+   Key imports: [what it depends on]
+   Patterns used: [how things are structured — hooks, classes, middleware, etc.]
+   Relevant to task because: [why this file matters for the implementation]
+   Current state: [any issues, TODOs, or constraints noticed]
+```
+
+#### Step 2D: Map the Data & Execution Flow
+
+Trace the flow relevant to your task:
+
+```
+🔄 CURRENT FLOW (for the area you're modifying):
+   User action → [component] → [function call] → [API endpoint] → [handler] → [database] → [response] → [UI update]
+
+   Exact function chain:
+   1. [Component.tsx] handleClick() 
+   2. → calls [api.ts] fetchData(userId: string, filters: FilterType)
+   3. → hits [routes.ts] G

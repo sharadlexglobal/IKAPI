@@ -237,8 +237,112 @@ def init_db():
                     END IF;
                 END $$;
             """)
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS topic_syntheses (
+                    id SERIAL PRIMARY KEY,
+                    topic_id TEXT REFERENCES taxonomy_topics(id) ON DELETE CASCADE,
+                    synthesis_json JSONB NOT NULL,
+                    model TEXT,
+                    genome_count INT DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    UNIQUE(topic_id)
+                );
+
+                CREATE TABLE IF NOT EXISTS conflict_scans (
+                    id SERIAL PRIMARY KEY,
+                    topic_id TEXT REFERENCES taxonomy_topics(id) ON DELETE SET NULL,
+                    category_id TEXT REFERENCES taxonomy_categories(id) ON DELETE SET NULL,
+                    scan_json JSONB NOT NULL,
+                    model TEXT,
+                    genome_count INT DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+                CREATE INDEX IF NOT EXISTS idx_conflict_scans_topic ON conflict_scans(topic_id);
+
+                CREATE TABLE IF NOT EXISTS district_courts (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    city TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    court_code TEXT UNIQUE,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+
+                CREATE TABLE IF NOT EXISTS district_judges (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    designation TEXT,
+                    court_id INT REFERENCES district_courts(id) ON DELETE CASCADE,
+                    current_bench TEXT,
+                    specializations TEXT[] DEFAULT '{}',
+                    active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+                CREATE INDEX IF NOT EXISTS idx_district_judges_court ON district_judges(court_id);
+
+                CREATE TABLE IF NOT EXISTS district_court_orders (
+                    id SERIAL PRIMARY KEY,
+                    order_reference TEXT,
+                    judge_id INT REFERENCES district_judges(id) ON DELETE CASCADE,
+                    court_id INT REFERENCES district_courts(id) ON DELETE SET NULL,
+                    order_date DATE,
+                    case_type TEXT,
+                    case_number TEXT,
+                    petitioner TEXT,
+                    respondent TEXT,
+                    order_text TEXT,
+                    order_source_url TEXT,
+                    tid BIGINT,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+                CREATE INDEX IF NOT EXISTS idx_dc_orders_judge ON district_court_orders(judge_id);
+                CREATE INDEX IF NOT EXISTS idx_dc_orders_court ON district_court_orders(court_id);
+                CREATE INDEX IF NOT EXISTS idx_dc_orders_case_type ON district_court_orders(case_type);
+
+                CREATE TABLE IF NOT EXISTS judge_genomes (
+                    id SERIAL PRIMARY KEY,
+                    judge_id INT REFERENCES district_judges(id) ON DELETE CASCADE,
+                    order_id INT REFERENCES district_court_orders(id) ON DELETE CASCADE,
+                    genome_json JSONB NOT NULL,
+                    schema_version TEXT DEFAULT '3.1.0',
+                    extraction_model TEXT,
+                    extraction_date TIMESTAMP DEFAULT NOW(),
+                    durability_score INT
+                );
+                CREATE INDEX IF NOT EXISTS idx_judge_genomes_judge ON judge_genomes(judge_id);
+
+                CREATE TABLE IF NOT EXISTS judge_profiles (
+                    judge_id INT REFERENCES district_judges(id) ON DELETE CASCADE UNIQUE,
+                    profile_json JSONB,
+                    total_orders_analyzed INT DEFAULT 0,
+                    last_updated TIMESTAMP DEFAULT NOW(),
+                    model_used TEXT
+                );
+            """)
+
+            _seed_delhi_courts(cur)
     finally:
         conn.close()
+
+
+def _seed_delhi_courts(cur):
+    cur.execute("SELECT COUNT(*) FROM district_courts WHERE city = 'Delhi'")
+    if cur.fetchone()[0] > 0:
+        return
+    delhi_courts = [
+        ("Saket District Court", "Delhi", "Delhi", "DEL_SAKET"),
+        ("Patiala House Courts", "Delhi", "Delhi", "DEL_PATIALA"),
+        ("Tis Hazari Courts", "Delhi", "Delhi", "DEL_TISHAZARI"),
+        ("Rohini Courts", "Delhi", "Delhi", "DEL_ROHINI"),
+        ("Dwarka Courts", "Delhi", "Delhi", "DEL_DWARKA"),
+        ("Karkardooma Courts", "Delhi", "Delhi", "DEL_KARKARDOOMA"),
+    ]
+    for name, city, state, code in delhi_courts:
+        cur.execute(
+            "INSERT INTO district_courts (name, city, state, court_code) VALUES (%s, %s, %s, %s) ON CONFLICT (court_code) DO NOTHING",
+            (name, city, state, code)
+        )
 
 
 def get_cached_judgment(tid):
@@ -1036,6 +1140,278 @@ def get_taxonomy_stats():
                     (SELECT COUNT(DISTINCT genome_tid) FROM genome_categories) AS tagged_genomes,
                     (SELECT COUNT(*) FROM judgment_genomes) AS total_genomes
             """)
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_coverage_heatmap():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT c.id AS category_id, c.name AS category_name, c.parent_statute,
+                       t.id AS topic_id, t.name AS topic_name,
+                       COUNT(gt.genome_tid) AS genome_count,
+                       ROUND(AVG(g.overall_durability_score)::numeric, 1) AS avg_durability,
+                       MIN(g.overall_durability_score) AS min_durability,
+                       MAX(g.overall_durability_score) AS max_durability
+                FROM taxonomy_categories c
+                LEFT JOIN taxonomy_topics t ON t.category_id = c.id
+                LEFT JOIN genome_topics gt ON gt.topic_id = t.id
+                LEFT JOIN judgment_genomes g ON gt.genome_tid = g.tid
+                GROUP BY c.id, c.name, c.parent_statute, t.id, t.name
+                ORDER BY c.name, t.name
+            """)
+            rows = cur.fetchall()
+
+            categories = {}
+            for r in rows:
+                cid = r["category_id"]
+                if cid not in categories:
+                    categories[cid] = {
+                        "id": cid, "name": r["category_name"],
+                        "parent_statute": r["parent_statute"], "topics": []
+                    }
+                if r["topic_id"]:
+                    gc = int(r["genome_count"] or 0)
+                    avg_d = float(r["avg_durability"]) if r["avg_durability"] else 0
+                    if gc == 0:
+                        strength = "GAP"
+                    elif avg_d >= 7 and gc >= 3:
+                        strength = "STRONG"
+                    elif avg_d >= 5 and gc >= 2:
+                        strength = "MODERATE"
+                    else:
+                        strength = "WEAK"
+                    categories[cid]["topics"].append({
+                        "id": r["topic_id"], "name": r["topic_name"],
+                        "genome_count": gc,
+                        "avg_durability": avg_d,
+                        "min_durability": r["min_durability"],
+                        "max_durability": r["max_durability"],
+                        "strength": strength,
+                    })
+
+            result = []
+            for cat in categories.values():
+                topics = cat["topics"]
+                covered = sum(1 for t in topics if t["genome_count"] > 0)
+                gaps = sum(1 for t in topics if t["strength"] == "GAP")
+                avg_str_vals = [t["avg_durability"] for t in topics if t["avg_durability"] > 0]
+                cat["topic_coverage"] = f"{covered}/{len(topics)}"
+                cat["gap_count"] = gaps
+                cat["avg_strength"] = round(sum(avg_str_vals) / len(avg_str_vals), 1) if avg_str_vals else 0
+                result.append(cat)
+            return result
+    finally:
+        conn.close()
+
+
+def get_topic_genomes_with_json(topic_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT g.tid, g.genome_json, g.overall_durability_score,
+                       g.extraction_model, g.certification_level,
+                       j.title, j.court_source, j.publish_date, j.num_cited_by
+                FROM genome_topics gt
+                JOIN judgment_genomes g ON gt.genome_tid = g.tid
+                LEFT JOIN judgments j ON g.tid = j.tid
+                WHERE gt.topic_id = %s
+                ORDER BY g.overall_durability_score DESC NULLS LAST
+            """, (topic_id,))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def save_topic_synthesis(topic_id, synthesis_json, model, genome_count):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO topic_syntheses (topic_id, synthesis_json, model, genome_count)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (topic_id) DO UPDATE SET
+                    synthesis_json = EXCLUDED.synthesis_json,
+                    model = EXCLUDED.model,
+                    genome_count = EXCLUDED.genome_count,
+                    created_at = NOW()
+            """, (topic_id, json.dumps(synthesis_json), model, genome_count))
+    finally:
+        conn.close()
+
+
+def get_topic_synthesis(topic_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT ts.*, t.name AS topic_name
+                FROM topic_syntheses ts
+                JOIN taxonomy_topics t ON ts.topic_id = t.id
+                WHERE ts.topic_id = %s
+            """, (topic_id,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_genomes_for_comparison(tids):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT g.tid, g.genome_json, g.overall_durability_score,
+                       g.extraction_model, g.certification_level,
+                       j.title, j.court_source, j.publish_date, j.num_cited_by
+                FROM judgment_genomes g
+                LEFT JOIN judgments j ON g.tid = j.tid
+                WHERE g.tid = ANY(%s)
+            """, (list(tids),))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def save_conflict_scan(topic_id, category_id, scan_json, model, genome_count):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            if topic_id:
+                cur.execute("DELETE FROM conflict_scans WHERE topic_id = %s", (topic_id,))
+            cur.execute("""
+                INSERT INTO conflict_scans (topic_id, category_id, scan_json, model, genome_count)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (topic_id, category_id, json.dumps(scan_json), model, genome_count))
+    finally:
+        conn.close()
+
+
+def get_conflict_scan(topic_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT * FROM conflict_scans
+                WHERE topic_id = %s
+                ORDER BY created_at DESC LIMIT 1
+            """, (topic_id,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_district_courts(city=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if city:
+                cur.execute("SELECT * FROM district_courts WHERE city = %s ORDER BY name", (city,))
+            else:
+                cur.execute("SELECT * FROM district_courts ORDER BY city, name")
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_district_judges(court_id=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if court_id:
+                cur.execute("""
+                    SELECT dj.*, dc.name AS court_name,
+                           (SELECT COUNT(*) FROM district_court_orders WHERE judge_id = dj.id) AS order_count
+                    FROM district_judges dj
+                    LEFT JOIN district_courts dc ON dj.court_id = dc.id
+                    WHERE dj.court_id = %s
+                    ORDER BY dj.name
+                """, (court_id,))
+            else:
+                cur.execute("""
+                    SELECT dj.*, dc.name AS court_name,
+                           (SELECT COUNT(*) FROM district_court_orders WHERE judge_id = dj.id) AS order_count
+                    FROM district_judges dj
+                    LEFT JOIN district_courts dc ON dj.court_id = dc.id
+                    ORDER BY dj.name
+                """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_district_judge(judge_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT dj.*, dc.name AS court_name, dc.city,
+                       (SELECT COUNT(*) FROM district_court_orders WHERE judge_id = dj.id) AS order_count,
+                       (SELECT COUNT(*) FROM judge_genomes WHERE judge_id = dj.id) AS genome_count
+                FROM district_judges dj
+                LEFT JOIN district_courts dc ON dj.court_id = dc.id
+                WHERE dj.id = %s
+            """, (judge_id,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def add_district_judge(name, designation, court_id, specializations=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO district_judges (name, designation, court_id, specializations)
+                VALUES (%s, %s, %s, %s) RETURNING id
+            """, (name, designation, court_id, specializations or []))
+            return cur.fetchone()[0]
+    finally:
+        conn.close()
+
+
+def add_district_order(judge_id, court_id, order_date, case_type, case_number,
+                       petitioner, respondent, order_text, order_source_url=None, tid=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO district_court_orders
+                    (judge_id, court_id, order_date, case_type, case_number,
+                     petitioner, respondent, order_text, order_source_url, tid)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
+            """, (judge_id, court_id, order_date, case_type, case_number,
+                  petitioner, respondent, order_text, order_source_url, tid))
+            return cur.fetchone()[0]
+    finally:
+        conn.close()
+
+
+def get_district_orders(judge_id, page=1, per_page=20):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            offset = (page - 1) * per_page
+            cur.execute("""
+                SELECT *, (SELECT COUNT(*) FROM district_court_orders WHERE judge_id = %s) AS total
+                FROM district_court_orders
+                WHERE judge_id = %s
+                ORDER BY order_date DESC NULLS LAST
+                LIMIT %s OFFSET %s
+            """, (judge_id, judge_id, per_page, offset))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_judge_profile(judge_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM judge_profiles WHERE judge_id = %s", (judge_id,))
             return cur.fetchone()
     finally:
         conn.close()

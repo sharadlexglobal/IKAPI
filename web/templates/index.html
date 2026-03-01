@@ -16,6 +16,7 @@
                 <button class="nav-tab" data-view="analysis">Analysis</button>
                 <button class="nav-tab" data-view="genomeLab">Genome Lab</button>
                 <button class="nav-tab" data-view="pipeline">Pipeline</button>
+                <button class="nav-tab" data-view="districtCourt">District Court</button>
             </div>
         </div>
     </div>
@@ -461,6 +462,13 @@
             <div id="taxonomyBrowserPanel" class="genome-panel">
                 <div class="taxonomy-layout">
                     <div class="taxonomy-stats-bar" id="taxonomyStatsBar"></div>
+                    <div class="heatmap-toggle-row">
+                        <button id="heatmapToggleBtn" class="btn-sm btn-secondary">Coverage Dashboard</button>
+                    </div>
+                    <div id="heatmapDashboard" class="heatmap-dashboard" style="display:none;">
+                        <div class="heatmap-summary" id="heatmapSummary"></div>
+                        <div class="heatmap-grid" id="heatmapGrid"></div>
+                    </div>
                     <div class="taxonomy-search-row">
                         <input type="text" id="taxonomySearchInput" class="search-input" placeholder="Search categories, topics, provisions...">
                         <button id="taxonomySearchBtn" class="btn-sm">Search</button>
@@ -478,11 +486,17 @@
                                 </div>
                             </div>
                             <div id="taxonomyGenomeList" class="taxonomy-genome-list" style="display:none;">
-                                <button id="taxonomyBackToTopics" class="btn-sm taxonomy-back-btn">Back to Topics</button>
+                                <div class="taxonomy-genome-header-row">
+                                    <button id="taxonomyBackToTopics" class="btn-sm taxonomy-back-btn">Back to Topics</button>
+                                    <button id="taxonomyCompareBtn" class="btn-sm btn-secondary" style="display:none;">Compare Selected</button>
+                                </div>
                                 <h4 id="taxonomyGenomeListTitle"></h4>
                                 <div id="taxonomyGenomeCards" class="taxonomy-genome-cards"></div>
                             </div>
                             <div id="taxonomySearchResults" class="taxonomy-search-results" style="display:none;"></div>
+                            <div id="taxonomySynthesisPanel" class="taxonomy-synthesis-panel" style="display:none;"></div>
+                            <div id="taxonomyConflictPanel" class="taxonomy-conflict-panel" style="display:none;"></div>
+                            <div id="taxonomyComparePanel" class="taxonomy-compare-panel" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
@@ -612,6 +626,124 @@
             <div class="modal-footer">
                 <button id="pipelineSubmitBtn" class="analyze-btn" disabled>Submit for Research</button>
                 <button id="pipelineCancelBtn" class="btn-sm">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="districtCourtView" class="view-panel">
+        <div class="container">
+            <div class="dc-header">
+                <h2>District Court Intelligence</h2>
+                <div class="dc-controls">
+                    <select id="dcCitySelect" class="dc-select">
+                        <option value="Delhi">Delhi</option>
+                    </select>
+                    <select id="dcCourtSelect" class="dc-select">
+                        <option value="">All Courts</option>
+                    </select>
+                </div>
+            </div>
+            <div class="dc-layout">
+                <div class="dc-sidebar">
+                    <div class="dc-sidebar-header">
+                        <span>Judges</span>
+                        <button id="dcAddJudgeBtn" class="btn-sm">+ Add Judge</button>
+                    </div>
+                    <div id="dcJudgeList" class="dc-judge-list">
+                        <div class="empty-state"><p>Select a court to view judges.</p></div>
+                    </div>
+                </div>
+                <div class="dc-main">
+                    <div id="dcWelcome" class="empty-state">
+                        <h3>Judge Profiling System</h3>
+                        <p>Select a judge to view their profile, orders, and behavioral analysis.</p>
+                        <p class="empty-hint">Start by selecting a court and adding judges. Import their orders to build behavioral profiles.</p>
+                    </div>
+                    <div id="dcJudgeProfile" style="display:none;">
+                        <div class="dc-judge-header" id="dcJudgeHeader"></div>
+                        <div class="dc-judge-tabs">
+                            <button class="dc-tab active" data-dctab="orders">Orders</button>
+                            <button class="dc-tab" data-dctab="profile">Mind Map</button>
+                            <button class="dc-tab" data-dctab="import">Import Order</button>
+                        </div>
+                        <div id="dcTabOrders" class="dc-tab-content active">
+                            <div id="dcOrdersList" class="dc-orders-list">
+                                <div class="empty-state"><p>No orders imported yet.</p></div>
+                            </div>
+                        </div>
+                        <div id="dcTabProfile" class="dc-tab-content">
+                            <div id="dcProfileContent" class="dc-profile-content">
+                                <div class="empty-state">
+                                    <h3>Judge Mind Map</h3>
+                                    <p>Import at least 10 orders to enable behavioral analysis.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="dcTabImport" class="dc-tab-content">
+                            <div class="dc-import-form">
+                                <div class="dc-form-row">
+                                    <div class="dc-form-field">
+                                        <label>Case Number</label>
+                                        <input type="text" id="dcOrderCaseNum" class="search-input" placeholder="e.g. Bail App. 1234/2025">
+                                    </div>
+                                    <div class="dc-form-field">
+                                        <label>Order Date</label>
+                                        <input type="date" id="dcOrderDate" class="search-input">
+                                    </div>
+                                </div>
+                                <div class="dc-form-row">
+                                    <div class="dc-form-field">
+                                        <label>Case Type</label>
+                                        <select id="dcOrderType" class="dc-select">
+                                            <option value="bail">Bail Application</option>
+                                            <option value="interim">Interim Application</option>
+                                            <option value="final">Final Order/Judgment</option>
+                                            <option value="misc">Miscellaneous</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="dc-form-row">
+                                    <div class="dc-form-field">
+                                        <label>Petitioner</label>
+                                        <input type="text" id="dcOrderPetitioner" class="search-input" placeholder="Petitioner name">
+                                    </div>
+                                    <div class="dc-form-field">
+                                        <label>Respondent</label>
+                                        <input type="text" id="dcOrderRespondent" class="search-input" placeholder="Respondent name">
+                                    </div>
+                                </div>
+                                <div class="dc-form-field" style="margin-top:8px;">
+                                    <label>Order Text</label>
+                                    <textarea id="dcOrderText" class="genome-textarea" rows="10" placeholder="Paste the full order text here..."></textarea>
+                                </div>
+                                <button id="dcSaveOrderBtn" class="genome-extract-btn" style="margin-top:12px;">Save Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dcAddJudgeModal" class="modal-overlay" style="display:none;">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3>Add Judge</h3>
+                <button id="dcJudgeModalClose" class="doc-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="analysis-section">
+                    <label>Judge Name</label>
+                    <input type="text" id="dcJudgeName" class="search-input" placeholder="e.g. Hon'ble Sh. Amit Bansal">
+                </div>
+                <div class="analysis-section">
+                    <label>Designation</label>
+                    <input type="text" id="dcJudgeDesignation" class="search-input" placeholder="e.g. Additional Sessions Judge">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="dcJudgeSaveBtn" class="analyze-btn">Save Judge</button>
+                <button id="dcJudgeCancelBtn" class="btn-sm">Cancel</button>
             </div>
         </div>
     </div>

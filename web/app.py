@@ -24,6 +24,12 @@ from db import (
     get_genomes_for_category, get_genomes_for_topic,
     get_all_provisions, search_taxonomy, get_genome_tags,
     get_taxonomy_stats,
+    get_coverage_heatmap, get_topic_genomes_with_json,
+    get_topic_synthesis, get_genomes_for_comparison,
+    get_conflict_scan,
+    get_district_courts, get_district_judges, get_district_judge,
+    add_district_judge, add_district_order, get_district_orders,
+    get_judge_profile,
 )
 from gemini_service import summarize_judgments, estimate_tokens
 from genome_config import (
@@ -1555,6 +1561,239 @@ def api_taxonomy_retag():
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/heatmap")
+def api_taxonomy_heatmap():
+    try:
+        data = get_coverage_heatmap()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/topics/<topic_id>/synthesize", methods=["POST"])
+def api_topic_synthesize(topic_id):
+    try:
+        from topic_synthesis import synthesize_topic
+        synthesis, usage = synthesize_topic(topic_id)
+        return jsonify({"synthesis": synthesis, "usage": usage})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/topics/<topic_id>/synthesis")
+def api_topic_synthesis_cached(topic_id):
+    try:
+        cached = get_topic_synthesis(topic_id)
+        if not cached:
+            return jsonify({"exists": False})
+        return jsonify({
+            "exists": True,
+            "synthesis": cached["synthesis_json"],
+            "topic_name": cached.get("topic_name", ""),
+            "genome_count": cached.get("genome_count", 0),
+            "created_at": cached["created_at"].isoformat() if cached.get("created_at") else None,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/compare", methods=["POST"])
+def api_taxonomy_compare():
+    try:
+        data = request.get_json()
+        tids = data.get("tids", [])
+        if not tids or len(tids) < 2 or len(tids) > 3:
+            return jsonify({"error": "Provide 2-3 TIDs for comparison"}), 400
+
+        genomes = get_genomes_for_comparison(tids)
+        if len(genomes) < 2:
+            return jsonify({"error": "Not all TIDs have genomes"}), 404
+
+        result = []
+        for g in genomes:
+            genome_json = g["genome_json"]
+            d1 = genome_json.get("dimension_1_visible", {})
+            d4 = genome_json.get("dimension_4_weaponizable", {})
+            d5 = genome_json.get("dimension_5_synthesis", {})
+
+            result.append({
+                "tid": g["tid"],
+                "title": g.get("title", ""),
+                "court_source": g.get("court_source", ""),
+                "publish_date": g["publish_date"].isoformat() if g.get("publish_date") else "",
+                "durability_score": g.get("overall_durability_score"),
+                "case_identity": d1.get("case_identity", {}),
+                "ratio_decidendi": d1.get("ratio_decidendi", []),
+                "provisions_engaged": d1.get("provisions_engaged", []),
+                "sword_uses": d4.get("sword_uses", []),
+                "shield_uses": d4.get("shield_uses", []),
+                "vulnerability_map": d4.get("vulnerability_map", {}),
+                "cheat_sheet": d5.get("practitioners_cheat_sheet", {}),
+                "genome_summary": d5.get("genome_summary", ""),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/topics/<topic_id>/scan-conflicts", methods=["POST"])
+def api_topic_scan_conflicts(topic_id):
+    try:
+        from conflict_radar import scan_conflicts
+        scan, usage = scan_conflicts(topic_id)
+        return jsonify({"scan": scan, "usage": usage})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/topics/<topic_id>/conflicts")
+def api_topic_conflicts_cached(topic_id):
+    try:
+        cached = get_conflict_scan(topic_id)
+        if not cached:
+            return jsonify({"exists": False})
+        return jsonify({
+            "exists": True,
+            "scan": cached["scan_json"],
+            "genome_count": cached.get("genome_count", 0),
+            "created_at": cached["created_at"].isoformat() if cached.get("created_at") else None,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/courts")
+def api_district_courts():
+    try:
+        city = request.args.get("city")
+        courts = get_district_courts(city)
+        return jsonify([dict(c) for c in courts])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/courts/<int:court_id>/judges")
+def api_district_court_judges(court_id):
+    try:
+        judges = get_district_judges(court_id)
+        result = []
+        for j in judges:
+            result.append({
+                "id": j["id"], "name": j["name"],
+                "designation": j.get("designation", ""),
+                "court_name": j.get("court_name", ""),
+                "specializations": j.get("specializations", []),
+                "active": j.get("active", True),
+                "order_count": j.get("order_count", 0),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/judges/<int:judge_id>")
+def api_district_judge_detail(judge_id):
+    try:
+        judge = get_district_judge(judge_id)
+        if not judge:
+            return jsonify({"error": "Judge not found"}), 404
+        return jsonify(dict(judge))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/judges/<int:judge_id>/orders")
+def api_district_judge_orders(judge_id):
+    try:
+        page = request.args.get("page", 1, type=int)
+        orders = get_district_orders(judge_id, page=page)
+        result = []
+        total = 0
+        for o in orders:
+            total = o.get("total", 0)
+            row = dict(o)
+            row.pop("total", None)
+            if row.get("order_date"):
+                row["order_date"] = row["order_date"].isoformat()
+            if row.get("created_at"):
+                row["created_at"] = row["created_at"].isoformat()
+            result.append(row)
+        return jsonify({"orders": result, "total": total, "page": page})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/judges", methods=["POST"])
+def api_add_district_judge():
+    try:
+        data = request.get_json()
+        name = data.get("name", "").strip()
+        if not name:
+            return jsonify({"error": "Name is required"}), 400
+        court_id = data.get("court_id")
+        if not court_id:
+            return jsonify({"error": "Court ID is required"}), 400
+        judge_id = add_district_judge(
+            name=name,
+            designation=data.get("designation", ""),
+            court_id=int(court_id),
+            specializations=data.get("specializations", []),
+        )
+        return jsonify({"id": judge_id, "name": name})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/orders", methods=["POST"])
+def api_add_district_order():
+    try:
+        data = request.get_json()
+        judge_id = data.get("judge_id")
+        court_id = data.get("court_id")
+        if not judge_id or not court_id:
+            return jsonify({"error": "judge_id and court_id are required"}), 400
+        order_id = add_district_order(
+            judge_id=int(judge_id),
+            court_id=int(court_id),
+            order_date=data.get("order_date"),
+            case_type=data.get("case_type", ""),
+            case_number=data.get("case_number", ""),
+            petitioner=data.get("petitioner", ""),
+            respondent=data.get("respondent", ""),
+            order_text=data.get("order_text", ""),
+            order_source_url=data.get("order_source_url"),
+            tid=data.get("tid"),
+        )
+        return jsonify({"id": order_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/judges/<int:judge_id>/profile")
+def api_judge_profile(judge_id):
+    try:
+        profile = get_judge_profile(judge_id)
+        if not profile:
+            return jsonify({"exists": False})
+        return jsonify({
+            "exists": True,
+            "profile": profile["profile_json"],
+            "total_orders_analyzed": profile.get("total_orders_analyzed", 0),
+            "last_updated": profile["last_updated"].isoformat() if profile.get("last_updated") else None,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/district/judges/<int:judge_id>/analyze", methods=["POST"])
+def api_analyze_judge(judge_id):
+    return jsonify({"error": "Judge analysis is coming soon. Import more orders first."}), 501
 
 
 try:

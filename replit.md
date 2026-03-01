@@ -15,10 +15,12 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── synthesis.py        # Dual-perspective research memo synthesis
 │   ├── query_generator.py  # Question-to-IK-search-query converter
 │   ├── cost_tracker.py     # Pipeline cost tracking (Claude API + IK API, USD/INR)
+│   ├── topic_synthesis.py  # AI topic synthesis (evolution timeline, killer arguments)
+│   ├── conflict_radar.py   # AI cross-topic conflict detection
 │   ├── taxonomy_seed.py    # Taxonomy seed script (categories, topics, provisions)
 │   ├── auto_tagger.py      # Auto-tagger engine (provision matching, keyword matching)
 │   ├── templates/
-│   │   └── index.html       # Search + Analysis + Genome Lab + Pipeline page
+│   │   └── index.html       # Search + Analysis + Genome Lab + Pipeline + District Court page
 │   └── static/
 │       ├── style.css        # Styles
 │       ├── app.js           # Frontend logic (search, analysis, genome lab, pipeline)
@@ -111,7 +113,21 @@ Four sub-tabs for deep legal analysis:
 - Auto-tagging: new genomes automatically tagged on save (extraction, pipeline, manual import)
 - No AI calls — pure string matching against provision index and topic keywords
 - 17 categories, 28 topics, 56 canonical provisions seeded from existing genome data
-- API: GET /api/taxonomy/categories, topics, provisions, search, genome tags, stats; POST /api/taxonomy/retag
+- **Coverage Dashboard**: Collapsible heatmap showing all topics color-coded by strength (STRONG/MODERATE/WEAK/GAP). Summary bar with topics covered, avg strength, gap count. Click any cell to navigate to that topic's genomes.
+- **Topic Synthesis**: "Synthesize" button on each topic card. AI generates evolution timeline, settled propositions, open questions, killer arguments (petitioner + respondent), practice advisory. Cached in `topic_syntheses` table. Uses Claude Sonnet 4.
+- **Genome Comparison**: Select 2-3 genomes via checkboxes → "Compare Selected" button → side-by-side view of ratio decidendi, provisions, sword/shield uses, vulnerability, cheat sheets.
+- **Conflict Radar**: "Conflict Radar" button on each topic card. AI scans all genomes within a topic for contradictions (ratio conflicts, sword/shield conflicts, temporal shifts, hierarchy conflicts). Shows severity (HIGH/MEDIUM/LOW), resolution strategies, advocate actions. Cached in `conflict_scans` table. Uses Claude Sonnet 4.
+- API: GET /api/taxonomy/categories, topics, provisions, search, genome tags, stats, heatmap; POST /api/taxonomy/retag, compare; GET/POST synthesis and conflict endpoints per topic
+
+### District Court Tab (Judge Profiling)
+- Delhi district courts: Saket, Patiala House, Tis Hazari, Rohini, Dwarka, Karkardooma (pre-seeded)
+- Judge management: add judges per court with name and designation
+- Order import: manually add court orders with case number, date, type (bail/interim/final/misc), parties, full text
+- Orders table: paginated, sorted by date, with case type badges
+- Judge Mind Map: placeholder for AI behavioral analysis (requires 10+ orders)
+- Expandable to other cities (city selector in UI)
+- API: GET /api/district/courts, judges, orders; POST /api/district/judges, orders; GET /api/district/judges/<id>/profile
+- New files: `web/topic_synthesis.py` (topic synthesis AI), `web/conflict_radar.py` (conflict detection AI)
 
 ### Pipeline Tab (Autonomous Research)
 Full end-to-end legal research pipeline. Submit a pleading and the system autonomously:
@@ -172,8 +188,15 @@ COMPLETED / FAILED
 - `genome_categories` — genome_tid + category_id PK, auto_tagged BOOLEAN, many-to-many
 - `genome_topics` — genome_tid + topic_id PK, auto_tagged BOOLEAN, confidence FLOAT, many-to-many
 - `provision_index` — id TEXT PK (canonical, e.g., NI_ACT_S138), canonical_name, parent_statute, aliases TEXT[], category_id (FK)
+- `topic_syntheses` — topic_id (FK), synthesis_json (JSONB), model, genome_count, created_at
+- `conflict_scans` — topic_id, category_id, scan_json (JSONB), model, genome_count, created_at
+- `district_courts` — id SERIAL PK, name, city, state, court_code UNIQUE, created_at
+- `district_judges` — id SERIAL PK, name, designation, court_id (FK), active BOOLEAN, created_at
+- `district_court_orders` — id SERIAL PK, judge_id (FK), court_id (FK), order_date, case_type, case_number, petitioner, respondent, order_text, tid (nullable), created_at
+- `judge_genomes` — id SERIAL PK, judge_id (FK), order_id (FK), genome_json (JSONB), schema_version, extraction_model, extraction_date, durability_score
+- `judge_profiles` — judge_id (FK, UNIQUE), profile_json (JSONB), total_orders_analyzed, last_updated, model_used
 
-Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_search_queries_text`, `idx_genomes_tid`, `idx_research_jobs_status`, `idx_pipeline_queries_job`, `idx_pipeline_results_job`, `idx_pipeline_results_relevant`, `idx_taxonomy_topics_category`, `idx_taxonomy_topics_keywords` (GIN), `idx_genome_categories_cat`, `idx_genome_topics_topic`, `idx_provision_index_aliases` (GIN), `idx_provision_index_category`
+Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_search_queries_text`, `idx_genomes_tid`, `idx_research_jobs_status`, `idx_pipeline_queries_job`, `idx_pipeline_results_job`, `idx_pipeline_results_relevant`, `idx_taxonomy_topics_category`, `idx_taxonomy_topics_keywords` (GIN), `idx_genome_categories_cat`, `idx_genome_topics_topic`, `idx_provision_index_aliases` (GIN), `idx_provision_index_category`, `idx_dc_orders_judge`, `idx_dc_orders_court`, `idx_dc_orders_type`
 
 ## API Endpoints
 
@@ -216,6 +239,21 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - `GET /api/taxonomy/genome/<tid>/tags` — Get category/topic tags for a genome
 - `GET /api/taxonomy/stats` — Taxonomy overview stats
 - `POST /api/taxonomy/retag` — Re-run auto-tagger on all genomes
+- `GET /api/taxonomy/heatmap` — Coverage dashboard data (all topics with strength labels)
+- `POST /api/taxonomy/topics/<topic_id>/synthesize` — AI topic synthesis (uses Claude Sonnet 4)
+- `GET /api/taxonomy/topics/<topic_id>/synthesis` — Get cached topic synthesis
+- `POST /api/taxonomy/compare` — Compare 2-3 genomes side-by-side `{"tids": [tid1, tid2]}`
+- `POST /api/taxonomy/topics/<topic_id>/scan-conflicts` — AI conflict scan (uses Claude Sonnet 4)
+- `GET /api/taxonomy/topics/<topic_id>/conflicts` — Get cached conflict scan
+
+### District Court (Judge Profiling)
+- `GET /api/district/courts?city=` — List courts by city
+- `GET /api/district/courts/<court_id>/judges` — List judges for a court
+- `GET /api/district/judges/<judge_id>` — Judge detail with stats
+- `GET /api/district/judges/<judge_id>/orders?page=` — Paginated orders
+- `POST /api/district/judges` — Add a judge `{"name":"...", "designation":"...", "court_id": int}`
+- `POST /api/district/orders` — Import an order with full text
+- `GET /api/district/judges/<judge_id>/profile` — Get cached judge profile
 
 ## Environment Variables
 

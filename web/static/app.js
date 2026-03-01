@@ -2086,8 +2086,11 @@ function loadTaxonomyCategories() {
                     this.classList.add("active");
                     document.getElementById("taxonomySearchResults").style.display = "none";
                     document.getElementById("taxonomyGenomeList").style.display = "none";
+                    document.getElementById("taxonomySynthesisPanel").style.display = "none";
+                    document.getElementById("taxonomyConflictPanel").style.display = "none";
+                    document.getElementById("taxonomyComparePanel").style.display = "none";
                     document.getElementById("taxonomyTopicList").style.display = "";
-                    loadTaxonomyTopics(catId);
+                    loadTaxonomyTopicsWithActions(catId);
                 });
             });
         });
@@ -2318,6 +2321,749 @@ document.querySelectorAll(".genome-sub-tab").forEach(function (tab) {
         if (this.getAttribute("data-subtab") === "taxonomyBrowser") {
             loadTaxonomyStats();
             loadTaxonomyCategories();
+        }
+    });
+});
+
+var _heatmapVisible = false;
+var heatmapToggle = document.getElementById("heatmapToggleBtn");
+if (heatmapToggle) {
+    heatmapToggle.addEventListener("click", function () {
+        _heatmapVisible = !_heatmapVisible;
+        var dash = document.getElementById("heatmapDashboard");
+        dash.style.display = _heatmapVisible ? "" : "none";
+        this.textContent = _heatmapVisible ? "Hide Dashboard" : "Coverage Dashboard";
+        if (_heatmapVisible) loadHeatmap();
+    });
+}
+
+function loadHeatmap() {
+    var grid = document.getElementById("heatmapGrid");
+    var summary = document.getElementById("heatmapSummary");
+    grid.innerHTML = '<div class="empty-state"><p>Loading coverage data...</p></div>';
+    fetch("/api/taxonomy/heatmap")
+        .then(function (r) { return r.json(); })
+        .then(function (cats) {
+            var totalTopics = 0, coveredTopics = 0, totalGaps = 0, strengthSum = 0, strengthCount = 0;
+            cats.forEach(function (c) {
+                c.topics.forEach(function (t) {
+                    totalTopics++;
+                    if (t.genome_count > 0) { coveredTopics++; strengthSum += t.avg_durability; strengthCount++; }
+                    if (t.strength === "GAP") totalGaps++;
+                });
+            });
+            var avgStr = strengthCount > 0 ? (strengthSum / strengthCount).toFixed(1) : "N/A";
+            summary.innerHTML =
+                '<div class="heatmap-stat"><span class="heatmap-stat-val">' + coveredTopics + '/' + totalTopics + '</span><span class="heatmap-stat-lbl">Topics Covered</span></div>' +
+                '<div class="heatmap-stat"><span class="heatmap-stat-val">' + avgStr + '</span><span class="heatmap-stat-lbl">Avg Strength</span></div>' +
+                '<div class="heatmap-stat"><span class="heatmap-stat-val' + (totalGaps > 0 ? ' heatmap-gap-count' : '') + '">' + totalGaps + '</span><span class="heatmap-stat-lbl">Gaps</span></div>';
+
+            var html = "";
+            cats.forEach(function (c) {
+                if (!c.topics.length) return;
+                html += '<div class="heatmap-category"><div class="heatmap-cat-header">' +
+                    '<span class="heatmap-cat-name">' + escapeHtml(c.name) + '</span>' +
+                    '<span class="heatmap-cat-coverage">' + c.topic_coverage + ' topics</span></div>' +
+                    '<div class="heatmap-cells">';
+                c.topics.forEach(function (t) {
+                    var cls = "heatmap-cell heatmap-" + t.strength.toLowerCase();
+                    html += '<div class="' + cls + '" data-topic-id="' + t.id + '" title="' +
+                        escapeHtml(t.name) + '\nGenomes: ' + t.genome_count + '\nAvg Durability: ' + t.avg_durability +
+                        (t.min_durability ? '\nRange: ' + t.min_durability + '-' + t.max_durability : '') + '">' +
+                        '<span class="heatmap-cell-name">' + escapeHtml(t.name) + '</span>' +
+                        '<span class="heatmap-cell-stats">' + t.genome_count + ' | ' + t.avg_durability + '</span>' +
+                        '</div>';
+                });
+                html += '</div></div>';
+            });
+            grid.innerHTML = html;
+            grid.querySelectorAll(".heatmap-cell").forEach(function (el) {
+                el.addEventListener("click", function () {
+                    var topicId = this.getAttribute("data-topic-id");
+                    var topicName = this.querySelector(".heatmap-cell-name").textContent;
+                    _heatmapVisible = false;
+                    document.getElementById("heatmapDashboard").style.display = "none";
+                    heatmapToggle.textContent = "Coverage Dashboard";
+                    loadTaxonomyGenomes("topic", topicId, topicName);
+                });
+            });
+        });
+}
+
+var _selectedCompareGenomes = [];
+
+function loadTaxonomyTopicsWithActions(catId) {
+    var container = document.getElementById("taxonomyTopicList");
+    container.innerHTML = '<div class="empty-state"><p>Loading topics...</p></div>';
+    fetch("/api/taxonomy/topics?category_id=" + encodeURIComponent(catId))
+        .then(function (r) { return r.json(); })
+        .then(function (topics) {
+            if (!topics.length) {
+                container.innerHTML = '<div class="empty-state"><p>No topics defined for this category yet.</p></div>';
+                return;
+            }
+            var html = "";
+            topics.forEach(function (t) {
+                var kwHtml = "";
+                if (t.keywords && t.keywords.length) {
+                    t.keywords.slice(0, 8).forEach(function (kw) {
+                        kwHtml += '<span class="taxonomy-keyword-tag">' + escapeHtml(kw) + '</span>';
+                    });
+                    if (t.keywords.length > 8) kwHtml += '<span class="taxonomy-keyword-tag">+' + (t.keywords.length - 8) + ' more</span>';
+                }
+                html += '<div class="taxonomy-topic-card" data-topic-id="' + t.id + '">' +
+                    '<div class="taxonomy-topic-header"><span class="taxonomy-topic-name">' + escapeHtml(t.name) + '</span>' +
+                    '<span class="taxonomy-topic-count">' + t.genome_count + ' genome' + (t.genome_count !== 1 ? 's' : '') + '</span></div>' +
+                    (t.description ? '<div class="taxonomy-topic-desc">' + escapeHtml(t.description) + '</div>' : '') +
+                    (kwHtml ? '<div class="taxonomy-topic-keywords">' + kwHtml + '</div>' : '') +
+                    '<div class="taxonomy-topic-actions">' +
+                    '<button class="btn-sm topic-synth-btn" data-topic-id="' + t.id + '" data-topic-name="' + escapeHtml(t.name) + '">Synthesize</button>' +
+                    '<button class="btn-sm btn-secondary topic-conflict-btn" data-topic-id="' + t.id + '" data-topic-name="' + escapeHtml(t.name) + '">Conflict Radar</button>' +
+                    '</div></div>';
+            });
+            container.innerHTML = html;
+            container.querySelectorAll(".taxonomy-topic-card").forEach(function (el) {
+                el.addEventListener("click", function (e) {
+                    if (e.target.classList.contains("topic-synth-btn") || e.target.classList.contains("topic-conflict-btn")) return;
+                    var topicId = this.getAttribute("data-topic-id");
+                    var topicName = this.querySelector(".taxonomy-topic-name").textContent;
+                    _taxonomyActiveTopic = topicId;
+                    loadTaxonomyGenomesWithCompare("topic", topicId, topicName);
+                });
+            });
+            container.querySelectorAll(".topic-synth-btn").forEach(function (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    triggerTopicSynthesis(this.getAttribute("data-topic-id"), this.getAttribute("data-topic-name"));
+                });
+            });
+            container.querySelectorAll(".topic-conflict-btn").forEach(function (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    triggerConflictScan(this.getAttribute("data-topic-id"), this.getAttribute("data-topic-name"));
+                });
+            });
+        });
+}
+
+function triggerTopicSynthesis(topicId, topicName) {
+    var panel = document.getElementById("taxonomySynthesisPanel");
+    document.getElementById("taxonomyTopicList").style.display = "none";
+    document.getElementById("taxonomyGenomeList").style.display = "none";
+    document.getElementById("taxonomySearchResults").style.display = "none";
+    document.getElementById("taxonomyConflictPanel").style.display = "none";
+    document.getElementById("taxonomyComparePanel").style.display = "none";
+    panel.style.display = "";
+    panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" id="synthBackBtn">Back to Topics</button>' +
+        '<h3>Topic Synthesis: ' + escapeHtml(topicName) + '</h3>' +
+        '<div class="synth-loading"><div class="spinner"></div><p>Checking for cached synthesis...</p></div>';
+
+    document.getElementById("synthBackBtn").addEventListener("click", function () {
+        panel.style.display = "none";
+        document.getElementById("taxonomyTopicList").style.display = "";
+        if (_taxonomyActiveCat) loadTaxonomyTopicsWithActions(_taxonomyActiveCat);
+    });
+
+    fetch("/api/taxonomy/topics/" + encodeURIComponent(topicId) + "/synthesis")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.exists) {
+                renderSynthesis(panel, topicName, data.synthesis, data.created_at, topicId);
+            } else {
+                panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" id="synthBackBtn2">Back to Topics</button>' +
+                    '<h3>Topic Synthesis: ' + escapeHtml(topicName) + '</h3>' +
+                    '<div class="synth-loading"><div class="spinner"></div><p>Generating synthesis with AI... This may take 30-60 seconds.</p></div>';
+                document.getElementById("synthBackBtn2").addEventListener("click", function () {
+                    panel.style.display = "none";
+                    document.getElementById("taxonomyTopicList").style.display = "";
+                    if (_taxonomyActiveCat) loadTaxonomyTopicsWithActions(_taxonomyActiveCat);
+                });
+                fetch("/api/taxonomy/topics/" + encodeURIComponent(topicId) + "/synthesize", { method: "POST" })
+                    .then(function (r) { return r.json(); })
+                    .then(function (result) {
+                        if (result.error) { panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" onclick="document.getElementById(\'taxonomySynthesisPanel\').style.display=\'none\';document.getElementById(\'taxonomyTopicList\').style.display=\'\';">Back</button><div class="empty-state"><p>Error: ' + escapeHtml(result.error) + '</p></div>'; return; }
+                        renderSynthesis(panel, topicName, result.synthesis, null, topicId);
+                    });
+            }
+        });
+}
+
+function renderSynthesis(panel, topicName, s, createdAt, topicId) {
+    var html = '<button class="btn-sm taxonomy-back-btn" id="synthBackBtnR">Back to Topics</button>';
+    html += '<div class="synth-header"><h3>Topic Synthesis: ' + escapeHtml(topicName) + '</h3>';
+    if (createdAt) html += '<span class="synth-date">Generated: ' + new Date(createdAt).toLocaleDateString() + '</span>';
+    html += '<button class="btn-sm btn-secondary" id="synthRefreshBtn" data-topic-id="' + topicId + '" data-topic-name="' + escapeHtml(topicName) + '">Refresh</button></div>';
+
+    var badge = s.strength_assessment || "N/A";
+    var badgeCls = badge === "STRONG" ? "badge-strong" : badge === "MODERATE" ? "badge-moderate" : badge === "WEAK" ? "badge-weak" : "badge-dev";
+    html += '<div class="synth-strength-badge ' + badgeCls + '">' + badge + '</div>';
+
+    if (s.current_legal_position) {
+        html += '<div class="synth-section"><h4>Current Legal Position</h4><div class="synth-text">' + escapeHtml(s.current_legal_position).replace(/\n/g, '<br>') + '</div></div>';
+    }
+
+    if (s.evolution_timeline && s.evolution_timeline.length) {
+        html += '<div class="synth-section"><h4>Evolution Timeline</h4><div class="synth-timeline">';
+        s.evolution_timeline.forEach(function (e) {
+            html += '<div class="synth-timeline-item"><span class="synth-tl-year">' + escapeHtml(e.year_range || '') + '</span>' +
+                '<span class="synth-tl-text">' + escapeHtml(e.development || '') +
+                (e.key_case_tid ? ' <a class="synth-tid-link" data-tid="' + e.key_case_tid + '">[TID ' + e.key_case_tid + ']</a>' : '') +
+                '</span></div>';
+        });
+        html += '</div></div>';
+    }
+
+    if (s.settled_propositions && s.settled_propositions.length) {
+        html += '<div class="synth-section"><h4>Settled Propositions</h4>';
+        s.settled_propositions.forEach(function (p) {
+            var confCls = p.confidence === "HIGH" ? "conf-high" : p.confidence === "MEDIUM" ? "conf-med" : "conf-low";
+            html += '<div class="synth-prop"><span class="synth-conf ' + confCls + '">' + (p.confidence || '') + '</span>' +
+                '<span>' + escapeHtml(p.proposition || '') + '</span>';
+            if (p.supporting_tids && p.supporting_tids.length) {
+                html += '<span class="synth-tids">[TIDs: ' + p.supporting_tids.join(', ') + ']</span>';
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    if (s.open_questions && s.open_questions.length) {
+        html += '<div class="synth-section"><h4>Open Questions</h4>';
+        s.open_questions.forEach(function (q) {
+            html += '<div class="synth-question"><div class="synth-q-text">' + escapeHtml(q.question || '') + '</div>';
+            if (q.competing_views) {
+                q.competing_views.forEach(function (v) {
+                    html += '<div class="synth-view"><span class="synth-view-arrow">&#8627;</span>' + escapeHtml(v.view || '') +
+                        (v.supporting_tids && v.supporting_tids.length ? ' <span class="synth-tids">[TIDs: ' + v.supporting_tids.join(', ') + ']</span>' : '') + '</div>';
+                });
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    if (s.killer_argument) {
+        html += '<div class="synth-section"><h4>Killer Arguments</h4><div class="synth-killer-grid">' +
+            '<div class="synth-killer-card synth-killer-pet"><div class="synth-killer-label">For Petitioner</div>' +
+            '<div class="synth-killer-text">' + escapeHtml(s.killer_argument.for_petitioner || '') + '</div></div>' +
+            '<div class="synth-killer-card synth-killer-res"><div class="synth-killer-label">For Respondent</div>' +
+            '<div class="synth-killer-text">' + escapeHtml(s.killer_argument.for_respondent || '') + '</div></div></div></div>';
+    }
+
+    if (s.practice_advisory) {
+        html += '<div class="synth-section synth-advisory"><h4>Practice Advisory</h4><div class="synth-text">' + escapeHtml(s.practice_advisory).replace(/\n/g, '<br>') + '</div></div>';
+    }
+
+    panel.innerHTML = html;
+    document.getElementById("synthBackBtnR").addEventListener("click", function () {
+        panel.style.display = "none";
+        document.getElementById("taxonomyTopicList").style.display = "";
+        if (_taxonomyActiveCat) loadTaxonomyTopicsWithActions(_taxonomyActiveCat);
+    });
+    var refreshBtn = document.getElementById("synthRefreshBtn");
+    if (refreshBtn) {
+        refreshBtn.addEventListener("click", function () {
+            panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" onclick="document.getElementById(\'taxonomySynthesisPanel\').style.display=\'none\';document.getElementById(\'taxonomyTopicList\').style.display=\'\';">Back</button>' +
+                '<h3>Refreshing synthesis...</h3><div class="synth-loading"><div class="spinner"></div><p>Regenerating with AI...</p></div>';
+            fetch("/api/taxonomy/topics/" + encodeURIComponent(this.getAttribute("data-topic-id")) + "/synthesize", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ force: true }) })
+                .then(function (r) { return r.json(); })
+                .then(function (result) {
+                    if (result.synthesis) renderSynthesis(panel, topicName, result.synthesis, null, topicId);
+                });
+        });
+    }
+    panel.querySelectorAll(".synth-tid-link").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            showGenomeFromDb(parseInt(this.getAttribute("data-tid")));
+        });
+    });
+}
+
+function triggerConflictScan(topicId, topicName) {
+    var panel = document.getElementById("taxonomyConflictPanel");
+    document.getElementById("taxonomyTopicList").style.display = "none";
+    document.getElementById("taxonomyGenomeList").style.display = "none";
+    document.getElementById("taxonomySearchResults").style.display = "none";
+    document.getElementById("taxonomySynthesisPanel").style.display = "none";
+    document.getElementById("taxonomyComparePanel").style.display = "none";
+    panel.style.display = "";
+    panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" id="conflictBackBtn">Back to Topics</button>' +
+        '<h3>Conflict Radar: ' + escapeHtml(topicName) + '</h3>' +
+        '<div class="synth-loading"><div class="spinner"></div><p>Checking for cached scan...</p></div>';
+
+    document.getElementById("conflictBackBtn").addEventListener("click", function () {
+        panel.style.display = "none";
+        document.getElementById("taxonomyTopicList").style.display = "";
+        if (_taxonomyActiveCat) loadTaxonomyTopicsWithActions(_taxonomyActiveCat);
+    });
+
+    fetch("/api/taxonomy/topics/" + encodeURIComponent(topicId) + "/conflicts")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.exists) {
+                renderConflicts(panel, topicName, data.scan, data.created_at, topicId);
+            } else {
+                panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" id="conflictBackBtn2">Back to Topics</button>' +
+                    '<h3>Conflict Radar: ' + escapeHtml(topicName) + '</h3>' +
+                    '<div class="synth-loading"><div class="spinner"></div><p>Scanning for conflicts with AI... This may take 30-60 seconds.</p></div>';
+                document.getElementById("conflictBackBtn2").addEventListener("click", function () {
+                    panel.style.display = "none";
+                    document.getElementById("taxonomyTopicList").style.display = "";
+                    if (_taxonomyActiveCat) loadTaxonomyTopicsWithActions(_taxonomyActiveCat);
+                });
+                fetch("/api/taxonomy/topics/" + encodeURIComponent(topicId) + "/scan-conflicts", { method: "POST" })
+                    .then(function (r) { return r.json(); })
+                    .then(function (result) {
+                        if (result.error) { panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" onclick="document.getElementById(\'taxonomyConflictPanel\').style.display=\'none\';document.getElementById(\'taxonomyTopicList\').style.display=\'\';">Back</button><div class="empty-state"><p>Error: ' + escapeHtml(result.error) + '</p></div>'; return; }
+                        renderConflicts(panel, topicName, result.scan, null, topicId);
+                    });
+            }
+        });
+}
+
+function renderConflicts(panel, topicName, scan, createdAt, topicId) {
+    var html = '<button class="btn-sm taxonomy-back-btn" id="conflictBackBtnR">Back to Topics</button>';
+    html += '<div class="synth-header"><h3>Conflict Radar: ' + escapeHtml(topicName) + '</h3>';
+    if (createdAt) html += '<span class="synth-date">' + new Date(createdAt).toLocaleDateString() + '</span>';
+    html += '<button class="btn-sm btn-secondary" id="conflictRescanBtn">Rescan</button></div>';
+
+    var coh = scan.overall_coherence || "CONSISTENT";
+    var cohCls = coh === "CONSISTENT" ? "badge-strong" : coh === "MINOR_TENSIONS" ? "badge-moderate" : coh === "SIGNIFICANT_CONFLICTS" ? "badge-weak" : "badge-dev";
+    html += '<div class="conflict-coherence ' + cohCls + '">' + coh.replace(/_/g, ' ') + '</div>';
+    html += '<div class="conflict-count">' + (scan.conflicts ? scan.conflicts.length : 0) + ' conflict' + ((scan.conflicts && scan.conflicts.length !== 1) ? 's' : '') + ' found in ' + (scan.total_genomes_scanned || 0) + ' genomes</div>';
+
+    if (scan.conflicts && scan.conflicts.length) {
+        scan.conflicts.sort(function (a, b) { var ord = { HIGH: 0, MEDIUM: 1, LOW: 2 }; return (ord[a.severity] || 3) - (ord[b.severity] || 3); });
+        scan.conflicts.forEach(function (c) {
+            var sevCls = c.severity === "HIGH" ? "sev-high" : c.severity === "MEDIUM" ? "sev-med" : "sev-low";
+            html += '<div class="conflict-card">' +
+                '<div class="conflict-card-header">' +
+                '<span class="conflict-sev ' + sevCls + '">' + c.severity + '</span>' +
+                '<span class="conflict-type">' + (c.type || '').replace(/_/g, ' ') + '</span>' +
+                '</div>' +
+                '<div class="conflict-desc">' + escapeHtml(c.description || '') + '</div>' +
+                '<div class="conflict-positions">' +
+                '<div class="conflict-pos conflict-pos-a"><span class="conflict-pos-label">Position A (TID ' + (c.genome_a ? c.genome_a.tid : '') + ')</span>' +
+                '<span class="conflict-pos-case">' + escapeHtml(c.genome_a ? c.genome_a.case_name || '' : '') + '</span>' +
+                '<span class="conflict-pos-text">' + escapeHtml(c.genome_a ? c.genome_a.position || '' : '') + '</span></div>' +
+                '<div class="conflict-pos conflict-pos-b"><span class="conflict-pos-label">Position B (TID ' + (c.genome_b ? c.genome_b.tid : '') + ')</span>' +
+                '<span class="conflict-pos-case">' + escapeHtml(c.genome_b ? c.genome_b.case_name || '' : '') + '</span>' +
+                '<span class="conflict-pos-text">' + escapeHtml(c.genome_b ? c.genome_b.position || '' : '') + '</span></div></div>' +
+                '<div class="conflict-resolution"><strong>Resolution:</strong> ' + escapeHtml(c.resolution_strategy || '') + '</div>' +
+                '<div class="conflict-action"><strong>Action:</strong> ' + escapeHtml(c.advocate_action || '') + '</div>' +
+                '</div>';
+        });
+    } else {
+        html += '<div class="empty-state"><p>No conflicts detected. The case law on this topic appears consistent.</p></div>';
+    }
+
+    panel.innerHTML = html;
+    document.getElementById("conflictBackBtnR").addEventListener("click", function () {
+        panel.style.display = "none";
+        document.getElementById("taxonomyTopicList").style.display = "";
+        if (_taxonomyActiveCat) loadTaxonomyTopicsWithActions(_taxonomyActiveCat);
+    });
+    var rescan = document.getElementById("conflictRescanBtn");
+    if (rescan) {
+        rescan.addEventListener("click", function () {
+            panel.innerHTML = '<button class="btn-sm taxonomy-back-btn" onclick="document.getElementById(\'taxonomyConflictPanel\').style.display=\'none\';document.getElementById(\'taxonomyTopicList\').style.display=\'\';">Back</button><h3>Rescanning...</h3><div class="synth-loading"><div class="spinner"></div></div>';
+            fetch("/api/taxonomy/topics/" + encodeURIComponent(topicId) + "/scan-conflicts", { method: "POST" })
+                .then(function (r) { return r.json(); })
+                .then(function (result) {
+                    if (result.scan) renderConflicts(panel, topicName, result.scan, null, topicId);
+                });
+        });
+    }
+}
+
+function loadTaxonomyGenomesWithCompare(type, id, label) {
+    document.getElementById("taxonomyTopicList").style.display = "none";
+    document.getElementById("taxonomySearchResults").style.display = "none";
+    document.getElementById("taxonomySynthesisPanel").style.display = "none";
+    document.getElementById("taxonomyConflictPanel").style.display = "none";
+    document.getElementById("taxonomyComparePanel").style.display = "none";
+    var genomeSection = document.getElementById("taxonomyGenomeList");
+    genomeSection.style.display = "";
+    document.getElementById("taxonomyGenomeListTitle").textContent = label;
+    var cardsDiv = document.getElementById("taxonomyGenomeCards");
+    cardsDiv.innerHTML = '<div class="empty-state"><p>Loading genomes...</p></div>';
+    _selectedCompareGenomes = [];
+    updateCompareBtn();
+
+    var url = type === "topic"
+        ? "/api/taxonomy/topics/" + encodeURIComponent(id) + "/genomes"
+        : "/api/taxonomy/categories/" + encodeURIComponent(id) + "/genomes";
+
+    fetch(url)
+        .then(function (r) { return r.json(); })
+        .then(function (genomes) {
+            if (!genomes.length) {
+                cardsDiv.innerHTML = '<div class="empty-state"><p>No genomes linked to this ' + type + '.</p></div>';
+                return;
+            }
+            var html = "";
+            genomes.forEach(function (g) {
+                var ds = g.durability_score;
+                var dsColor = ds >= 8 ? "#27ae60" : ds >= 6 ? "#f39c12" : ds >= 4 ? "#e67e22" : "#e74c3c";
+                var dsWidth = ds ? (ds * 10) + "%" : "0%";
+                html += '<div class="taxonomy-genome-card" data-tid="' + g.tid + '">' +
+                    '<div class="taxonomy-genome-card-top">' +
+                    '<label class="compare-checkbox-label" onclick="event.stopPropagation();">' +
+                    '<input type="checkbox" class="compare-cb" data-tid="' + g.tid + '" data-title="' + escapeHtml(g.title || 'TID ' + g.tid) + '"> Compare</label></div>' +
+                    '<div class="taxonomy-genome-title">' + escapeHtml(g.title || 'TID ' + g.tid) + '</div>' +
+                    '<div class="taxonomy-genome-meta">' +
+                    (g.court_source ? '<span>' + escapeHtml(g.court_source) + '</span>' : '') +
+                    (g.publish_date ? '<span>' + g.publish_date + '</span>' : '') +
+                    (g.num_cited_by ? '<span>Cited: ' + g.num_cited_by + '</span>' : '') +
+                    (ds ? '<span>Durability: ' + ds + '/10</span>' : '') +
+                    (g.confidence && g.confidence < 1 ? '<span class="taxonomy-confidence-badge" style="background:#fff3e0;color:#e65100;">Match: ' + Math.round(g.confidence * 100) + '%</span>' : '') +
+                    '</div>' +
+                    (ds ? '<div class="taxonomy-durability-bar"><div class="taxonomy-durability-fill" style="width:' + dsWidth + ';background:' + dsColor + '"></div></div>' : '') +
+                    '</div>';
+            });
+            cardsDiv.innerHTML = html;
+            cardsDiv.querySelectorAll(".taxonomy-genome-card").forEach(function (el) {
+                el.addEventListener("click", function () {
+                    var tid = parseInt(this.getAttribute("data-tid"));
+                    showGenomeFromDb(tid);
+                });
+            });
+            cardsDiv.querySelectorAll(".compare-cb").forEach(function (cb) {
+                cb.addEventListener("change", function () {
+                    var tid = parseInt(this.getAttribute("data-tid"));
+                    if (this.checked) {
+                        if (_selectedCompareGenomes.length >= 3) { this.checked = false; return; }
+                        _selectedCompareGenomes.push(tid);
+                    } else {
+                        _selectedCompareGenomes = _selectedCompareGenomes.filter(function (t) { return t !== tid; });
+                    }
+                    updateCompareBtn();
+                });
+            });
+        });
+}
+
+function updateCompareBtn() {
+    var btn = document.getElementById("taxonomyCompareBtn");
+    if (!btn) return;
+    if (_selectedCompareGenomes.length >= 2) {
+        btn.style.display = "";
+        btn.textContent = "Compare " + _selectedCompareGenomes.length + " Genomes";
+    } else {
+        btn.style.display = "none";
+    }
+}
+
+var compareBtn = document.getElementById("taxonomyCompareBtn");
+if (compareBtn) {
+    compareBtn.addEventListener("click", function () {
+        if (_selectedCompareGenomes.length < 2) return;
+        loadComparison(_selectedCompareGenomes);
+    });
+}
+
+function loadComparison(tids) {
+    var panel = document.getElementById("taxonomyComparePanel");
+    document.getElementById("taxonomyGenomeList").style.display = "none";
+    document.getElementById("taxonomyTopicList").style.display = "none";
+    document.getElementById("taxonomySynthesisPanel").style.display = "none";
+    document.getElementById("taxonomyConflictPanel").style.display = "none";
+    panel.style.display = "";
+    panel.innerHTML = '<div class="synth-loading"><div class="spinner"></div><p>Loading comparison...</p></div>';
+
+    fetch("/api/taxonomy/compare", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tids: tids }) })
+        .then(function (r) { return r.json(); })
+        .then(function (genomes) {
+            if (genomes.error) { panel.innerHTML = '<div class="empty-state"><p>' + escapeHtml(genomes.error) + '</p></div>'; return; }
+            renderComparison(panel, genomes);
+        });
+}
+
+function renderComparison(panel, genomes) {
+    var colCount = genomes.length;
+    var html = '<button class="btn-sm taxonomy-back-btn" id="compareBackBtn">Back to Genomes</button>';
+    html += '<h3>Genome Comparison (' + colCount + ' judgments)</h3>';
+    html += '<div class="compare-grid compare-cols-' + colCount + '">';
+
+    html += '<div class="compare-row compare-header-row">';
+    genomes.forEach(function (g) {
+        html += '<div class="compare-col-header"><div class="compare-case-name">' + escapeHtml(g.title || 'TID ' + g.tid) + '</div>' +
+            '<div class="compare-meta">' + (g.court_source || '') + ' | ' + (g.publish_date || '') + '</div>' +
+            '<div class="compare-durability">Durability: ' + (g.durability_score || 'N/A') + '/10</div></div>';
+    });
+    html += '</div>';
+
+    html += _compareSection("Ratio Decidendi", genomes, function (g) {
+        var ratios = g.ratio_decidendi || [];
+        return ratios.map(function (r) {
+            return '<div class="compare-item"><strong>' + escapeHtml(r.label || '') + '</strong><br>' + escapeHtml(r.proposition || '') + '</div>';
+        }).join('') || '<em>None</em>';
+    });
+
+    html += _compareSection("Provisions Engaged", genomes, function (g) {
+        var provs = g.provisions_engaged || [];
+        return provs.map(function (p) {
+            return '<span class="compare-prov-tag">' + escapeHtml(p.provision_id || p.parent_statute || '') + '</span>';
+        }).join(' ') || '<em>None</em>';
+    });
+
+    html += _compareSection("Sword Uses", genomes, function (g) {
+        var swords = g.sword_uses || [];
+        return swords.map(function (s) {
+            return '<div class="compare-item">' + escapeHtml(s.scenario || '') + '</div>';
+        }).join('') || '<em>None</em>';
+    });
+
+    html += _compareSection("Shield Uses", genomes, function (g) {
+        var shields = g.shield_uses || [];
+        return shields.map(function (s) {
+            return '<div class="compare-item">' + escapeHtml(s.attack_being_faced || s.scenario || '') + '</div>';
+        }).join('') || '<em>None</em>';
+    });
+
+    html += _compareSection("Vulnerability", genomes, function (g) {
+        var vm = g.vulnerability_map || {};
+        var vulns = vm.vulnerabilities || vm.attack_vectors || [];
+        return vulns.map(function (v) {
+            return '<div class="compare-item compare-vuln">' + escapeHtml(v.weak_point || '') + '</div>';
+        }).join('') || '<em>None identified</em>';
+    });
+
+    html += _compareSection("Cheat Sheet", genomes, function (g) {
+        var cs = g.cheat_sheet || {};
+        var out = '';
+        var cw = cs.cite_when;
+        if (cw) {
+            if (Array.isArray(cw)) out += '<div class="compare-cite"><strong>Cite when:</strong> ' + cw.map(function (c) { return escapeHtml(String(c)); }).join('; ') + '</div>';
+            else out += '<div class="compare-cite"><strong>Cite when:</strong> ' + escapeHtml(String(cw)) + '</div>';
+        }
+        var dc = cs.do_not_cite_when || cs.dont_cite_when;
+        if (dc) {
+            if (Array.isArray(dc)) out += '<div class="compare-nocite"><strong>Don\'t cite:</strong> ' + dc.map(function (c) { return escapeHtml(String(c)); }).join('; ') + '</div>';
+            else out += '<div class="compare-nocite"><strong>Don\'t cite:</strong> ' + escapeHtml(String(dc)) + '</div>';
+        }
+        var kp = cs.killer_paragraph;
+        if (kp) out += '<div class="compare-killer"><strong>Killer para:</strong> ' + escapeHtml(String(kp).substring(0, 300)) + '</div>';
+        return out || '<em>None</em>';
+    });
+
+    html += '</div>';
+    panel.innerHTML = html;
+
+    document.getElementById("compareBackBtn").addEventListener("click", function () {
+        panel.style.display = "none";
+        document.getElementById("taxonomyGenomeList").style.display = "";
+    });
+}
+
+function _compareSection(title, genomes, extractFn) {
+    var html = '<div class="compare-row"><div class="compare-row-label">' + title + '</div>';
+    genomes.forEach(function (g) {
+        html += '<div class="compare-cell">' + extractFn(g) + '</div>';
+    });
+    html += '</div>';
+    return html;
+}
+
+var _dcActiveJudge = null;
+var _dcActiveCourt = null;
+var _dcInitialized = false;
+
+function initDistrictCourt() {
+    if (_dcInitialized) {
+        return;
+    }
+    _dcInitialized = true;
+
+    var citySelect = document.getElementById("dcCitySelect");
+    var courtSelect = document.getElementById("dcCourtSelect");
+    if (!citySelect) return;
+
+    loadDcCourts(citySelect.value);
+    citySelect.addEventListener("change", function () {
+        loadDcCourts(this.value);
+    });
+    courtSelect.addEventListener("change", function () {
+        var courtId = this.value;
+        _dcActiveCourt = courtId || null;
+        if (courtId) loadDcJudges(courtId);
+        else document.getElementById("dcJudgeList").innerHTML = '<div class="empty-state"><p>Select a court.</p></div>';
+    });
+
+    document.getElementById("dcAddJudgeBtn").addEventListener("click", function () {
+        if (!_dcActiveCourt) { alert("Select a court first."); return; }
+        document.getElementById("dcAddJudgeModal").style.display = "";
+    });
+    document.getElementById("dcJudgeModalClose").addEventListener("click", function () {
+        document.getElementById("dcAddJudgeModal").style.display = "none";
+    });
+    document.getElementById("dcJudgeCancelBtn").addEventListener("click", function () {
+        document.getElementById("dcAddJudgeModal").style.display = "none";
+    });
+    document.getElementById("dcJudgeSaveBtn").addEventListener("click", function () {
+        var name = document.getElementById("dcJudgeName").value.trim();
+        var designation = document.getElementById("dcJudgeDesignation").value.trim();
+        if (!name) { alert("Name is required."); return; }
+        fetch("/api/district/judges", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, designation: designation, court_id: parseInt(_dcActiveCourt) })
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            if (data.error) { alert(data.error); return; }
+            document.getElementById("dcAddJudgeModal").style.display = "none";
+            document.getElementById("dcJudgeName").value = "";
+            document.getElementById("dcJudgeDesignation").value = "";
+            loadDcJudges(_dcActiveCourt);
+        });
+    });
+
+    document.querySelectorAll(".dc-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            document.querySelectorAll(".dc-tab").forEach(function (t) { t.classList.remove("active"); });
+            this.classList.add("active");
+            document.querySelectorAll(".dc-tab-content").forEach(function (c) { c.classList.remove("active"); });
+            var target = this.getAttribute("data-dctab");
+            document.getElementById("dcTab" + target.charAt(0).toUpperCase() + target.slice(1)).classList.add("active");
+        });
+    });
+
+    document.getElementById("dcSaveOrderBtn").addEventListener("click", saveDcOrder);
+}
+
+function loadDcCourts(city) {
+    fetch("/api/district/courts?city=" + encodeURIComponent(city))
+        .then(function (r) { return r.json(); })
+        .then(function (courts) {
+            var select = document.getElementById("dcCourtSelect");
+            select.innerHTML = '<option value="">All Courts</option>';
+            courts.forEach(function (c) {
+                select.innerHTML += '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>';
+            });
+        });
+}
+
+function loadDcJudges(courtId) {
+    fetch("/api/district/courts/" + courtId + "/judges")
+        .then(function (r) { return r.json(); })
+        .then(function (judges) {
+            var list = document.getElementById("dcJudgeList");
+            if (!judges.length) {
+                list.innerHTML = '<div class="empty-state"><p>No judges added yet. Click "+ Add Judge" to start.</p></div>';
+                return;
+            }
+            var html = "";
+            judges.forEach(function (j) {
+                html += '<div class="dc-judge-item' + (_dcActiveJudge === j.id ? ' active' : '') + '" data-judge-id="' + j.id + '">' +
+                    '<div class="dc-judge-name">' + escapeHtml(j.name) + '</div>' +
+                    '<div class="dc-judge-meta">' + escapeHtml(j.designation || '') + ' | ' + j.order_count + ' orders</div></div>';
+            });
+            list.innerHTML = html;
+            list.querySelectorAll(".dc-judge-item").forEach(function (el) {
+                el.addEventListener("click", function () {
+                    _dcActiveJudge = parseInt(this.getAttribute("data-judge-id"));
+                    list.querySelectorAll(".dc-judge-item").forEach(function (e) { e.classList.remove("active"); });
+                    this.classList.add("active");
+                    loadDcJudgeProfile(_dcActiveJudge);
+                });
+            });
+        });
+}
+
+function loadDcJudgeProfile(judgeId) {
+    document.getElementById("dcWelcome").style.display = "none";
+    document.getElementById("dcJudgeProfile").style.display = "";
+
+    fetch("/api/district/judges/" + judgeId)
+        .then(function (r) { return r.json(); })
+        .then(function (judge) {
+            var header = document.getElementById("dcJudgeHeader");
+            header.innerHTML = '<h3>' + escapeHtml(judge.name) + '</h3>' +
+                '<div class="dc-judge-detail">' +
+                '<span>' + escapeHtml(judge.designation || '') + '</span>' +
+                '<span>' + escapeHtml(judge.court_name || '') + '</span>' +
+                '<span>' + (judge.order_count || 0) + ' orders</span>' +
+                '<span>' + (judge.genome_count || 0) + ' genomes</span></div>';
+        });
+
+    loadDcOrders(judgeId);
+
+    fetch("/api/district/judges/" + judgeId + "/profile")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var content = document.getElementById("dcProfileContent");
+            if (data.exists && data.profile) {
+                content.innerHTML = '<pre class="dc-profile-json">' + escapeHtml(JSON.stringify(data.profile, null, 2)) + '</pre>';
+            } else {
+                content.innerHTML = '<div class="empty-state"><h3>Judge Mind Map</h3><p>Import at least 10 orders to enable behavioral analysis.</p>' +
+                    '<button class="btn-sm" id="dcAnalyzeBtn" disabled>Analyze Judge (Coming Soon)</button></div>';
+            }
+        });
+}
+
+function loadDcOrders(judgeId, page) {
+    page = page || 1;
+    fetch("/api/district/judges/" + judgeId + "/orders?page=" + page)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var list = document.getElementById("dcOrdersList");
+            if (!data.orders || !data.orders.length) {
+                list.innerHTML = '<div class="empty-state"><p>No orders imported yet. Use the Import tab to add orders.</p></div>';
+                return;
+            }
+            var html = '<table class="dc-orders-table"><thead><tr><th>Date</th><th>Case No.</th><th>Type</th><th>Parties</th></tr></thead><tbody>';
+            data.orders.forEach(function (o) {
+                var typeCls = "dc-type-" + (o.case_type || "misc");
+                html += '<tr><td>' + (o.order_date || '') + '</td><td>' + escapeHtml(o.case_number || '') + '</td>' +
+                    '<td><span class="dc-case-type-badge ' + typeCls + '">' + escapeHtml(o.case_type || '') + '</span></td>' +
+                    '<td>' + escapeHtml((o.petitioner || '') + ' v. ' + (o.respondent || '')) + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            if (data.total > 20) {
+                html += '<div class="dc-pagination">';
+                if (page > 1) html += '<button class="btn-sm" onclick="loadDcOrders(' + judgeId + ',' + (page - 1) + ')">Prev</button>';
+                html += '<span>Page ' + page + ' of ' + Math.ceil(data.total / 20) + '</span>';
+                if (page * 20 < data.total) html += '<button class="btn-sm" onclick="loadDcOrders(' + judgeId + ',' + (page + 1) + ')">Next</button>';
+                html += '</div>';
+            }
+            list.innerHTML = html;
+        });
+}
+
+function saveDcOrder() {
+    if (!_dcActiveJudge || !_dcActiveCourt) { alert("Select a judge first."); return; }
+    var data = {
+        judge_id: _dcActiveJudge,
+        court_id: parseInt(_dcActiveCourt),
+        case_number: document.getElementById("dcOrderCaseNum").value.trim(),
+        order_date: document.getElementById("dcOrderDate").value,
+        case_type: document.getElementById("dcOrderType").value,
+        petitioner: document.getElementById("dcOrderPetitioner").value.trim(),
+        respondent: document.getElementById("dcOrderRespondent").value.trim(),
+        order_text: document.getElementById("dcOrderText").value.trim(),
+    };
+    if (!data.order_text) { alert("Order text is required."); return; }
+    fetch("/api/district/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    }).then(function (r) { return r.json(); }).then(function (result) {
+        if (result.error) { alert(result.error); return; }
+        alert("Order saved successfully.");
+        document.getElementById("dcOrderCaseNum").value = "";
+        document.getElementById("dcOrderDate").value = "";
+        document.getElementById("dcOrderPetitioner").value = "";
+        document.getElementById("dcOrderRespondent").value = "";
+        document.getElementById("dcOrderText").value = "";
+        loadDcOrders(_dcActiveJudge);
+        loadDcJudges(_dcActiveCourt);
+    });
+}
+
+document.querySelectorAll(".nav-tab").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+        if (this.getAttribute("data-view") === "districtCourt") {
+            initDistrictCourt();
         }
     });
 });
