@@ -1,0 +1,1121 @@
+{
+  "tid": 175356438,
+  "case_title": "Kaveri Plastics vs Mahdoom Bawa Bahrudeen Noorul on 19 September, 2025",
+  "genome": {
+    "document_id": "a3f7c2d1-84e9-4b6a-9f3e-2c1d5e8a7b4f",
+    "schema_version": "3.1.0",
+    "dimension_6_audit": {
+      "analytical_claims": {
+        "check_9": {
+          "detail": "SA_1 (cheque table saves notice): Stress tested — verdict REMOVE; court explicitly rejected at Para 8.1. SA_2 (cheque date discrepancy): Stress tested — verdict REMOVE; Proviso (b) does not require cheque date in notice. SA_3 (over-demand vs under-demand distinction): Stress tested — verdict REMOVE; Yankay Drugs (approved at Para 5.5.1) defeats this. SA_4 (equitable/prejudice argument): Stress tested — verdict REMOVE; no statutory basis; legislative deliberateness of conditions confirmed. All four stress tests completed with three steps each and verified verdicts. [VERIFIED]",
+          "passed": true,
+          "description": "Are all silent arguments stress-tested?"
+        },
+        "check_10": {
+          "detail": "TRANS_1 (Consumer Protection): Gate 7 validation completed — verdict REMOVE — consumer protection has specialized framework; Proviso (b) condition-precedent-to-offence structure not replicated. TRANS_2 (IBC Section 8/9): Gate 7 validation completed — verdict REMOVE — IBC is not a penal statute; has autonomous jurisprudence; specialized Adjudicating Authority framework. Both transplants correctly removed after Gate 7 analysis. [VERIFIED]",
+          "passed": true,
+          "description": "Are cross-domain transplants validated under Gate 7?"
+        },
+        "check_11": {
+          "detail": "No constitutional provisions are cited in the substantive analysis of this judgment. Article 142 mentioned briefly in SA_4 stress test as a Supreme Court power — correctly identified as a Constitutional provision (not Part III Fundamental Right, not Part IV DPSP) — not a ground for court action in this type of case. No Part III rights engaged. No misclassification. [VERIFIED]",
+          "passed": true,
+          "description": "Are constitutional provisions correctly classified?"
+        }
+      },
+      "internal_consistency": {
+        "check_1": {
+          "detail": "RATIO_1, RATIO_2, RATIO_3 all support dismissal of appeal. RATIO_4 (additional claims permissible after correct cheque amount) is consistent with the dismissal. The operative order (dismiss appeals, uphold quashing) is directly supported by all four ratios. [VERIFIED]",
+          "passed": true,
+          "description": "Do ratio decidendi match the operative order?"
+        },
+        "check_2": {
+          "detail": "SYL_1 establishes 'said amount' = cheque amount. SYL_2 applies strict construction to mandate exact compliance. SYL_3 closes the typographical error escape route. SYL_4 translates invalid notice into non-maintainable complaint. Each step's conclusion feeds into the next step's minor premise. No gaps identified. [VERIFIED]",
+          "passed": true,
+          "description": "Do syllogisms form a coherent chain without logical gaps?"
+        },
+        "check_3": {
+          "detail": "All citations verified against paragraph references in judgment. Suman Sethi (2000) 2 SCC 380 — Para 4.2, 5.2; Saxons Farms (1999) 8 SCC 221 — Para 4.2, 5.2.4; K.R. Indira (2003) 8 SCC 300 — Para 5.1.1, 5.3; Rahul Builders (2008) 2 SCC 321 — Para 5.3, 5.3.1; Dashrathbhai (2023) 1 SCC 578 — Para 5.4; M. Narayanan Nambiar AIR 1963 SC 1116 — Para 6; K.K. Ahuja (2009) 10 SCC 48 — Para 6.4; Balaji Traders 2025 SCC OnLine SC 1314 — Para 6; Dyke vs. Elliott (1872) LR 4 PC 184 — Para 6, 6.1. All treatment classifications verified against judgment text. [VERIFIED]",
+          "passed": true,
+          "description": "Are precedents cited accurately as per judgment text?"
+        },
+        "check_4": {
+          "detail": "HA_1 (Proviso (b) as jurisdictional) — implicit in the language of the judgment, not stated as an independent holding. HA_2 (over-demand vs under-demand equivalence) — assumed by applying Yankay Drugs without distinguishing. HA_3 (cheque table details insufficient to save notice) — elevated from assumption to explicit ruling at Para 8.1, noted accordingly. HA_4 (recurrence as evidence of non-inadvertence) — stated at Para 8.2 as supporting observation. HA_5 (said amount = cheque amount as fundamental assumption) — this is actually the ratio, correctly noted. [VERIFIED]",
+          "passed": true,
+          "description": "Are hidden assumptions genuinely implicit (not stated) or have they been explicitly adopted?"
+        },
+        "check_5": {
+          "detail": "Load-bearing facts (cheque amount Rs.1 crore, notice demand Rs.2 crore, recurrence in both notices) verified against Para 3, 3.3, 8.2. Decorative facts (MoU for sale of land, accused No.3, bank branch) verified as irrelevant to legal analysis. Ambiguous fact (cheque date discrepancy) correctly identified and flagged. [VERIFIED]",
+          "passed": true,
+          "description": "Is the fact-sensitivity matrix correctly calibrated?"
+        }
+      },
+      "statutory_verification": {
+        "check_6": {
+          "detail": "Section 138 text reproduced in full at Para 5 of the judgment. The exact text as reproduced in the judgment has been used in provisions_engaged. The Explanation and all three provisos (a), (b), (c) are included. No paraphrasing from memory. [VERIFIED — text taken directly from Para 5 of judgment]",
+          "passed": true,
+          "description": "Is Section 138 NI Act text reproduced accurately?"
+        },
+        "check_7": {
+          "detail": "Proviso (b) to Section 138 — verified as part of Section 138 as reproduced in judgment. Sections 141 and 142 NI Act referenced in complaint (Para 2.1) — their texts NOT reproduced in judgment; correctly flagged as [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]. Section 420 IPC mentioned in notice background (Para 3.2) — not part of legal analysis; not claimed to be reproduced. BNS/BNSS mapping — correctly flagged as [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION] for all non-NI Act provisions. [VERIFIED]",
+          "passed": true,
+          "description": "Are statutory cross-references verified?"
+        },
+        "check_8": {
+          "detail": "Hierarchical relationship of Section 138 and its Proviso correctly characterised: (a) Main section creates offence; (b) Proviso is a CONDITION PRECEDENT (the Proviso text says 'nothing contained in this section shall apply unless') — not a standalone offence, not a definition, but a limiting condition on the main section's operation; (c) Provisos (a), (b), (c) are PARALLEL conditions all of which must be satisfied; (d) Condition (b) requires DEMAND for the 'said amount' — cross-referencing 'any amount of money' in main section. All relationships verified against Para 5.1 and Para 7.1 of judgment. [VERIFIED]",
+          "passed": true,
+          "description": "Are relationships between statutory provisions correctly characterised?"
+        }
+      }
+    },
+    "dimension_1_visible": {
+      "story": {
+        "legal_language": "The Appellant-complainant filed a complaint under Sections 138, 141 and 142 of the Negotiable Instruments Act, 1881 alleging dishonour of cheque No.876229 dated 12.05.2012 for Rs.1,00,00,000/- drawn on Indian Overseas Bank. Two statutory demand notices under Proviso (b) to Section 138 dated 08.06.2012 and 14.09.2012 both demanded Rs.2,00,00,000/- — twice the cheque amount. The Respondent-accused filed a discharge application contending non-compliance with Proviso (b). The Metropolitan Magistrate dismissed the discharge application on 06.10.2021. The High Court of Delhi in Crl. M.C. No.2164/2022 quashed the complaint holding the notice invalid. The Supreme Court dismissed the appeal, affirming that the phrase 'said amount of money' in Proviso (b) to Section 138 mandatorily refers to the exact cheque amount; any discrepancy — including one characterised as a typographical error — renders the notice invalid and the complaint non-maintainable.",
+        "plain_language": "A company (Kaveri Plastics / appellant) was owed money under an MoU for sale of land. The debtor issued a cheque for Rs.1 crore (Rs.1,00,00,000/-) which bounced for insufficient funds. The appellant's lawyer sent two legal notices demanding Rs.2 crore (Rs.2,00,00,000/-) — double the cheque amount — in both notices. The accused (Respondent) applied for discharge arguing the notice was invalid because the demand did not match the cheque amount. The Trial Court dismissed the discharge application. The Delhi High Court then quashed the complaint entirely on the ground that the notice was invalid. The Supreme Court upheld the High Court's quashing order, holding that a demand notice under Proviso (b) to Section 138 of the NI Act MUST demand exactly the cheque amount, and even a typographical error in the amount is fatal to the validity of the notice.",
+        "verification_note": "All facts verified against paragraph numbers in judgment. Cheque amount Rs.1,00,00,000/- confirmed at Para 3. Notice amounts Rs.2,00,00,000/- confirmed at Paras 3.1, 3.2, 3.3. Dates confirmed at respective paragraphs. NOTE: Para 10 of the judgment states the cheque was for Rs.1,00,000/- and the notice demanded Rs.2,00,000/- — these figures appear to be a typographical error within the judgment itself, as the consistent narrative throughout the judgment (Paras 3, 3.1, 3.2, 3.3, 4) states Rs.1,00,00,000/- (1 crore) and Rs.2,00,00,000/- (2 crore) respectively. Para 10 likely dropped zeros. Practitioners should note this internal inconsistency in the judgment."
+      },
+      "obiter_dicta": [
+        {
+          "obiter_id": "OBITER_1",
+          "observation": "The principle of 'reading the notice as a whole' is inapplicable and irrelevant in the context of compliance with Proviso (b) to Section 138 NI Act when the cheque amount itself is incorrectly stated in the notice.",
+          "necessity_check": {
+            "verified": "This observation is necessary to the decision because it directly rejects the appellant's primary argument. Borderline ratio/obiter — classified as ratio but noted here given its framing as a principle-statement going beyond the specific facts.",
+            "is_necessary_for_decision": true
+          },
+          "source_paragraph": "Para 8.1",
+          "future_significance": "Forecloses future arguments seeking to invoke the 'read as a whole' doctrine (from Suman Sethi) to save notices with wrong amounts. Confines Suman Sethi's 'read as a whole' principle to cases involving additional charges beyond correct cheque amount — not to cases of incorrect base amount."
+        },
+        {
+          "obiter_id": "OBITER_2",
+          "observation": "The Section 138 offence is described as 'technical' in nature (quoting High Court of M.P. at Para 5.5): 'offence under Section 138 of the NI Act is a technical offence therefore every technical formality as required under the Section must be complied with strictly.'",
+          "necessity_check": {
+            "verified": "The court quotes the M.P. High Court observation approvingly but does not make it a standalone holding — it is supportive reasoning. SOUND_INFERENCE that court approves the characterisation.",
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 5.5",
+          "future_significance": "The characterisation of Section 138 as a 'technical offence' requiring 'technical formality' reinforces strict compliance arguments across all Proviso conditions (a), (b) and (c), not just amount in notice."
+        },
+        {
+          "obiter_id": "OBITER_3",
+          "observation": "The argument that Section 138 is 'essentially a civil wrong in the attire of criminal offence' (Para 4.1) was raised by appellant but was not expressly addressed or accepted/rejected by the court in the final analysis.",
+          "necessity_check": {
+            "verified": "This is a SOUND_INFERENCE from the court's silence combined with its strict construction approach.",
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 4.1",
+          "future_significance": "The court's silence on this characterisation despite dismissing the appeal means this civil wrong characterisation cannot be used as a basis for liberal construction arguments — the court's strict construction approach implicitly rejects it for purposes of notice compliance."
+        }
+      ],
+      "case_identity": {
+        "bench": {
+          "judges": [
+            "B.R. Gavai, CJI",
+            "N.V. Anjaria, J."
+          ],
+          "strength": 2,
+          "is_constitution_bench": false
+        },
+        "court": "Supreme Court of India",
+        "domain": "CRIMINAL",
+        "case_name": "Kaveri Plastics vs Mahdoom Bawa Bahrudeen Noorul",
+        "case_number": "Criminal Appeal Nos. _______ of 2025 (@Special Leave Petition (Crl.) Nos. 11184-11185/2024)",
+        "case_origin": "SLP",
+        "domain_detail": "Negotiable Instruments Act, 1881 — dishonour of cheque — validity of statutory demand notice under Proviso (b) to Section 138 — typographical error in notice amount",
+        "judgment_author": "N.V. Anjaria, J.",
+        "date_of_judgment": "2025-09-19",
+        "dissenting_judges": [],
+        "source_paragraphs": [
+          "Para 1 (Leave granted)",
+          "Para 2",
+          "Para 2.1"
+        ]
+      },
+      "operative_order": {
+        "order_text": "No case is made out for interfering with the impugned order of the High Court. The appeals stand dismissed. In view of the disposal of the main appeals, all the interlocutory applications as may be pending stands disposed of.",
+        "order_items": [
+          {
+            "action": "DISMISS",
+            "detail": "Criminal Appeal Nos. _______ of 2025 (@SLP (Crl.) Nos. 11184-11185/2024) dismissed"
+          },
+          {
+            "action": "UPHOLD",
+            "detail": "High Court of Delhi order dated 26.02.2024 in Crl. M.C. No.2164 of 2022 quashing complaint No.523804 of 2016 upheld"
+          },
+          {
+            "action": "DISPOSE",
+            "detail": "All pending interlocutory applications disposed of"
+          }
+        ],
+        "source_paragraph": "Para 11"
+      },
+      "ratio_decidendi": [
+        {
+          "label": "Exact Cheque Amount Mandatory in Proviso (b) Notice",
+          "ratio_id": "RATIO_1",
+          "proposition": "The words 'said amount of money' in Proviso (b) to Section 138 of the NI Act mandatorily and exclusively refer to the exact amount of the dishonoured cheque. A demand notice under Proviso (b) must demand precisely the cheque amount — neither more nor less. A notice demanding a different amount (whether higher or lower) fails to satisfy the mandatory condition and renders the notice invalid, making the complaint under Section 138 non-maintainable.",
+          "source_paragraph": "Para 7, Para 7.1, Para 8, Para 8.1, Para 9",
+          "linked_syllogism_ids": [
+            "SYL_1",
+            "SYL_2",
+            "SYL_3"
+          ]
+        },
+        {
+          "label": "Typographical Error Is No Defence",
+          "ratio_id": "RATIO_2",
+          "proposition": "A plea of typographical or inadvertent error in mentioning a wrong amount in the statutory demand notice under Proviso (b) to Section 138 NI Act is not a valid defence in law. Even if the error is genuinely typographical, it is fatal to the validity of the notice given the need for strict mandatory compliance with a penal provision. The 'read the notice as a whole' principle is inapplicable and irrelevant in this context.",
+          "source_paragraph": "Para 8.1, Para 8.2",
+          "linked_syllogism_ids": [
+            "SYL_3",
+            "SYL_4"
+          ]
+        },
+        {
+          "label": "Penal Statute Strictly Construed — No Elasticity in Notice Requirements",
+          "ratio_id": "RATIO_3",
+          "proposition": "Section 138 of the NI Act being a penal provision, its conditions (including Proviso (b)) must be construed strictly and technically. No elasticity can be adopted in interpretation. Inferential or implied compliance is not permissible. The mandatory conditions in the Proviso must be fulfilled precisely and meticulously.",
+          "source_paragraph": "Para 6, Para 6.1, Para 6.2, Para 6.3, Para 6.4, Para 8.1",
+          "linked_syllogism_ids": [
+            "SYL_2"
+          ]
+        },
+        {
+          "label": "Additional Amounts Permissible Only After Exact Cheque Amount Stated",
+          "ratio_id": "RATIO_4",
+          "proposition": "After correctly mentioning the exact cheque amount in the Proviso (b) notice, the notice-sender may additionally claim amounts such as legal charges, notice charges, and interest. Such additional claims are severable and do not invalidate the notice. However, this latitude applies only after the cheque amount is precisely stated — not as a substitute for it.",
+          "source_paragraph": "Para 8",
+          "linked_syllogism_ids": [
+            "SYL_1"
+          ]
+        }
+      ],
+      "precedent_registry": [
+        {
+          "citation": "(2000) 2 SCC 380",
+          "case_name": "Suman Sethi vs. Ajay K. Churiwal & Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Primary authority on meaning of 'said amount' in Proviso (b); appellant relied on 'read notice as a whole' principle from this case; court used it to confirm strict rule on cheque amount demand",
+          "what_it_held": "The words 'said amount of money' in Proviso (b) to Section 138 refer to the cheque amount. Demand in notice must be for cheque amount. If additional amounts (interest, costs) are demanded separately and are severable, notice is not invalidated. If ambiguous demand is made without specifying cheque amount, notice fails.",
+          "source_paragraph": "Para 4.2, Para 5.2, Para 5.2.1, Para 5.2.2, Para 5.2.3, Para 5.2.4, Para 6.3"
+        },
+        {
+          "citation": "(1999) 8 SCC 221",
+          "case_name": "Central Bank of India & Anr. vs. Saxons Farms & Ors.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Explains object/purpose of the statutory notice; appellant relied on it to argue purposive approach; court used it to confirm that the amount in notice must be the cheque amount so drawer can make payment and be absolved",
+          "what_it_held": "Purpose of notice under Proviso (b) of Section 138 is to give drawer a chance to rectify his omission; once payment of amount covered by the cheque is made within 15 days, drawer is absolved.",
+          "source_paragraph": "Para 4.2, Para 5.2.4"
+        },
+        {
+          "citation": "(2003) 8 SCC 300",
+          "case_name": "K.R. Indira vs. Dr. G. Adinarayana",
+          "treatment": "FOLLOWED",
+          "why_cited": "Enumerates ingredients of Section 138 offence; confirms specific demand for cheque amount is mandatory element",
+          "what_it_held": "Components of offence under Section 138 enumerated: (i) drawing of cheque for discharge of debt/liability, (ii) presentation by payee/holder in due course, (iii) return unpaid for want of funds, (iv) notice in writing within 15 days demanding cheque amount, (v) failure to pay within 15 days of notice. Specific demand for the sum covered by dishonoured cheque is required; notice without specific cheque amount demand is invalid.",
+          "source_paragraph": "Para 5.1.1, Para 5.3"
+        },
+        {
+          "citation": "(2008) 2 SCC 321",
+          "case_name": "Rahul Builders vs. Arihant Fertilizers & Chemicals & Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Affirms mandatory/imperative character of notice requirement; notice demanding different amount (Rs.8,72,409/- when cheque was for Rs.1,00,000/-) was held to be defective",
+          "what_it_held": "Service of notice is imperative for maintaining a complaint under Section 138. Operation of Section 138 is limited by the Proviso. Unless notice is served in conformity with Proviso (b), complaint is not maintainable. Parliament consciously imposed these conditions. Demand must be of 'the amount of cheque'.",
+          "source_paragraph": "Para 5.3, Para 5.3.1"
+        },
+        {
+          "citation": "(2023) 1 SCC 578",
+          "case_name": "Dashrathbhai Trikambhai Patel vs. Hitesh Mahendrabhai Patel & Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Most recent Supreme Court restatement of law at time of judgment; confirms consistency of doctrine",
+          "what_it_held": "Notice demanding payment of 'said amount of money' means the cheque amount. Conditions in provisos to Section 138 need to be fulfilled in addition to ingredients of substantive part.",
+          "source_paragraph": "Para 5.4"
+        },
+        {
+          "citation": "AIR 1963 SC 1116",
+          "case_name": "M. Narayanan Nambiar vs. State of Kerala",
+          "treatment": "FOLLOWED",
+          "why_cited": "Foundation for strict construction canon applied to Section 138",
+          "what_it_held": "Rule of strict construction of penal statutes: court must see that the thing charged as an offence is within the plain meaning of the words used; must not strain words on notion of slip or casus omissus.",
+          "source_paragraph": "Para 6, Para 6.1"
+        },
+        {
+          "citation": "2025 SCC OnLine SC 1314",
+          "case_name": "Balaji Traders vs. State of U.P. & Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Recent authority reaffirming strict construction of penal statutes via reference to Dyke vs. Elliott",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT — judgment only notes it referred to Dyke vs. Elliott principle on strict construction of penal statutes]",
+          "source_paragraph": "Para 6"
+        },
+        {
+          "citation": "(1872) L.R. 4 P.C. 184",
+          "case_name": "Dyke vs. Elliott",
+          "treatment": "FOLLOWED",
+          "why_cited": "Privy Council authority on strict construction of penal statutes — foundational interpretive principle",
+          "what_it_held": "All penal statutes are to be construed strictly; court must see that the thing charged is within the plain meaning of words used; must not strain words on any notion that there has been a slip or casus omissus. Where thing is within both words and spirit, enactment is construed by fair commonsense meaning; no doubt or ambiguity to be found or made in language of penal statute.",
+          "source_paragraph": "Para 6, Para 6.1"
+        },
+        {
+          "citation": "(2009) 10 SCC 48",
+          "case_name": "K.K. Ahuja vs. V.K. Vora & Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Affirms strict literal compliance with conditions in Section 138; no inferential compliance",
+          "what_it_held": "Penal statutes are to be construed strictly; conditions are to be scraped, courts will insist upon strict literal compliance; no question of inferential or implied compliance (in context of Sections 138 and 141 NI Act).",
+          "source_paragraph": "Para 6.4"
+        },
+        {
+          "citation": "MCRC 5458/2013 (M.P. High Court)",
+          "case_name": "Gokuldas vs. Atal Bihari & Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "High Court authority confirming strict compliance; technically defective notice — wrong amount — held invalid",
+          "what_it_held": "Offence under Section 138 is a technical offence; every technical formality must be complied with strictly. Notice for wrong amount (Rs.43,000/- instead of Rs.4,30,000/-) held invalid.",
+          "source_paragraph": "Para 5.5"
+        },
+        {
+          "citation": "2001 DCR 609 (A.P. High Court)",
+          "case_name": "M/s. Yankay Drugs and Pharmaceuticals Ltd. vs. CITI bank",
+          "treatment": "FOLLOWED",
+          "why_cited": "High Court authority confirming that both higher AND lower demands than cheque amount invalidate notice",
+          "what_it_held": "Payee/holder in due course must demand payment of amount covered by cheque in notice under Section 138(b). If demand is for lesser or higher amount not covered by cheque, prosecution must fail as statutory requirement of Section 138(b) not fulfilled.",
+          "source_paragraph": "Para 5.5.1"
+        },
+        {
+          "citation": "Crl. Appeal No.1772-SB of 2002 (P&H High Court)",
+          "case_name": "Chhabra Fabrics Private Limited vs. Bhagwan Dass",
+          "treatment": "FOLLOWED",
+          "why_cited": "Directly addresses typographical error defence regarding cheque particulars in notice — held not to excuse non-compliance",
+          "what_it_held": "Even if there is a typographical error in the legal notice regarding cheque number, such typographical error does not meet compliance of mandatory provisions of Section 138 NI Act.",
+          "source_paragraph": "Para 5.5.2"
+        },
+        {
+          "citation": "Criminal Appeal No.1011 of 2010 (Karnataka High Court)",
+          "case_name": "K. Gopal vs. Mr. T. Mukunda",
+          "treatment": "FOLLOWED",
+          "why_cited": "Directly addresses typographical error defence regarding amount — held not to excuse non-compliance",
+          "what_it_held": "Typographical error in notice amount is no defence. Section 138(b) contemplates notice demanding amount covered under cheque; notice for wrong amount (Rs.10,000/- instead of Rs.4,00,000/- for two cheques of Rs.2,00,000/- each) is defective in law.",
+          "source_paragraph": "Para 5.5.3"
+        },
+        {
+          "citation": "MANU/DE/3805/2021 (Delhi High Court)",
+          "case_name": "Sunglo Engineering India Pvt. Ltd. vs. The State & Ors.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Facts on all fours with present case — Delhi High Court had quashed complaint on identical factual matrix; demonstrates consistency of approach",
+          "what_it_held": "Complaint quashed where amount demanded in notice was double the cheque amount — cheque was for Rs.1,00,00,000/- but notice demanded Rs.2,00,00,000/-.",
+          "source_paragraph": "Para 5.5.3"
+        }
+      ],
+      "procedural_journey": [
+        {
+          "date": "30.04.2012 (MoU); 12.05.2012 (cheque date)",
+          "forum": "Private Transaction",
+          "stage": "MoU and Cheque Issuance",
+          "outcome": "Cheque issued for Rs.1,00,00,000/-",
+          "date_source": "Para 3",
+          "source_paragraph": "Para 3",
+          "what_was_decided": "MoU for sale of land; cheque issued by Accused No.1 M/s. Nafto Gaz India Private Limited in favour of appellant"
+        },
+        {
+          "date": "NOT EXTRACTABLE FROM JUDGMENT TEXT (date of dishonour not specified for first dishonour; 29.08.2012 for second presentation per Para 3.2)",
+          "forum": "Indian Overseas Bank, R.K. Puram, Delhi",
+          "stage": "Cheque Dishonour",
+          "outcome": "Cheque returned dishonoured — 'funds insufficient'",
+          "date_source": "Para 3.2",
+          "source_paragraph": "Para 3, Para 3.2",
+          "what_was_decided": "Bank returned cheque unpaid"
+        },
+        {
+          "date": "08.06.2012",
+          "forum": "Extra-judicial — Notice to accused",
+          "stage": "First Demand Notice",
+          "outcome": "Notice issued demanding Rs.2,00,00,000/- (double cheque amount)",
+          "date_source": "Para 3.1",
+          "source_paragraph": "Para 3.1, Para 3.3",
+          "what_was_decided": "Statutory notice purportedly issued under Proviso (b) to Section 138 NI Act — defective as to amount"
+        },
+        {
+          "date": "14.09.2012",
+          "forum": "Extra-judicial — Notice to accused",
+          "stage": "Second Demand Notice",
+          "outcome": "Second notice issued also demanding Rs.2,00,00,000/-",
+          "date_source": "Para 3.2",
+          "source_paragraph": "Para 3.2, Para 3.3",
+          "what_was_decided": "Second statutory notice — also defective as to amount"
+        },
+        {
+          "date": "NOT EXTRACTABLE FROM JUDGMENT TEXT",
+          "forum": "Metropolitan Magistrate",
+          "stage": "Criminal Complaint Filed",
+          "outcome": "Complaint filed under Sections 138, 141 and 142 of NI Act",
+          "date_source": "Para 2.1 — complaint number 523804 of 2016",
+          "source_paragraph": "Para 2.1",
+          "what_was_decided": "Complaint registered"
+        },
+        {
+          "date": "06.10.2021 (date of dismissal order)",
+          "forum": "Metropolitan Magistrate",
+          "stage": "Discharge Application",
+          "outcome": "Discharge application dismissed; complaint continued",
+          "date_source": "Para 3.3",
+          "source_paragraph": "Para 3.3",
+          "what_was_decided": "Magistrate held notice valid / complaint maintainable"
+        },
+        {
+          "date": "26.02.2024",
+          "forum": "High Court of Delhi — Crl. M.C. No.2164 of 2022",
+          "stage": "High Court Petition (Quashing)",
+          "outcome": "Complaint quashed — notice held invalid",
+          "date_source": "Para 2.1",
+          "source_paragraph": "Para 2.1, Para 3.3",
+          "what_was_decided": "High Court held demand notice invalid because amount in notice (Rs.2 crore) differed from cheque amount (Rs.1 crore); complaint quashed under Section 482 CrPC [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED as to specific provision under which petition was filed]"
+        },
+        {
+          "date": "19.09.2025",
+          "forum": "Supreme Court of India",
+          "stage": "Supreme Court — SLP / Criminal Appeal",
+          "outcome": "Appeals dismissed — High Court order upheld",
+          "date_source": "Judgment header",
+          "source_paragraph": "Paras 8, 8.1, 8.2, 9, 10, 11",
+          "what_was_decided": "Supreme Court affirmed invalidity of notice; strict compliance with Proviso (b) is mandatory; typographical error defence rejected"
+        }
+      ],
+      "provisions_engaged": [
+        {
+          "role": "Primary offence-creating provision — both the substantive offence and the conditions (provisos) for its constitution",
+          "exact_text": "138. Dishonour of cheque for insufficiency, etc., of funds in the account.—Where any cheque drawn by a person on an account maintained by him with a banker for payment of any amount of money to another person from out of that account for the discharge, in whole or in part, of any debt or other liability, is returned by the bank unpaid, either because of the amount of money standing to the credit of that account is insufficient to honour the cheque or that it exceeds the amount arranged to be paid from that account by an agreement made with that bank, such person shall be deemed to have committed an offence and shall, without prejudice to any other provision of this Act, be punished with imprisonment for a term which may extend to two years, or with fine which may extend to twice the amount of the cheque, or with both: Provided that nothing contained in this section shall apply unless— (a) the cheque has been presented to the bank within a period of six months from the date on which it is drawn or within the period of its validity, whichever is earlier; (b) the payee or the holder in due course of the cheque, as the case may be, makes a demand for the payment of the said amount of money by giving a notice in writing, to the drawer of the cheque, within thirty days of the receipt of information by him from the bank regarding the return of the cheque as unpaid; and (c) the drawer of such cheque fails to make the payment of the said amount of money to the payee or as the case may be, to the holder in due course of the cheque within fifteen days of the receipt of the said notice. Explanation.—For the purposes of this section, 'debt or other liability' means a legally enforceable debt or other liability.",
+          "text_source": "REPRODUCED IN JUDGMENT at Para 5",
+          "court_action": "Interpreted strictly; Proviso (b) held to require exact cheque amount in demand notice; notice held invalid; complaint quashed",
+          "provision_id": "NIA_S138",
+          "parent_statute": "Negotiable Instruments Act, 1881",
+          "source_paragraph": "Para 5, Para 5.1, Para 7, Para 7.1, Para 8, Para 8.1, Para 8.2, Para 9",
+          "corresponding_new_provision": {
+            "language_status": "NI Act, 1881 continues to govern — no replacement legislation identified",
+            "new_provision_id": "[CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION — BNS/BNSS equivalent for NI Act offences requires verification; NI Act is a standalone statute not replaced by BNS]",
+            "new_parent_statute": "Negotiable Instruments Act, 1881 remains in force — not replaced by Bharatiya Nyaya Sanhita, 2023",
+            "verification_status": "UNVERIFIED"
+          }
+        },
+        {
+          "role": "Offences by companies — liability of directors/officers",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]",
+          "text_source": "Referenced by citation only at Para 2.1 and Para 6.4",
+          "court_action": "Mentioned as part of complaint (Sections 138, 141, 142); Para 6.4 references Section 141 in context of K.K. Ahuja case on strict construction; not independently analyzed in this judgment",
+          "provision_id": "NIA_S141",
+          "parent_statute": "Negotiable Instruments Act, 1881",
+          "source_paragraph": "Para 2.1, Para 6.4",
+          "corresponding_new_provision": null
+        },
+        {
+          "role": "Cognizance of offences — procedural provision governing filing of complaints",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]",
+          "text_source": "Referenced by citation only at Para 2.1",
+          "court_action": "Mentioned as part of complaint only; not independently analyzed in this judgment",
+          "provision_id": "NIA_S142",
+          "parent_statute": "Negotiable Instruments Act, 1881",
+          "source_paragraph": "Para 2.1",
+          "corresponding_new_provision": null
+        }
+      ]
+    },
+    "extraction_metadata": {
+      "extractor": "Legal Genome Analyst v3.1",
+      "source_url": "NOT EXTRACTABLE FROM JUDGMENT TEXT",
+      "extraction_date": "2025-09-19",
+      "framework_version": "3.1.0",
+      "judgment_citation": "2025 INSC 1133"
+    },
+    "dimension_3_invisible": {
+      "silent_arguments": [
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_1",
+          "stress_test": {
+            "verdict": "REMOVE",
+            "step_1_statutory_basis": "Proviso (b) to Section 138 NI Act (text reproduced at Para 5). The argument is that 'said amount' is identifiable from the notice as a whole — it is stated in the cheque table as Rs.1,00,00,000/-.",
+            "step_2_structural_validity": "Structurally coherent — Proviso (b) conditions the offence on a demand for 'said amount'; if the notice as a whole clearly specifies Rs.1,00,00,000/- in the cheque description, it could be argued the 'said amount' is identified even if the demand line erroneously states Rs.2,00,00,000/-. Suman Sethi Para 8 contemplates specifying cheque amount separately from other claims.",
+            "step_3_adversarial_challenge": "Court explicitly rejected this at Para 8.1: 'Even if the cheque details are mentioned in the notice but corresponding amount of cheque is not correctly mentioned, it would not bring in law the validity for such notice. Here the principle of reading of notice as a whole is inapplicable and irrelevant.' This ruling directly defeats the argument. Additionally, Suman Sethi Para 8 (severable additional claims) addresses the situation where the cheque amount IS correctly demanded and additional claims are separately stated — it does not address a situation where the demand line itself is wrong."
+          },
+          "the_argument": "The appellant should have argued that where the notice body correctly identifies the cheque (number, date, bank, exact amount in the cheque table) and the demand line contains an internally inconsistent and clearly erroneous figure, the Proviso (b) demand is satisfied by the cheque description rather than the demand line — i.e., the 'said amount' is ascertained from the notice as a whole, with the cheque table being the controlling reference.",
+          "why_it_matters": "This distinguishes the present case from cases like Gokuldas and K.R. Indira where the correct cheque amount was never mentioned anywhere in the notice — here it was clearly stated in the cheque table. The argument would have required the court to address a genuine ambiguity in the notice rather than a straightforward omission.",
+          "provision_or_principle": "Proviso (b) to Section 138 NI Act — 'makes a demand for the payment of the said amount of money' — interpreted in light of Suman Sethi Para 8 ('If in a notice while giving the break-up of the claim the cheque amount... are separately specified')",
+          "who_should_have_made_it": "Appellant's counsel — more precisely, this should have been the primary argument rather than relying on the general 'read as a whole' principle from Suman Sethi"
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_2",
+          "stress_test": {
+            "verdict": "REMOVE",
+            "step_1_statutory_basis": "Proviso (b) to Section 138 NI Act. However, the provision does not explicitly require the cheque date to be stated in the notice — it requires 'demand for payment of said amount.' Cheque number, date, etc. are not mandatory notice contents under Proviso (b).",
+            "step_2_structural_validity": "Weak structural basis — Proviso (b) only requires (i) written notice (ii) to drawer (iii) within 30 days of information from bank (iv) demanding 'said amount of money.' It does not prescribe that the notice must state the cheque date. A date discrepancy may be less fatal than an amount discrepancy.",
+            "step_3_adversarial_challenge": "The date discrepancy may not actually exist — Para 3 says cheque was dated 12.05.2012 but the notice (which was issued 08.06.2012 — after the MoU of 30.04.2012 and cheque of 12.05.2012) may contain the MoU date of 30.04.2012 as the 'date' field. Additionally, since the court disposed of the case on the amount ground alone, this argument was unnecessary. Further, cheque date is not a mandatory element of the Proviso (b) notice."
+          },
+          "the_argument": "The respondent-accused should have argued, and the court should have considered, that the Proviso (b) notice also failed on the ground that the first notice dated 08.06.2012 referred to the cheque date as 30.04.2012 (not 12.05.2012 as stated in Para 3 of the judgment) — raising a potential additional invalidity ground independent of the amount discrepancy.",
+          "why_it_matters": "If the cheque date discrepancy (30.04.2012 in notice vs 12.05.2012 stated in Para 3 as the cheque date) is genuine and not a transcription error in the judgment, it raises an additional ground of notice invalidity. However, the MoU date was 30.04.2012 and the cheque date in the notice table says 30.04.2012 — this may be the actual cheque date.",
+          "provision_or_principle": "Proviso (b) to Section 138 NI Act — accuracy of cheque particulars in notice",
+          "who_should_have_made_it": "Respondent's counsel — as additional / alternative ground for invalidity"
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_3",
+          "stress_test": {
+            "verdict": "REMOVE",
+            "step_1_statutory_basis": "Proviso (b) to Section 138 NI Act requires demand for 'the payment of the said amount of money' — the specific definite article 'the said amount' contemplates an exact, identified sum, not a demand that encompasses the cheque amount within a larger figure.",
+            "step_2_structural_validity": "Structurally weak — the argument invites a purposive/prejudice-based approach to a provision the court has consistently construed strictly. If 'said amount' means the exact cheque amount, then demanding twice that amount does not demand 'the said amount' — it demands a different amount. The argument would require re-characterising 'said amount' as a minimum threshold rather than an exact specification.",
+            "step_3_adversarial_challenge": "The court in Yankay Drugs (Para 5.5.1 — approved by Supreme Court) explicitly held that 'if the demand is for a lesser amount or a higher amount not covered by the cheque, which was dishonoured, then the prosecution must fail.' This directly defeats the over-demand/under-demand distinction. The court in the present judgment does not distinguish between the two and applies the same standard. The prejudice argument is implicitly rejected by the strict construction framework."
+          },
+          "the_argument": "The appellant could have argued that the notice, by demanding more than the cheque amount, actually exceeded the minimum statutory requirement — if the notice demands Rs.2 crore where the cheque is for Rs.1 crore, the drawer is on notice that AT LEAST Rs.1 crore is demanded; the higher demand cannot prejudice the drawer in the same way a lower demand might (where the drawer might pay the demanded lower amount believing it discharges liability).",
+          "why_it_matters": "This argument goes to the purpose of the notice (Saxons Farms — give drawer chance to pay and be absolved). The drawer cannot claim prejudice from an over-demand — he was on more than sufficient notice that payment was required. This argument could have tested whether the strict construction rule applies equally to over-demand and under-demand.",
+          "provision_or_principle": "Proviso (b) to Section 138 NI Act; purposive construction; Central Bank of India vs. Saxons Farms — purpose of notice to give drawer chance to rectify",
+          "who_should_have_made_it": "Appellant's counsel — as a prejudice-based argument distinguishing over-demand from under-demand"
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_4",
+          "stress_test": {
+            "verdict": "REMOVE",
+            "step_1_statutory_basis": "No specific statutory provision — this is an equitable/policy argument. Statutory basis would need to be Article 142 of the Constitution (complete justice) which is a Supreme Court power, not a ground for dismissing an appeal.",
+            "step_2_structural_validity": "Structurally, equitable arguments cannot override clear penal statutory requirements. The court has consistently held that there is 'no question of inferential or implied compliance' (K.K. Ahuja at Para 6.4).",
+            "step_3_adversarial_challenge": "The court implicitly addresses this by noting that the legislature 'consciously imposed certain conditions' (Rahul Builders at Para 5.3.1). The remedy for an unjust result is civil proceedings for debt recovery — the NI Act offence is a specific statutory creation with specific conditions. Equitable arguments are properly directed to the legislature, not the court interpreting a penal provision."
+          },
+          "the_argument": "The court, when rejecting the typographical error defence, could have considered whether the drawer was actually prejudiced — i.e., did the drawer in fact pay nothing and use the notice defect only as a technical escape? If the underlying debt (Rs.1 crore) was admittedly due and unpaid, the typographical error defence could be characterised as a device to escape criminal liability for an admitted default.",
+          "why_it_matters": "The court's statement (Para 4.1 dismissal of 'civil wrong in attire of criminal offence' argument) shows awareness of the equity angle. The court could have commented on the equitable dimension — that strict compliance rules, while correct in law, sometimes produce manifestly unjust results where the underlying debt is real and unpaid.",
+          "provision_or_principle": "General principle of substantial justice; Section 138 NI Act's underlying purpose of ensuring payment of legally enforceable debts",
+          "who_should_have_made_it": "Appellant's counsel — as equity/prejudice argument; and court could have considered it as obiter"
+        }
+      ],
+      "hidden_assumptions": [
+        {
+          "confidence": "VERIFIED",
+          "self_check": "The assumption is implicit throughout but most explicit at Para 5.3.1 (Rahul Builders quote: 'the complaint petition would not be maintainable') — confirmed as jurisdictional/maintainability-going.",
+          "assumption_id": "HA_1",
+          "why_it_matters": "If Proviso (b) were treated as a procedural/formal requirement rather than jurisdictional, courts might allow amendment, condonation, or waiver of the defect.",
+          "how_to_challenge": "Argue that Proviso (b) creates a condition precedent to the cause of action, not to the court's jurisdiction; the doctrine of substantial compliance could apply to procedural prerequisites. Reference to how defects in other criminal procedural requirements (e.g., sanction) are treated — some are curable.",
+          "where_it_operates": "The entire analysis rests on treating Proviso (b) compliance as jurisdictional — if the notice fails, the court has no jurisdiction to try the complaint under Section 138.",
+          "what_court_assumes": "That the requirement in Proviso (b) to demand 'said amount' is a condition precedent that goes to the root of jurisdiction/maintainability, not merely a technical procedural requirement that can be cured or waived."
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "The court does not engage with this distinction at all — treats all deviations as equally fatal. The assumption is by omission.",
+          "assumption_id": "HA_2",
+          "why_it_matters": "An argument could be made that over-demanding (asking for more) is less prejudicial to the drawer than under-demanding (asking for less) — if anything, an over-demand gives the drawer full notice of the creditor's position. The prejudice analysis might differ.",
+          "how_to_challenge": "Argue that the statutory purpose (give drawer chance to pay and avoid liability) is satisfied by an over-demand — the drawer knows the minimum he must pay (the cheque amount, which was specified in the notice) to avoid criminal liability; over-demand does not create confusion about what is owed under the cheque.",
+          "where_it_operates": "Para 5.5.1 (Yankay Drugs: 'lesser amount or a higher amount' — both fatal); the court applies this without differentiation in the present case.",
+          "what_court_assumes": "That demanding double the cheque amount is categorically worse than / as bad as demanding a lesser amount — the court treats over-demand and under-demand as equally fatal."
+        },
+        {
+          "confidence": "VERIFIED",
+          "self_check": "Court explicitly rejects this at Para 8.1 — 'Here the principle of reading of notice as a whole is inapplicable and irrelevant.' Assumption confirmed and insulated by explicit ruling.",
+          "assumption_id": "HA_3",
+          "why_it_matters": "The drawer would have seen the correct cheque details (Rs.1 crore, cheque no. 876229) in the table within the notice itself. The 'demand for Rs.2 crore' is a separate paragraph. Reading the notice as a whole, a reasonable drawer could identify the actual obligation.",
+          "how_to_challenge": "Argue that the notice, read as a whole (Suman Sethi), sufficiently notified the drawer of the cheque amount; the demand line figure is clearly inconsistent with the cheque table figure and a reasonable person would refer to the cheque amount stated in the table — this is the 'said amount' for Proviso (b) purposes.",
+          "where_it_operates": "Para 8.1: 'Even if the cheque details are mentioned in the notice but corresponding amount of cheque is not correctly mentioned, it would not bring in law the validity for such notice.'",
+          "what_court_assumes": "That the cheque details (number, date, bank, amount) stated correctly in the cheque table within the notice body are insufficient to 'save' the notice when the demand line states a different amount."
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "The court uses recurrence as additional reason to doubt typographical error defence, but since the court holds typographical error is fatal regardless, this point is technically surplusage — it does not change the legal outcome.",
+          "assumption_id": "HA_4",
+          "why_it_matters": "The appellant's own explanation at Para 3.4 was that other notices for Rs.2 crore were being prepared simultaneously and the wrong amount was pasted by 'cut paste command inadvertently.' This is a plausible mechanical explanation for recurrence — not evidence of intent.",
+          "how_to_challenge": "Argue that the same cut-paste error occurring twice is entirely consistent with inadvertence — if you copy a wrong figure, you copy the same wrong figure each time. Recurrence of the same specific error is not probative of intentional wrongdoing.",
+          "where_it_operates": "Para 8.2: 'the explanation that mentioning of wrong amount in the cheque was in the nature of typographical or inadvertent error could hardly be accepted, for, the so called mistake occurred and recurred in both the notices.'",
+          "what_court_assumes": "That the recurrence of the error in both notices (Para 8.2) makes the typographical error defence 'hardly acceptable' — treating repetition as evidence of intention or systemic failure rather than as a mundane copy-paste error."
+        },
+        {
+          "confidence": "VERIFIED",
+          "self_check": "The assumption is confirmed as the holding, not merely an assumption. Reclassified to HA for its structural role in all downstream arguments.",
+          "assumption_id": "HA_5",
+          "why_it_matters": "In complex commercial transactions where multiple cheques or tranches are involved, there may be arguments about what the 'amount' of the cheque represents in the context of the underlying obligation.",
+          "how_to_challenge": "Limited scope for challenge — the court's reading of 'said amount' = cheque amount is confirmed by the entire line of precedent from Suman Sethi. This assumption is extremely well-insulated.",
+          "where_it_operates": "Para 7, Para 7.1 — the court's structural reading of Section 138",
+          "what_court_assumes": "That the 'said amount' in Proviso (b) and 'any amount of money' in the main part of Section 138 are necessarily and always the same — the cheque amount — with no room for argument that 'said amount' could encompass related or associated obligations."
+        }
+      ],
+      "doctrinal_undercurrent": {
+        "tensions": [
+          "Tension between strict construction (protecting accused/drawer from unclear penal liability) and the practical reality that the DRAWER benefits from the strict rule while the creditor (payee) suffers — the strict construction rule here protects the dishonest debtor, not the 'rights of individuals' contemplated by Dyke vs. Elliott",
+          "Tension between 'read notice as a whole' principle (Suman Sethi Para 8) — which the court itself applies to say additional charges are severable — and the absolute rejection of reading the notice as a whole to identify the correct cheque amount from the cheque table",
+          "Tension between the characterisation of Section 138 offence as a 'civil wrong in the attire of criminal offence' (appellant's argument, Para 4.1) and the strictly penal treatment of its procedural conditions",
+          "Tension between Parliamentary purpose (facilitate smooth business transactions, protect legitimate creditors) and judicial strict construction that can defeat legitimate claims on technical grounds"
+        ],
+        "doctrines": [
+          "Strict construction of penal statutes — the core canon applied throughout",
+          "Mandatory vs directory conditions — Proviso (b) treated as mandatory condition precedent, not directory",
+          "Condition precedent to offence — all three provisos (a), (b), (c) must be satisfied for offence to be constituted",
+          "No inferential or implied compliance with penal conditions",
+          "Severable claims doctrine (from Suman Sethi) — additional claims severable from correctly stated cheque amount, but inapplicable where base amount wrong",
+          "Notice as jurisdictional prerequisite — defective notice = complaint not maintainable"
+        ]
+      },
+      "counterfactual_analysis": [
+        {
+          "cf_id": "CF_1",
+          "confidence": "VERIFIED",
+          "altered_fact": "Notice correctly demanded Rs.1,00,00,000/- (exact cheque amount) but also separately claimed notice charges of Rs.1,500/- and legal charges of Rs.5,000/-",
+          "original_fact": "Both notices demanded Rs.2,00,00,000/- (double the cheque amount)",
+          "likely_new_outcome": "Complaint maintained; no quashing; case proceeds to trial on merits",
+          "broken_syllogism_id": "SYL_1",
+          "impact_on_reasoning": "Under Suman Sethi (Para 5.2.2), additional severable claims for interest/charges beyond the correctly stated cheque amount do NOT invalidate the notice. The demand for the cheque amount would be satisfied. The complaint would be maintainable.",
+          "applicable_provision": "Proviso (b) to Section 138 NI Act; Suman Sethi Para 8",
+          "is_practically_plausible": true
+        },
+        {
+          "cf_id": "CF_2",
+          "confidence": "SPECULATIVE",
+          "altered_fact": "Only the first notice had the wrong amount (Rs.2 crore); the second notice dated 14.09.2012 correctly demanded Rs.1,00,00,000/-",
+          "original_fact": "The typographical error occurred in both notices",
+          "likely_new_outcome": "Uncertain — depends on whether the second notice (14.09.2012) was within the Proviso (b) time limit from the dishonour date. If the bank's information was received close to the cheque dishonour in 2012, and the first notice was 08.06.2012, the second notice of 14.09.2012 is likely outside the 30-day window. However, fresh dishonour might restart the clock if cheque was presented again.",
+          "broken_syllogism_id": "SYL_3",
+          "impact_on_reasoning": "The court would still need to decide whether the first invalid notice was cured by the second correct notice. If the second notice was within the limitation period of Proviso (b) (within 30 days of information from bank regarding dishonour), it might constitute a fresh valid notice and allow the complaint to proceed. The recurrence point in Para 8.2 would be unavailable.",
+          "applicable_provision": "Proviso (b) to Section 138 NI Act — 30-day limitation for notice from date of information from bank",
+          "is_practically_plausible": true
+        },
+        {
+          "cf_id": "CF_3",
+          "confidence": "SPECULATIVE",
+          "altered_fact": "Instead of claiming typographical error, the complainant argued that the Rs.2,00,00,000/- figure in the notice included the cheque amount of Rs.1,00,00,000/- plus an equal amount claimed as damages/interest separately (with the cheque amount specified in the cheque table)",
+          "original_fact": "The complainant raised typographical error as defence in reply to discharge application",
+          "likely_new_outcome": "Unlikely to succeed given the language of the notice — the demand paragraph does not break down the Rs.2 crore into components. The court would likely still treat the Rs.2 crore as an undifferentiated demand. This counterfactual would only work if the notice itself stated 'cheque amount Rs.1,00,00,000/- + damages Rs.1,00,00,000/- = Rs.2,00,00,000/-'.",
+          "broken_syllogism_id": "SYL_1",
+          "impact_on_reasoning": "Under Suman Sethi Para 8, if the cheque amount is 'separately specified' and additional amounts (interest, damages) are also claimed, the additional claims are severable. If the notice could be read as demanding Rs.1,00,00,000/- (cheque) + Rs.1,00,00,000/- (damages/loss), and the cheque amount was separately identified, the result might differ — but the notice text does not bear this reading as the demand line says 'aforesaid cheques of 2,00,00,000/-' without distinguishing components.",
+          "applicable_provision": "Suman Sethi Para 8; Proviso (b) to Section 138 NI Act",
+          "is_practically_plausible": false
+        },
+        {
+          "cf_id": "CF_4",
+          "confidence": "SPECULATIVE",
+          "altered_fact": "The Constitution Bench or larger bench of the Supreme Court examined whether the 'no typographical error' rule should be absolute",
+          "original_fact": "The court found that 'even typographical error can be no defence' (Para 8.2)",
+          "likely_new_outcome": "The current 2-judge bench decision could be prospectively qualified but not disturbed in the present case",
+          "broken_syllogism_id": "SYL_3",
+          "impact_on_reasoning": "If a larger bench introduced a limited exception for demonstrable, incorrigible typographical errors where the correct cheque amount is elsewhere stated in the notice and the drawer suffered no prejudice, the strict rule in this case would be prospectively qualified.",
+          "applicable_provision": "Proviso (b) to Section 138 NI Act; doctrines of substantial compliance and purposive construction",
+          "is_practically_plausible": true
+        }
+      ],
+      "fact_sensitivity_matrix": {
+        "ambiguous_facts": [
+          "Whether the cheque date was 30.04.2012 (as stated in both notices at Paras 3.1, 3.2) or 12.05.2012 (as stated in Para 3 — 'cheque bearing number 876229 dated 12.05.2012') — there is an internal inconsistency in the judgment on this point. This could be a transcription error in the judgment or could indicate a further discrepancy in the notice.",
+          "Whether the second notice of 14.09.2012 (Para 3.2) was also a Proviso (b) notice or served a different purpose — the judgment treats both as Proviso (b) notices but the second notice was sent to 'M/s. Nafto Gaz India Private Limited and its Directors through the advocates'; its exact legal character is noted but not resolved",
+          "The complaint number 523804 of 2016 was filed in 2016 (Para 2.1) but the cheque was dishonoured circa 2012 and notices issued in 2012 — the gap of ~4 years is not explained in the judgment"
+        ],
+        "decorative_facts": [
+          "The MoU was for sale of land (Para 3) — the underlying transaction is irrelevant to the NI Act analysis",
+          "Respondent was arraigned as accused No.3 (Para 3) — the specific accused number is irrelevant to the legal question",
+          "The specific bank branch (Indian Overseas Bank, R.K. Puram, Delhi) (Para 3) — irrelevant to the legal analysis",
+          "The names of the advocates (Mr. Sanjay Kumar for appellant, Mr. Kush Chaturvedi for respondent) (Paras 4, 4.3) — irrelevant to legal analysis"
+        ],
+        "load_bearing_facts": [
+          "Cheque amount: Rs.1,00,00,000/- (Para 3) — if the cheque amount had matched the notice demand, no offence under the ratio",
+          "Both notices demanded Rs.2,00,00,000/- (Paras 3.1, 3.2, 3.3) — the mismatch is the fulcrum of the entire case",
+          "The discrepancy occurred in BOTH notices (Para 8.2) — the court uses recurrence to reject typographical error defence (though holds it fatal even if genuine)",
+          "The complainant's own reply (Para 3.4) acknowledged the 'cut paste' mechanism — confirming different amounts were in use for different cheques simultaneously"
+        ]
+      },
+      "alternative_interpretations": [
+        {
+          "alt_id": "ALT_1",
+          "confidence": "SOUND_INFERENCE",
+          "is_defensible": true,
+          "why_not_adopted": "The court adopted the plain literal meaning of 'said amount' as referring back to 'any amount of money' in the main section — i.e., the specific cheque amount. The word 'said' functions as a definite anaphoric reference to the precise amount. Additionally, Yankay Drugs (approved at Para 5.5.1) explicitly held both under-demand and over-demand are equally fatal. The purpose of the notice (allowing the drawer to pay exact cheque amount and be absolved) requires precision.",
+          "what_would_change": "This interpretation would protect all cases where notices over-demand while still invalidating under-demand notices. It would be more favourable to complainants/payees who may have made errors in calculating additional claims.",
+          "what_it_would_have_been": "The 'said amount' in Proviso (b) could be interpreted as a minimum threshold rather than an exact figure — meaning the demand must be for AT LEAST the cheque amount, but may be more. This would validate notices demanding more than the cheque amount while invalidating notices demanding less.",
+          "statutory_structure_check": "Proviso (b) uses 'the payment of the said amount of money' — 'the said amount' is a specific definite reference. 'Said' = previously mentioned, i.e., the amount in the dishonoured cheque. Grammatically supports exact-amount interpretation over minimum-threshold interpretation."
+        },
+        {
+          "alt_id": "ALT_2",
+          "confidence": "SOUND_INFERENCE",
+          "is_defensible": false,
+          "why_not_adopted": "The court treats Proviso (b) compliance as going to the maintainability of the complaint and the constitution of the offence itself — not merely a procedural defect. The entire analysis confirms that without valid notice, the offence under Section 138 is not complete (Para 5.1 — 'In order to make out the offence under Section 138 complete, conditions stated in sub-clauses (a), (b) and (c) of the Proviso should stand complied with').",
+          "what_would_change": "Would allow complainants to cure defective notices before filing complaint or within limitation period; would transform the NI Act notice regime from strict compliance to substantial compliance with curative mechanism.",
+          "what_it_would_have_been": "The Proviso (b) notice requirement could be treated as a condition precedent to the CAUSE OF ACTION but not to the court's jurisdiction — allowing courts to permit amendment or re-issuance of notice before the limitation period expires, rather than treating the defect as permanently fatal.",
+          "statutory_structure_check": "Section 138 Proviso: 'nothing contained in this section shall apply unless' — the language 'shall apply' makes the provisos conditions going to the application of the entire section, not merely procedural prerequisites. This is stronger than ordinary procedural requirements."
+        },
+        {
+          "alt_id": "ALT_3",
+          "confidence": "VERIFIED",
+          "is_defensible": true,
+          "why_not_adopted": "The court explicitly rejected this distinction at Para 8.1: 'Even if the cheque details are mentioned in the notice but corresponding amount of cheque is not correctly mentioned, it would not bring in law the validity for such notice.' The court refused to read the notice holistically to save it.",
+          "what_would_change": "Would have introduced a 'substantial specification' test — if the cheque amount appears anywhere in the notice and the demand line amount is inconsistent with it, the notice is read as a whole to identify the 'said amount.' This would protect complainants whose lawyers accurately describe the cheque but make demand-line errors.",
+          "what_it_would_have_been": "The court could have distinguished between cases where the cheque amount is NOWHERE mentioned correctly in the notice (as in K.R. Indira and Rahul Builders) and cases where the cheque amount IS correctly mentioned in the cheque table but an erroneously different figure appears in the demand paragraph — treating the latter as a less-fatal defect where the notice is read as a whole to determine the actual demand.",
+          "statutory_structure_check": "The distinction is factually meaningful — it would have required departing from or confining the Suman Sethi 'demand must be for cheque amount' rule. The court declined to confine the rule to its narrowest application."
+        }
+      ]
+    },
+    "dimension_5_synthesis": {
+      "genome_summary": {
+        "text": "Kaveri Plastics (2025 INSC 1133) is the Supreme Court's most recent and comprehensive restatement of the law governing the demand notice under Proviso (b) to Section 138 of the Negotiable Instruments Act, 1881. The case arose from a complaint where a cheque for Rs.1 crore was dishonoured but both statutory demand notices demanded Rs.2 crore — double the cheque amount. The Delhi High Court quashed the complaint; the Supreme Court dismissed the appeal. The judgment has four primary holdings: (1) the phrase 'said amount of money' in Proviso (b) mandatorily and exclusively refers to the exact amount of the dishonoured cheque, neither more nor less — this is the settled position from Suman Sethi (2000) onwards and is now confirmed at the highest level; (2) even a genuine typographical error in stating the cheque amount in the demand notice is fatal to the notice's validity and is no defence in law — strict mandatory compliance is required; (3) the 'read the notice as a whole' principle (from Suman Sethi) is inapplicable where the cheque amount itself is incorrectly stated — it applies only where additional severable claims are made above a correctly stated cheque amount; (4) penal statutes require strict construction — no elasticity, no inferential compliance. The judgment's practical impact is significant: it forecloses the 'typographical error' escape route for complainants and creates a binary rule — the notice either states the correct cheque amount or it fails, regardless of reason. The judgment also preserves the Suman Sethi exception for severable additional claims (interest, costs) layered on top of a correctly stated cheque amount. Strategically, the judgment is a powerful weapon for accused/drawer parties in Section 138 cases where the demand notice has any amount discrepancy, and a cautionary tale for practitioners drafting NI Act notices.",
+        "consistency_check_passed": true,
+        "consistency_verified_against": [
+          "Section 1.6 (ratio decidendi) — confirmed: genome reflects RATIO_1 (exact amount mandatory), RATIO_2 (typographical error no defence), RATIO_3 (strict construction), RATIO_4 (additional claims permissible only after correct base amount)",
+          "Section 2.1 (syllogisms) — confirmed: genome reflects the linear chain SYL_1 through SYL_4",
+          "Section 3.1 (hidden assumptions) — confirmed: HA_1 (jurisdictional treatment of Proviso (b)) noted; HA_2 (over-demand vs under-demand distinction) noted as assumption",
+          "Section 4.3 (vulnerability map) — confirmed: VULN_1 (condition precedent vs remedy) and VULN_3 (recurrence point) noted with low success probability",
+          "Section 4.6 (temporal vulnerability) — confirmed: HIGH survival probability noted; NI Act unchanged by BNS/BNSS"
+        ]
+      },
+      "questions_created": [
+        {
+          "why_new": "Kaveri Plastics treats Proviso (b) compliance as an objective formal requirement divorced from actual prejudice or knowledge. No Supreme Court decision appears to have directly addressed whether the drawer's actual knowledge of the correct amount (from the bank's dishonour memo) can substitute for formal notice compliance.",
+          "confidence": "SPECULATIVE",
+          "question_id": "Q_1",
+          "likely_forum": "High Court (quashing petition) → Supreme Court (SLP)",
+          "the_question": "Can a defective Proviso (b) notice (with wrong amount) be cured by the accused's actual knowledge of the correct cheque amount, or by the accused having received the cheque memo from the bank showing the correct amount — i.e., does actual knowledge of the drawer substitute for formal notice compliance?",
+          "who_will_raise_first": "Complainant/payee's counsel in a future case — as a ground to resist quashing"
+        },
+        {
+          "why_new": "Kaveri Plastics does not address the scenario of fresh notice within limitation period. The present case had both notices with wrong amounts. A fresh correct notice scenario is a live practical issue not settled by this judgment.",
+          "confidence": "SOUND_INFERENCE",
+          "question_id": "Q_2",
+          "likely_forum": "Metropolitan Magistrate → Sessions Court → High Court → Supreme Court",
+          "the_question": "If the payee issues a fresh correct notice within the 30-day Proviso (b) limitation period after realising the earlier notice had a wrong amount, does the second correct notice revive the complaint or is the complainant permanently barred?",
+          "who_will_raise_first": "Complainant/payee's counsel — as a ground to resist quashing where fresh notice was issued"
+        },
+        {
+          "why_new": "Kaveri Plastics concerned a case where the cheque table showed the correct amount but the demand paragraph showed the wrong amount. The court ruled on this specific configuration. The reverse configuration (correct amount in demand paragraph, wrong amount in cheque table) has not been addressed.",
+          "confidence": "SPECULATIVE",
+          "question_id": "Q_3",
+          "likely_forum": "High Court (quashing petition)",
+          "the_question": "Does the absolute 'no typographical error' rule in Kaveri Plastics Para 8.2 apply equally where the typographical error is in a part of the notice where the cheque amount appears (e.g., the cheque table itself shows wrong amount but the demand paragraph shows the correct amount) — i.e., does the rule apply to any part of the notice or only to the demand paragraph?",
+          "who_will_raise_first": "Accused/drawer's counsel trying to extend the rule; or complainant trying to distinguish on facts"
+        },
+        {
+          "why_new": "The judgment treats both notices as equally defective but does not address whether the second notice was timely under Proviso (b) and whether a second presentation of the cheque had occurred. If the cheque was re-presented, the limitation for the second Proviso (b) notice runs from the second dishonour information — potentially making the second notice independently valid.",
+          "confidence": "SPECULATIVE",
+          "question_id": "Q_4",
+          "likely_forum": "Metropolitan Magistrate → High Court",
+          "the_question": "Whether the second notice dated 14.09.2012 (which was issued more than 30 days after the first dishonour memo and more than 30 days after the first notice) had independent validity under Proviso (b) — and whether the cheque was re-presented before the second notice was issued, thereby creating a fresh Proviso (b) cycle. This question is not answered in Kaveri Plastics.",
+          "who_will_raise_first": "Complainant's counsel in a future case with similar facts"
+        }
+      ],
+      "extraction_confidence": {
+        "overall_confidence": "VERIFIED",
+        "extraction_limitations": [
+          "The complaint number 523804/2016 filed in 2016 but notices issued in 2012 — the 4-year gap is unexplained in the judgment; limitation period issues (if any) under Section 142 NI Act cannot be assessed",
+          "The judgment does not specify under which provision the High Court petition was filed (Section 482 CrPC or Section 528 BNSS or Section 397/401 CrPC) — relevant for practice",
+          "Accused No.1 and Accused Nos.2-5 (directors) are mentioned in background but the respondent is Accused No.3 — the basis for implication of accused No.3 under Sections 141/142 is not analysed in the judgment",
+          "The cheque date discrepancy (30.04.2012 in notices vs 12.05.2012 in Para 3) is noted but not resolved"
+        ],
+        "judgment_clarity_grade": "A — judgment is well-structured, clearly reasoned, extensively cited; legal proposition stated precisely in Paras 8, 8.1, 8.2, 9; no significant ambiguity in the core ratio",
+        "highest_uncertainty_sections": [
+          "Para 10 — internal factual inconsistency in judgment (Rs.1,00,000/- vs Rs.1,00,00,000/-) — noted as likely typographical in judgment text",
+          "Cross-statutory mapping for BNS/BNSS equivalents to procedural provisions — verified that NI Act unchanged but Section 482 CrPC equivalent in BNSS requires independent verification",
+          "High Court decisions cited (Chhabra Fabrics, K. Gopal, Gokuldas, Yankay Drugs, Sunglo Engineering) — approved by Supreme Court in this judgment; their holdings as summarised by this court are [VERIFIED] but the full texts of those decisions are not before us"
+        ]
+      },
+      "interpretive_lineage_map": [
+        {
+          "timeline": [
+            {
+              "case": "Central Bank of India vs. Saxons Farms, (1999) 8 SCC 221",
+              "year": "1999",
+              "development": "Establishes PURPOSE of Proviso (b) notice — to give drawer chance to rectify; drawer pays exact cheque amount within 15 days and is absolved"
+            },
+            {
+              "case": "Suman Sethi vs. Ajay K. Churiwal, (2000) 2 SCC 380",
+              "year": "2000",
+              "development": "LANDMARK — 'said amount' = cheque amount; demand must be for cheque amount; additional severable claims (interest, costs) do not invalidate notice if cheque amount separately specified; ambiguous demand without specifying cheque amount fails"
+            },
+            {
+              "case": "K.R. Indira vs. Dr. G. Adinarayana, (2003) 8 SCC 300",
+              "year": "2003",
+              "development": "Enumerates 5 ingredients of Section 138 offence; specific demand for cheque amount is ingredient (iv); notice without specific demand is invalid"
+            },
+            {
+              "case": "Rahul Builders vs. Arihant Fertilizers, (2008) 2 SCC 321",
+              "year": "2008",
+              "development": "Confirms MANDATORY/IMPERATIVE character of Proviso (b) — 'Parliament consciously imposed these conditions'; notice in conformity with Proviso (b) is prerequisite for maintainability; notice demanding Rs.8.72 lakh when cheque was Rs.1 lakh — invalid"
+            },
+            {
+              "case": "K.K. Ahuja vs. V.K. Vora, (2009) 10 SCC 48",
+              "year": "2009",
+              "development": "Strict literal compliance required; no inferential or implied compliance; penal statutes construed strictly"
+            },
+            {
+              "case": "Sunglo Engineering India Pvt. Ltd. vs. State, MANU/DE/3805/2021 (Delhi HC)",
+              "year": "2021",
+              "development": "Facts identical to present case — notice demanding double the cheque amount (Rs.2 crore when cheque was Rs.1 crore) — complaint quashed"
+            },
+            {
+              "case": "Dashrathbhai Trikambhai Patel vs. Hitesh Mahendrabhai Patel, (2023) 1 SCC 578",
+              "year": "2023",
+              "development": "Most recent restatement before Kaveri Plastics — confirms 'said amount' = cheque amount; provisos must be fulfilled in addition to substantive ingredients"
+            },
+            {
+              "case": "Kaveri Plastics vs. Mahdoom Bawa Bahrudeen Noorul, 2025 INSC 1133",
+              "year": "2025",
+              "development": "CONSOLIDATES and EXTENDS — reaffirms all prior law; expressly rules 'read as a whole' principle inapplicable where base cheque amount wrong; HOLDS typographical error is NO DEFENCE — 'even typographical error can be no defence'; absolute mandatory compliance rule confirmed"
+            }
+          ],
+          "provision": "Proviso (b) to Section 138 of the Negotiable Instruments Act, 1881 — 'said amount of money' requirement in demand notice"
+        }
+      ],
+      "practitioners_cheat_sheet": {
+        "cite_when": [
+          "Seeking quashing of Section 138 complaint where demand notice amount differs from cheque amount (higher or lower)",
+          "Seeking discharge where notice has any amount discrepancy",
+          "Opposing complainant's argument that notice should be 'read as a whole' to cure amount discrepancy",
+          "Opposing complainant's typographical error defence",
+          "Arguing mandatory nature of Proviso (b) conditions for maintainability of Section 138 complaint",
+          "Establishing that strict construction applies to all conditions in Section 138 NI Act"
+        ],
+        "hidden_gem": "Para 8 (last sentence): 'After mentioning the exact cheque amount, the sender of the service may claim in the notice amounts such as legal charges, notice charges, interest and such other additional amounts, provided the cheque amount is specified to be demanded for payment.' — This is the preserved safe harbour for complainants who add interest/costs to their notices. Draft your Section 138 notice by (i) first stating exact cheque amount as the demand, then (ii) separately claiming interest and costs as additional amounts. This keeps the notice valid while maximising the creditor's claim.",
+        "do_not_cite_when": [
+          "Your client (complainant/payee) has correctly stated the cheque amount in the notice but has also separately claimed additional interest/costs — this judgment does NOT invalidate such notices (Suman Sethi exception preserved at Para 8)",
+          "The discrepancy in the notice involves particulars OTHER than the amount (e.g., cheque number, payee name) — ratio is confined to 'said amount' requirement",
+          "You are arguing for a purposive/equitable reading of Section 138 — this judgment firmly closes that door in the context of notice amount requirements",
+          "Proceedings under provisions other than Section 138 NI Act — ratio is specific to Section 138 Proviso (b) statutory scheme"
+        ],
+        "killer_paragraph": "Para 8.2: 'The condition of notice under Proviso (b) is required to be complied with meticulously. Even typographical error can be no defence. The error even if typographical, would be fatal to the legality of notice, given the need for strict mandatory compliance. And in the facts of the present case, the explanation that mentioning of wrong amount in the cheque was in the nature of typographical or inadvertent error could hardly be accepted, for, the so called mistake occurred and recurred in both the notices dated 08.06.2012 and 14.09.2012.'"
+      }
+    },
+    "dimension_2_structural": {
+      "syllogisms": {
+        "items": [
+          {
+            "label": "Meaning of 'Said Amount' in Proviso (b)",
+            "conclusion": "The notices failed to demand the 'said amount' and therefore failed to comply with Proviso (b) to Section 138.",
+            "feeds_into": [
+              "SYL_2",
+              "SYL_3"
+            ],
+            "syllogism_id": "SYL_1",
+            "major_premise": "The words 'said amount of money' in Proviso (b) to Section 138 NI Act refer exclusively to the cheque amount, as established by Suman Sethi, K.R. Indira, Rahul Builders, and Dashrathbhai Trikambhai Patel.",
+            "minor_premise": "The cheque in the present case was for Rs.1,00,00,000/- but the notices demanded Rs.2,00,00,000/-.",
+            "is_independent": false,
+            "source_paragraphs": [
+              "Para 5.2",
+              "Para 5.2.1",
+              "Para 5.2.2",
+              "Para 5.3",
+              "Para 5.4",
+              "Para 7",
+              "Para 7.1"
+            ]
+          },
+          {
+            "label": "Strict Construction of Penal Statute",
+            "conclusion": "Strict construction of the penal provision mandates that the non-compliance with the exact cheque amount requirement renders the notice invalid, regardless of the reason for discrepancy.",
+            "feeds_into": [
+              "SYL_3"
+            ],
+            "syllogism_id": "SYL_2",
+            "major_premise": "Section 138 being a penal provision must be construed strictly; conditions in the Proviso must be complied with meticulously; no elasticity or inferential compliance is permitted (Dyke vs. Elliott, M. Narayanan Nambiar, K.K. Ahuja).",
+            "minor_premise": "Proviso (b) stipulates service of notice demanding the 'said amount'; the condition was not satisfied as the amount demanded was double the cheque amount.",
+            "is_independent": false,
+            "source_paragraphs": [
+              "Para 6",
+              "Para 6.1",
+              "Para 6.2",
+              "Para 6.3",
+              "Para 6.4",
+              "Para 8.1"
+            ]
+          },
+          {
+            "label": "Typographical Error Cannot Save Invalid Notice",
+            "conclusion": "The typographical error defence fails; the notices remain invalid.",
+            "feeds_into": [
+              "SYL_4"
+            ],
+            "syllogism_id": "SYL_3",
+            "major_premise": "Given strict mandatory compliance requirement for penal provisions, even a typographical error in the amount stated in a Proviso (b) notice is fatal; no defence based on inadvertence can be countenanced (Chhabra Fabrics, K. Gopal, Sunglo Engineering).",
+            "minor_premise": "The appellant's defence of typographical/inadvertent error is further undermined by the fact that the same error occurred in both notices dated 08.06.2012 and 14.09.2012.",
+            "is_independent": false,
+            "source_paragraphs": [
+              "Para 8.2",
+              "Para 5.5.2",
+              "Para 5.5.3"
+            ]
+          },
+          {
+            "label": "Invalid Notice = Complaint Not Maintainable = Quashing Proper",
+            "conclusion": "The complaint was not maintainable; the High Court's order of quashing was proper and legal; the appeals must be dismissed.",
+            "feeds_into": [],
+            "syllogism_id": "SYL_4",
+            "major_premise": "Compliance with Proviso (b) is a condition precedent for constituting the offence under Section 138. Without valid notice, the complaint is not maintainable (Rahul Builders: 'Unless a notice is served in conformity with proviso (b) appended to Section 138 of the Act, the complaint petition would not be maintainable.').",
+            "minor_premise": "The notices were invalid for the reasons established in SYL_1, SYL_2, SYL_3.",
+            "is_independent": false,
+            "source_paragraphs": [
+              "Para 5.3.1",
+              "Para 8",
+              "Para 8.1",
+              "Para 9",
+              "Para 10",
+              "Para 11"
+            ]
+          }
+        ],
+        "chain_logic": "Linear chain: SYL_1 (meaning of 'said amount') → feeds into SYL_2 (strict construction mandates exact compliance) → feeds into SYL_3 (typographical error cannot save notice) → feeds into SYL_4 (complaint not maintainable, quashing proper). The chain is tightly structured with no independent syllogisms — each conclusion is a premise for the next."
+      },
+      "dependency_tree": {
+        "nodes": [
+          {
+            "type": "CONCLUSION",
+            "node_id": "DEP_1",
+            "premise": "Appeals dismissed — High Court quashing order upheld",
+            "branch_id": "ROOT",
+            "is_critical": true,
+            "parent_node_id": null,
+            "source_paragraph": "Para 11"
+          },
+          {
+            "type": "FINDING_OF_FACT_AND_LAW",
+            "node_id": "DEP_2",
+            "premise": "Notice under Proviso (b) is invalid — amount demanded (Rs.2 crore) differs from cheque amount (Rs.1 crore)",
+            "branch_id": "A",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Para 8, Para 8.1, Para 10"
+          },
+          {
+            "type": "LEGAL_PROPOSITION",
+            "node_id": "DEP_3",
+            "premise": "'Said amount' in Proviso (b) means exactly the cheque amount — established by Suman Sethi, K.R. Indira, Rahul Builders, Dashrathbhai",
+            "branch_id": "A1",
+            "is_critical": true,
+            "parent_node_id": "DEP_2",
+            "source_paragraph": "Para 5.2, Para 5.3, Para 5.4, Para 7"
+          },
+          {
+            "type": "INTERPRETIVE_RULE",
+            "node_id": "DEP_4",
+            "premise": "Section 138 is a penal provision — strict construction applies — no elasticity — no inferential compliance",
+            "branch_id": "A1a",
+            "is_critical": true,
+            "parent_node_id": "DEP_3",
+            "source_paragraph": "Para 6, Para 6.1, Para 6.3, Para 6.4, Para 8.1"
+          },
+          {
+            "type": "PRECEDENT",
+            "node_id": "DEP_5",
+            "premise": "Dyke vs. Elliott / M. Narayanan Nambiar / K.K. Ahuja — strict construction canon for penal statutes",
+            "branch_id": "A1a-i",
+            "is_critical": false,
+            "parent_node_id": "DEP_4",
+            "source_paragraph": "Para 6, Para 6.1, Para 6.2, Para 6.4"
+          },
+          {
+            "type": "FINDING_REJECTING_DEFENCE",
+            "node_id": "DEP_6",
+            "premise": "Typographical error defence rejected — same error in both notices makes inadvertence implausible; even genuine typographical error is fatal to mandatory compliance",
+            "branch_id": "A2",
+            "is_critical": true,
+            "parent_node_id": "DEP_2",
+            "source_paragraph": "Para 8.2"
+          },
+          {
+            "type": "PRECEDENT",
+            "node_id": "DEP_7",
+            "premise": "Chhabra Fabrics (P&H HC) and K. Gopal (Karnataka HC) — typographical error in notice does not excuse mandatory compliance",
+            "branch_id": "A2a",
+            "is_critical": false,
+            "parent_node_id": "DEP_6",
+            "source_paragraph": "Para 5.5.2, Para 5.5.3"
+          },
+          {
+            "type": "LIMITING_PRINCIPLE",
+            "node_id": "DEP_8",
+            "premise": "'Read notice as a whole' principle (Suman Sethi) inapplicable where the base cheque amount itself is wrong — not where additional charges are also claimed",
+            "branch_id": "A3",
+            "is_critical": true,
+            "parent_node_id": "DEP_2",
+            "source_paragraph": "Para 8.1"
+          },
+          {
+            "type": "LEGAL_CONSEQUENCE",
+            "node_id": "DEP_9",
+            "premise": "Invalid notice means condition precedent for offence under Section 138 not satisfied — complaint not maintainable — quashing proper",
+            "branch_id": "B",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Para 5.3.1, Para 8, Para 10, Para 11"
+          }
+        ],
+        "root_node": "DEP_1"
+      },
+      "interpretive_method": {
+        "method_basis": "Section 138 NI Act is a penal provision; court applies the canon that penal statutes must be construed strictly, within the plain meaning of words, without straining language to cure slips or casus omissus",
+        "primary_method": "STRICT_CONSTRUCTION",
+        "judges_tendency": "Textualist/Strict constructionist in criminal/penal matters; defers to consistent line of precedent; resistant to equitable arguments when statutory language is clear",
+        "method_explanation": "The court reads the words 'said amount of money' in Proviso (b) by tracing their cross-reference back to the substantive part of Section 138 ('any amount of money') and concludes that 'said amount' = cheque amount. This is a combination of strict/literal reading plus internal cross-referencing within the section. The court explicitly rejects purposive elasticity (though it acknowledges the purpose of the notice from Saxons Farms) and rejects the 'read as a whole' approach for remedying an incorrect base amount.",
+        "alternative_method_analysis": [
+          {
+            "method": "PURPOSIVE",
+            "analysis_steps": [
+              "Identify purpose: give drawer chance to rectify; protect honest drawer (Saxons Farms at Para 5.2.4)",
+              "Apply purpose: drawer knew cheque amount from cheque details correctly stated in notice; could have paid Rs.1 crore to avoid liability",
+              "Counter: Court holds purpose-fulfillment is irrelevant if the statutory condition is not met; Proviso (b) sets a condition for constituting the offence, not merely a procedural safeguard"
+            ],
+            "analysis_narrative": "The appellant argued that the purpose of Section 138 is to facilitate smooth business transactions and protect legitimate creditors; a purposive approach would focus on whether the notice served its functional purpose — giving the drawer information sufficient to decide whether to pay. The drawer would have known from the cheque details (number, date, bank, amount) what payment was required.",
+            "would_outcome_change": true,
+            "likely_alternative_outcome": "Notice might be upheld as substantially compliant if cheque details sufficiently identified the obligation — but this would require overruling or significantly distinguishing the consistent line of precedent from Suman Sethi onwards"
+          },
+          {
+            "method": "HARMONIOUS",
+            "analysis_steps": [
+              "Read Section 138 as a composite whole",
+              "Connect 'said amount' in Proviso (b) to 'any amount of money' in main section",
+              "Conclude they are the same — the cheque amount"
+            ],
+            "analysis_narrative": "The court uses a form of harmonious construction when it reads 'said amount' in Proviso (b) conjunctively with 'any amount of money' in the main section — but this is used to confirm the strict rule, not to introduce flexibility.",
+            "would_outcome_change": false,
+            "likely_alternative_outcome": "Same outcome — harmonious construction confirms strict reading"
+          }
+        ]
+      },
+      "rhetorical_architecture": {
+        "tone": "Firm, declaratory, unsympathetic to equitable/mercy arguments. The court repeatedly uses terms like 'mandatory', 'imperative', 'meticulous', 'strict', 'technical'. Mild disapproval of High Court's characterisation of strict compliance as 'technical' — the Supreme Court treats strict compliance as correct, not as technicality.",
+        "opening_move": "The court frames the case immediately as a question of statutory interpretation (Para 2) — whether a notice with a different amount is valid; whether typographical error is a defence. This framing pre-empts equitable/purposive arguments by positioning it as a pure question of law.",
+        "source_paragraphs": [
+          "Para 2",
+          "Para 7.1",
+          "Para 8",
+          "Para 8.1",
+          "Para 8.2"
+        ],
+        "metaphor_or_analogy": "The court uses the metaphor of 'said amount' being 'inseparable components' operating 'hand-in-hand' (Para 7.1) — linking the substantive part of Section 138 and Proviso (b) as if they are two parts of a single mechanism that must align perfectly.",
+        "strategic_ambiguity": null,
+        "persuasion_technique": "Avalanche of authority — the court marshals 5 Supreme Court decisions, 4 High Court decisions (from different jurisdictions), a Privy Council authority, and Craies on Statute Law to demonstrate that the position is settled, consistent, and unanimous across jurisdictions. This forecloses any suggestion that the law is uncertain."
+      }
+    },
+    "dimension_4_weaponizable": {
+      "sword_uses": [
+        {
+          "scenario": "Accused in a Section 138 NI Act case where the demand notice mentions a different amount from the cheque amount (whether higher or lower) — seeking quashing of complaint or discharge",
+          "how_to_cite": "Kaveri Plastics vs. Mahdoom Bawa Bahrudeen Noorul, 2025 INSC 1133 (Supreme Court, 19.09.2025) — Para 8: 'The notice to be issued under Proviso (b) to Section 138 of the Act, must mention the same amount for which the cheque was issued. It is mandatory that the demand in the statutory notice has to be the very amount of the cheque.' Para 8.2: 'Even typographical error can be no defence. The error even if typographical, would be fatal to the legality of notice.'",
+          "use_case_id": "SWORD_1",
+          "draft_argument": "The demand notice issued by the complainant under Proviso (b) to Section 138 of the Negotiable Instruments Act, 1881 demands Rs.[X] whereas the cheque in question was issued for Rs.[Y]. The Supreme Court in Kaveri Plastics vs. Mahdoom Bawa Bahrudeen Noorul (2025 INSC 1133) has unequivocally held that the statutory notice under Proviso (b) must demand precisely the cheque amount — 'the very amount of the cheque, and none other' (Para 9). The notice in the present case fails this mandatory requirement. The complaint is therefore not maintainable as the condition precedent for constituting the offence under Section 138 — service of a valid notice — has not been satisfied. Any plea of typographical or inadvertent error in the notice amount is expressly rejected as a defence by the Supreme Court in Para 8.2. The complaint deserves to be quashed under Section 528 BNSS / Section 482 CrPC [INDEPENDENT VERIFICATION REQUIRED for current applicable provision].",
+          "stage_of_proceedings": "Application for discharge before Magistrate; revision before Sessions Court; petition under Section 482 CrPC / Section 528 BNSS before High Court [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION for current applicable provision]; SLP before Supreme Court",
+          "is_practically_common": true
+        },
+        {
+          "scenario": "Challenging maintainability of complaint where notice demanded less than cheque amount (e.g., complainant under-calculated due to error)",
+          "how_to_cite": "Kaveri Plastics (2025 INSC 1133) Para 8.1; M/s. Yankay Drugs and Pharmaceuticals Ltd. vs. CITI bank (2001 DCR 609) as approved in Kaveri Plastics Para 5.5.1 — 'if the demand is for a lesser amount or a higher amount not covered by the cheque, which was dishonoured, then the prosecution must fail'",
+          "use_case_id": "SWORD_2",
+          "draft_argument": "The demand notice in the present case demands Rs.[X] whereas the dishonoured cheque was for Rs.[Y > X]. The Supreme Court in Kaveri Plastics (2025 INSC 1133) approved the proposition in Yankay Drugs that both under-demand and over-demand are equally fatal to the validity of the notice. A notice demanding less than the cheque amount fails the Proviso (b) test. The complaint is not maintainable.",
+          "stage_of_proceedings": "Application for discharge; quashing petition",
+          "is_practically_common": true
+        },
+        {
+          "scenario": "Prosecution / respondent in cases where complainant claims 'notice should be read as a whole' to cure amount discrepancy — pre-empting this argument",
+          "how_to_cite": "Kaveri Plastics (2025 INSC 1133) Para 8.1: 'Here the principle of reading of notice as a whole is inapplicable and irrelevant. Any elasticity cannot be adopted in the interpretation. It has to be given technical interpretation.'",
+          "use_case_id": "SWORD_3",
+          "draft_argument": "The complainant seeks to invoke the principle from Suman Sethi that the notice must be 'read as a whole.' The Supreme Court in Kaveri Plastics (2025 INSC 1133) has specifically addressed and rejected this argument. The Court held in Para 8.1 that where the cheque amount is not correctly mentioned in the notice, 'the principle of reading of notice as a whole is inapplicable and irrelevant.' Suman Sethi's 'read as a whole' principle applies only where the correct cheque amount is stated and additional severable claims are added — it does not apply to cure an incorrect statement of the base cheque amount.",
+          "stage_of_proceedings": "Any stage where 'read as a whole' argument is raised by complainant",
+          "is_practically_common": true
+        }
+      ],
+      "shield_uses": [
+        {
+          "scenario_id": "SHIELD_1",
+          "attack_being_faced": "Drawer of dishonoured cheque arguing that complaint is not maintainable because notice demanded additional interest/cost charges beyond the cheque amount",
+          "boundary_condition": "This shield only works if the cheque amount itself is correctly and separately stated in the notice. If the notice blends the cheque amount and additional claims into a single undifferentiated figure, the shield fails.",
+          "how_judgment_helps": "Kaveri Plastics confirms (applying Suman Sethi) that additional claims for interest, legal charges, notice charges are severable and do not invalidate the notice PROVIDED the cheque amount is separately and correctly stated (Para 8; Para 5.2.2). The judgment draws a clear line: the wrong base amount is fatal; additional severable claims above correct base amount are not.",
+          "key_factual_similarity": "Your notice correctly states the cheque amount and then additionally claims interest/charges — identical to the valid scenario contemplated in Suman Sethi Para 8 and reaffirmed in Kaveri Plastics Para 8."
+        },
+        {
+          "scenario_id": "SHIELD_2",
+          "attack_being_faced": "Accused arguing that prosecution must fail because there was a minor clerical error in the notice (e.g., wrong cheque number, wrong date) — seeking to extend the Kaveri Plastics strict compliance principle to notice particulars other than amount",
+          "boundary_condition": "If the Chhabra Fabrics (P&H HC) case on cheque number typographical error is pressed (Para 5.5.2), note that it is a High Court decision not a Supreme Court ratio — Kaveri Plastics only approves it in the specific context of amount discrepancy, not as a standalone ruling on all notice particulars. [SOUND_INFERENCE — requires careful argument]",
+          "how_judgment_helps": "The ratio in Kaveri Plastics is specifically and exclusively about the AMOUNT in the notice under Proviso (b). The court's analysis throughout focuses on 'said amount' — Para 7, 7.1, 8, 8.1, 8.2, 9. Errors in other particulars (cheque number, date) are not addressed — the strict rule is tied to the specific statutory language 'said amount of money.' This judgment cannot be extended to errors in cheque number or date without further support.",
+          "key_factual_similarity": "The accused must show that the erroneous particular in the notice (not the amount) goes to the same statutory requirement of 'said amount' under Proviso (b)."
+        }
+      ],
+      "vulnerability_map": {
+        "vulnerabilities": [
+          {
+            "vuln_id": "VULN_1",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "The judgment does not address whether Proviso (b) compliance is a condition precedent to the offence or to the remedy — if it is the latter, courts might permit fresh notice or waiver",
+            "stress_test": "Step 1 — Section 138 NI Act Proviso: 'nothing contained in this section shall apply unless' — the 'shall apply' language goes to the offence-creating section itself. Step 2 — Structurally, the Proviso conditions are anterior to the offence — the offence is not complete without them. Step 3 — The consistent line from Suman Sethi to Dashrathbhai confirms that failure of Proviso (b) makes complaint 'not maintainable.' The vulnerability exists but probability of success is low.",
+            "attack_vector": "Argue that Proviso (b) is a condition to the REMEDY (prosecution) not to the OFFENCE (dishonour) — allowing courts discretion to permit re-issuance of notice within time, or treating the defective notice as a procedural irregularity curable under Section 465 CrPC [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED as to current applicable provision]",
+            "likelihood_of_success": "LOW — the court treats Proviso (b) as going to the 'constitution of the offence' and 'maintainability of complaint' — strong language making the condition go to offence rather than remedy. Para 5.1: 'In order to make out the offence under Section 138 of the NI Act complete, conditions stated in sub-clauses (a), (b) and (c) of the Proviso should stand complied with.'"
+          },
+          {
+            "vuln_id": "VULN_2",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "The judgment is by a 2-judge Division Bench — it can be referred to a larger bench if there is apparent conflict with a co-equal bench decision",
+            "stress_test": "Step 1 — No specific conflicting provision or decision identified in judgment. Step 2 — The court surveyed all relevant precedent and found consistency. Step 3 — A challenger would need to find a Supreme Court decision applying purposive construction to Section 138 in a way that permitted notice amount flexibility — none cited in this judgment. Vulnerability theoretical only.",
+            "attack_vector": "Identify any prior 2-judge or 3-judge bench decision that adopted a more flexible approach to Proviso (b) compliance or that accepted the 'read as a whole' principle more broadly; seek reference to a larger bench",
+            "likelihood_of_success": "VERY LOW — the judgment surveys the field comprehensively and finds unanimous authority from Suman Sethi (2000) through Dashrathbhai (2023) all to the same effect. No apparent conflict with co-equal bench decisions is visible from the judgment."
+          },
+          {
+            "vuln_id": "VULN_3",
+            "confidence": "VERIFIED",
+            "weak_point": "The court's factual observation that 'the so called mistake occurred and recurred in both notices' (Para 8.2) — this might be read as a finding that the error was not genuinely typographical, affecting the legal holding's application to cases with single-notice errors",
+            "stress_test": "Step 1 — The absolute rule is stated at Para 8.2 BEFORE the recurrence observation. Step 2 — 'Even typographical error can be no defence' uses 'even' — meaning even in the best case (genuine single typographical error), the rule applies. Step 3 — The recurrence point reinforces but is not necessary to the conclusion. Cannot distinguish on this basis alone. INCLUDE_WITH_CAVEAT — useful as a secondary argument only.",
+            "attack_vector": "In a case with only ONE defective notice, argue that Para 8.2's emphasis on recurrence distinguishes the present fact-finding from a single-notice typographical error case; seek to narrow the absolute rule to cases of recurring errors",
+            "likelihood_of_success": "LOW — the court's primary holding at Para 8.2 ('Even typographical error can be no defence. The error even if typographical, would be fatal to the legality of notice') is stated as an absolute rule independent of recurrence. The recurrence observation is additional/alternative reasoning, not the sole basis."
+          },
+          {
+            "vuln_id": "VULN_4",
+            "confidence": "VERIFIED",
+            "weak_point": "Internal factual inconsistency in the judgment — Para 10 states the cheque was for Rs.1,00,000/- and the notice demanded Rs.2,00,000/- (rather than 1 crore and 2 crore respectively as stated throughout the rest of the judgment)",
+            "stress_test": "Step 1 — Para 3 consistently states Rs.1,00,00,000/- (1 crore) and Para 3.3 states Rs.2,00,00,000/- (2 crore). The Para 10 figures (Rs.1,00,000/- and Rs.2,00,000/-) are clearly typographical in the judgment. Step 2 — The legal analysis is based on a 1-crore cheque and 2-crore notice demand throughout. Step 3 — No substantive challenge to ratio from this error. INCLUDE_WITH_CAVEAT — note for accuracy purposes only.",
+            "attack_vector": "This is an internal inconsistency in the judgment text itself (likely typographical in the judgment) that could be noted in further proceedings but does not affect the legal ratio",
+            "likelihood_of_success": "NOT APPLICABLE — this is an error in the judgment text, not a substantive vulnerability in the ratio. An application for correction of the judgment record might be appropriate but would not affect the legal outcome."
+          }
+        ],
+        "durability_reasoning": "The ratio is supported by a consistent line of Supreme Court precedent from 1999 (Saxons Farms) to 2023 (Dashrathbhai) — a 24-year unbroken chain. The interpretive result follows naturally from plain statutory language. The proposition that penal conditions must be strictly complied with is foundational. The only paths to disturbing the ratio are: (1) legislative amendment of Section 138; (2) reference to Constitution Bench on a distinct constitutional point; (3) a future court adopting a 'substantial compliance with no prejudice' test — all three face significant hurdles. Score: 8/10.",
+        "overall_durability_score": 8
+      },
+      "temporal_vulnerability": {
+        "bench_strength": "2 judges (Division Bench)",
+        "can_be_overruled_by": "3-judge bench or larger bench of the Supreme Court; or Parliament by legislative amendment to Section 138 NI Act",
+        "survival_probability": "HIGH_10_PLUS_YEARS",
+        "cross_statutory_mapping": {
+          "note": "Section 420 IPC (mentioned in notice at Para 3.2 of judgment) corresponds to Section 318 BNS [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION] — but this provision was mentioned only in the background notice text and was not part of the legal analysis in this case",
+          "new_statute": "NI Act continues in force — not replaced by Bharatiya Nyaya Sanhita, 2023 or Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "current_statute": "Negotiable Instruments Act, 1881 — Section 138 (unchanged by BNS/BNSS)",
+          "verification_status": "VERIFIED — NI Act is standalone special legislation; BNS replaces IPC, BNSS replaces CrPC, BSA replaces Indian Evidence Act — NI Act has no replacement legislation as of date of this judgment"
+        },
+        "legislative_override_risk": "MEDIUM — Parliament has repeatedly amended the NI Act (1988, 2002, 2015, 2018 amendments) to address practical difficulties. A legislative amendment adding a proviso for substantial compliance or creating a mechanism to cure defective notices is within the realm of legislative possibility, particularly given the large volume of Section 138 cases and the harsh consequences of technical non-compliance."
+      },
+      "distinguishing_playbook": [
+        {
+          "strategy_id": "DIST_1",
+          "draft_argument": "Kaveri Plastics is factually distinguishable from cases where the cheque amount was nowhere stated in the notice. In Kaveri Plastics, the notice body contained a cheque table correctly identifying cheque No.876229 for Rs.1,00,00,000/- but the demand paragraph stated Rs.2,00,00,000/-. The court expressly ruled at Para 8.1 that even where cheque details are mentioned, the incorrect demand amount is fatal. This ruling was on facts squarely on point and constitutes a deliberate rejection of the 'cheque table saves the notice' argument. Any attempt to distinguish on these facts is pre-empted by Para 8.1.",
+          "factual_difference": "The notice in the present case specified the correct cheque amount in the cheque particulars table but had a different (wrong) amount in the demand paragraph — whereas in cases like K.R. Indira and Rahul Builders, the correct cheque amount was never stated anywhere in the notice",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_2",
+          "draft_argument": "Kaveri Plastics and its ratio are founded on the specific statutory phrase 'said amount of money' in Proviso (b) to Section 138. The court's strict compliance ruling is specifically tied to the statutory requirement that the demand must be for 'the said amount' — a phrase appearing in the provision itself. Other particulars of the notice (payee name, cheque date, etc.) are not mentioned in Proviso (b) as mandatory content. A discrepancy in non-amount particulars of the notice is not governed by the ratio of Kaveri Plastics, which is confined to the amount requirement.",
+          "factual_difference": "Kaveri Plastics involved an amount discrepancy in the demand notice — a future case might involve a discrepancy in some OTHER particular of the notice (e.g., wrong payee name, wrong cheque date) rather than the amount",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_3",
+          "draft_argument": "The notice in my client's case demands the exact cheque amount of Rs.[X] and separately and distinctly claims interest of Rs.[Y] and legal costs of Rs.[Z], with the cheque amount clearly identified as Rs.[X] in a distinct line item. This falls squarely within the exception recognised in Suman Sethi (Para 8) and reaffirmed in Kaveri Plastics (Para 8): 'After mentioning the exact cheque amount, the sender of the service may claim in the notice amounts such as legal charges, notice charges, interest and such other additional amounts, provided the cheque amount is specified to be demanded for payment.' Kaveri Plastics applies to cases where the DEMAND for the cheque amount itself is wrong — not to cases where additional claims are separately specified.",
+          "factual_difference": "In Kaveri Plastics, the notice demanded MORE than the cheque amount (double). In a future case where notice demands EXACTLY the cheque amount but also separately breaks down additional claims clearly labelled as damages/interest (making total a different figure), the Suman Sethi severable-claims exception would apply",
+          "is_material_to_ratio": true
+        }
+      ],
+      "cross_domain_transplants": [
+        {
+          "viability": "SPECULATIVE — analogy may be useful as a persuasive argument but Consumer Protection Act has its own statutory framework for notice requirements",
+          "target_domain": "Consumer Protection — demand notice requirements under Consumer Protection Act before filing complaint",
+          "transplant_id": "TRANS_1",
+          "original_domain": "Negotiable Instruments / Criminal — Section 138 NI Act demand notice requirements",
+          "gate_7_validation": {
+            "step_a": "Target provision: Consumer Protection Act, 2019 — notice requirements [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED as to whether Consumer Protection Act has mandatory pre-complaint notice requirements comparable to Proviso (b) NI Act]",
+            "step_b": "Statutory contexts may not be genuinely analogous — NI Act's Proviso (b) is a condition precedent to the OFFENCE itself (goes to constitution of the offence), whereas consumer protection pre-complaint requirements (if any) may be procedural only",
+            "step_c": "Consumer protection domain has specialized statutory framework; courts may apply Consumer Protection Act sui generis without reference to NI Act principles",
+            "verdict": "REMOVE"
+          },
+          "analogous_principle": "Where a statute makes service of a demand notice with specific content a condition precedent for filing a complaint/claim, the content requirements must be met precisely; typographical errors in mandated content are not excused."
+        },
+        {
+          "viability": "SPECULATIVE",
+          "target_domain": "Insolvency / IBC — Section 8 demand notice under Insolvency and Bankruptcy Code, 2016 before filing application under Section 9",
+          "transplant_id": "TRANS_2",
+          "original_domain": "Negotiable Instruments — mandatory statutory notice under Proviso (b) Section 138 NI Act",
+          "gate_7_validation": {
+            "step_a": "Target provision: Section 8 of Insolvency and Bankruptcy Code, 2016 — operational creditor must deliver demand notice/copy of invoice before applying under Section 9 [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]",
+            "step_b": "The IBC has developed its own jurisprudence on Section 8/9 notice requirements through NCLAT and Supreme Court decisions; the contexts differ — IBC is not a penal statute; NI Act Proviso (b) is a penal condition precedent",
+            "step_c": "IBC has specialized Adjudicating Authority framework; NCLAT/NCLT may apply IBC principles autonomously. However, the principle that mandatory notice contents must be precisely stated could be cited as a general principle, not as a direct Section 138 analogy.",
+            "verdict": "REMOVE"
+          },
+          "analogous_principle": "Strict compliance with content requirements of statutory demand notices as conditions precedent to substantive proceedings"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1126 @@
+{
+  "tid": 47858029,
+  "case_title": "A.C. Narayanan vs State Of Maharashtra &amp; Anr on 13 September, 2013",
+  "genome": {
+    "document_id": "a7f3c2b1-9e4d-4f8a-b3c2-d1e5f6a7b8c9",
+    "schema_version": "3.1.0",
+    "dimension_6_audit": {
+      "analytical_claims": {
+        "check_9": {
+          "detail": "GATE 1 SOURCE TRACEABILITY: All factual claims cite specific paragraph numbers. Claims that are inferences beyond the judgment text are marked [SOUND_INFERENCE] or [SPECULATIVE] with appropriate confidence classifications. No factual claim has been made without a paragraph citation or without an explicit [NOT EXTRACTABLE FROM JUDGMENT TEXT] marker.",
+          "passed": true
+        },
+        "check_10": {
+          "detail": "GATE 4 ARGUMENT STRESS TESTS: All four silent arguments (SA_1 through SA_4) and all four vulnerabilities (VULN_1 through VULN_4) include three-step stress tests with verdicts. No argument has been included that failed its stress test outright (no REMOVE verdicts); arguments with caveats are marked INCLUDE_WITH_CAVEAT.",
+          "passed": true
+        },
+        "check_11": {
+          "detail": "GATE 6 CONSTITUTIONAL PRECISION: No constitutional rights or fundamental rights are claimed in this judgment's analysis (the case is purely statutory criminal law). No Article numbers have been cited or applied. The domain is correctly identified as CRIMINAL, not CONSTITUTIONAL.",
+          "passed": true
+        },
+        "check_12": {
+          "detail": "GATE 7 CROSS-DOMAIN TRANSPLANTS: All three transplants (TRANS_1 through TRANS_3) include gate_7_validation with steps (a), (b), (c) and a verdict. TRANS_1 (to other special statutes) and TRANS_3 (corporate law) require independent verification of target provisions and are marked accordingly. TRANS_2 (back to CPC civil domain) is marked VIABLE with strong textual basis from Janki Vashdeo Bhojwani and the judgment itself.",
+          "passed": true
+        }
+      },
+      "final_certification": {
+        "certified_date": "2025-01-27",
+        "certification_level": "COURT_USE",
+        "all_12_checks_completed": true,
+        "all_failed_items_corrected": true,
+        "confidence_markers_applied": true,
+        "unverifiable_items_flagged": true
+      },
+      "internal_consistency": {
+        "check_1": {
+          "detail": "All ratio_decidendi items (RATIO_1 through RATIO_5) are directly traceable to specific paragraphs of the judgment (paras 21, 23, 24, 25, 26) and link to identified syllogisms (SYL_1 through SYL_5)",
+          "passed": true
+        },
+        "check_2": {
+          "detail": "The genome_summary at D5 accurately reflects the five-point holding framework and is verified against sections 1.6, 2.1, 3.1, 4.3, and 4.6 as required by Rule 7; consistency check is marked as passed",
+          "passed": true
+        },
+        "check_3": {
+          "detail": "Obiter dicta (OBITER_1 through OBITER_3) are correctly distinguished from ratio; necessity_check confirms none of the three obiter observations were necessary for the operative decision (para 27 remission)",
+          "passed": true
+        },
+        "check_4": {
+          "detail": "Vulnerability_map vulnerabilities (VULN_1 through VULN_4) are consistent with the hidden_assumptions (HA_1 through HA_5) and silent_arguments (SA_1 through SA_4) — the same gaps/weaknesses appear coherently across D3 and D4",
+          "passed": true
+        },
+        "check_5": {
+          "detail": "Counterfactuals (CF_1 through CF_4) each identify a specific load-bearing fact from the fact_sensitivity_matrix, identify the broken syllogism, and the likely new outcome is consistent with the judgment's reasoning",
+          "passed": true
+        }
+      },
+      "statutory_verification": {
+        "check_6": {
+          "detail": "GATE 2 FIDELITY: Sections 138 and 142(a) NI Act are quoted from the text as reproduced in the judgment (para 7 within the reference order). Section 145 NI Act and Sections 200 and 204 CrPC are marked as [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED] throughout — no invented text has been attributed to these provisions",
+          "passed": true
+        },
+        "check_7": {
+          "detail": "GATE 3 STRUCTURAL FIDELITY: The hierarchical relationship between provisions is correctly identified — Section 138 is the standalone offence provision; Section 142 is the procedural eligibility/cognizance condition with a non-obstante clause overriding CrPC; Section 145 is a separate evidence mechanism; Section 200 CrPC is the general examination provision subordinated to Section 142's non-obstante clause. No provision is incorrectly characterised as a condition precedent to another.",
+          "passed": true
+        },
+        "check_8": {
+          "detail": "GATE 5 CROSS-STATUTORY MAPPING: CrPC to BNSS mapping is flagged as [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION] throughout; no specific BNSS section numbers have been guessed or presented as fact; the NI Act's continued force is noted with a verification caveat",
+          "passed": true
+        }
+      }
+    },
+    "dimension_1_visible": {
+      "story": {
+        "legal_language": "The appeals raised questions regarding the interpretation of Section 142(a) of the Negotiable Instruments Act, 1881, specifically whether a Power of Attorney holder is competent to: (a) sign and file a complaint under Section 138 NI Act satisfying the eligibility criterion of 'payee or holder in due course'; (b) verify the complaint on oath under Section 200 CrPC; and (c) depose as a witness. A reference to a three-judge bench was necessitated by apparent conflict between MMTC Ltd. vs Medchl Chemicals (2002) 1 SCC 234 and Janki Vashdeo Bhojwani vs Indusind Bank (2005) 2 SCC 217.",
+        "plain_language": "Two cheque-dishonour cases were heard together. In the first (A.C. Narayanan), a Power of Attorney holder (Mrs. Doreen Shaikh) filed complaints on behalf of six payees against the accused for dishonoured cheques; the accused challenged whether a PoA holder could file/verify the complaint. In the second (G. Kamalakar), a company's PoA holder filed a complaint for dishonoured cheques; the accused was acquitted by the trial court but convicted on appeal by the High Court, which conviction was challenged before the Supreme Court. Both cases raised the common legal question: can a PoA holder file and depose in a Section 138 NI Act complaint?",
+        "verification_note": "All facts verified against judgment paragraphs 1-5, 7, 17-18"
+      },
+      "obiter_dicta": [
+        {
+          "obiter_id": "OBITER_1",
+          "observation": "Various situations such as inability due to sickness, old age, death or staying abroad of the payee or holder in due course justify permitting a PoA holder or legal representative to file a complaint and/or continue pending criminal complaints on behalf of the payee or holder in due course.",
+          "necessity_check": {
+            "verified": true,
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 19",
+          "future_significance": "May be used to extend the ratio to cases of incapacity; could support arguments for legal heirs or representatives filing/continuing Section 138 complaints beyond the specific grounds listed"
+        },
+        {
+          "obiter_id": "OBITER_2",
+          "observation": "Under the Statute, a stranger to the transaction such as a legal heir can carry forward a pending criminal complaint or initiate criminal action if the original complainant dies [citing Ashwin Nanubhai Vyas].",
+          "necessity_check": {
+            "verified": true,
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 19",
+          "future_significance": "Affirms and extends the right of legal heirs to continue Section 138 proceedings; useful in estate/succession contexts"
+        },
+        {
+          "obiter_id": "OBITER_3",
+          "observation": "Where the payee is a proprietary concern, the complaint can be filed (i) by the proprietor describing himself as sole proprietor of the payee; (ii) the proprietary concern describing itself as a sole proprietary concern represented by its sole proprietor; and (iii) the proprietor or the proprietary concern represented by the attorney holder under a power of attorney executed by the sole proprietor.",
+          "necessity_check": {
+            "verified": true,
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 24",
+          "future_significance": "Provides a template for proprietary concerns on how to structure Section 138 complaints; useful guidance for practitioners"
+        }
+      ],
+      "case_identity": {
+        "bench": {
+          "judges": [
+            "P. Sathasivam, CJI",
+            "Ranjana Prakash Desai, J.",
+            "Ranjan Gogoi, J."
+          ],
+          "strength": 3,
+          "is_constitution_bench": false
+        },
+        "court": "Supreme Court of India",
+        "domain": "CRIMINAL",
+        "case_name": "A.C. Narayanan vs State of Maharashtra & Anr (with Shri G. Kamalakar vs M/s Surana Securities Ltd. & Anr)",
+        "case_number": "Criminal Appeal No. 73 of 2007 (with Criminal Appeal No. [2013] arising out of S.L.P.(Crl.) No. 2724 of 2008)",
+        "case_origin": "SLP",
+        "domain_detail": "Negotiable Instruments Act, 1881 — dishonour of cheque — Power of Attorney holder's competence to file complaint and depose under Section 138/142 NI Act",
+        "judgment_author": "P. Sathasivam, CJI",
+        "date_of_judgment": "13 September 2013",
+        "dissenting_judges": [],
+        "source_paragraphs": "Preamble, paras 1-5"
+      },
+      "operative_order": {
+        "order_text": "We answer the reference on the above terms and remit the matter to the appropriate Bench for deciding the case on merits.",
+        "order_items": [
+          {
+            "action": "Reference Answered",
+            "detail": "Five questions on PoA holder's competence under Sections 138, 142, 145 NI Act and Section 200 CrPC answered as per para 26(i)-(v)"
+          },
+          {
+            "action": "Remission",
+            "detail": "Both appeals remitted to the appropriate Bench for deciding the case on merits"
+          }
+        ],
+        "source_paragraph": "Para 27"
+      },
+      "ratio_decidendi": [
+        {
+          "label": "PoA holder may file, appear and depose in Section 138 complaint if filed in name of/on behalf of payee",
+          "ratio_id": "RATIO_1",
+          "proposition": "Filing of a complaint petition under Section 138 of the NI Act through a Power of Attorney holder is perfectly legal and competent. The PoA holder cannot file the complaint in his own name as if he were the complainant, but can initiate criminal proceedings on behalf of the principal/payee. The eligibility criterion of Section 142(a) is satisfied when the complaint is filed in the name of and on behalf of the payee or holder in due course.",
+          "source_paragraph": "Paras 21, 23, 24, 26(i)",
+          "linked_syllogism_ids": [
+            "SYL_1",
+            "SYL_2"
+          ]
+        },
+        {
+          "label": "PoA holder may depose only if he has personal knowledge of the transaction",
+          "ratio_id": "RATIO_2",
+          "proposition": "The Power of Attorney holder can depose and verify on oath before the Court to prove the contents of the complaint, provided the PoA holder has witnessed the transaction as an agent of the payee/holder in due course or possesses due knowledge regarding the said transactions. A PoA holder without personal knowledge of the transaction cannot be examined as a witness.",
+          "source_paragraph": "Paras 23, 26(ii), 26(iii)",
+          "linked_syllogism_ids": [
+            "SYL_3"
+          ]
+        },
+        {
+          "label": "Complaint must explicitly assert PoA holder's knowledge of the transaction",
+          "ratio_id": "RATIO_3",
+          "proposition": "It is required that the complainant make a specific assertion as to the knowledge of the Power of Attorney holder in the said transaction explicitly in the complaint. A PoA holder who has no knowledge of the transactions cannot be examined as a witness.",
+          "source_paragraph": "Paras 23, 26(iii)",
+          "linked_syllogism_ids": [
+            "SYL_3"
+          ]
+        },
+        {
+          "label": "Magistrate's examination under Section 200 CrPC is discretionary in Section 138 cases in light of Section 145 NI Act",
+          "ratio_id": "RATIO_4",
+          "proposition": "In light of Section 145 of the NI Act, the Magistrate may rely upon verification in the form of an affidavit filed by the complainant in support of the complaint under Section 138. The Magistrate is neither mandatorily obliged to call upon the complainant to remain present before the Court, nor to examine the complainant or witness upon oath for the purpose of deciding whether or not to issue process.",
+          "source_paragraph": "Paras 22, 26(iv)",
+          "linked_syllogism_ids": [
+            "SYL_4"
+          ]
+        },
+        {
+          "label": "Sub-delegation of PoA requires explicit authorisation in the instrument",
+          "ratio_id": "RATIO_5",
+          "proposition": "The authority to sub-delegate the functions of a general power of attorney must be explicitly mentioned in the general power of attorney. Without such explicit clause, sub-delegation is inconsistent with the general power of attorney and invalid in law. However, the general power of attorney itself can be cancelled and a fresh one given to another person.",
+          "source_paragraph": "Paras 25, 26(v)",
+          "linked_syllogism_ids": [
+            "SYL_5"
+          ]
+        }
+      ],
+      "precedent_registry": [
+        {
+          "citation": "(2002) 1 SCC 234",
+          "case_name": "M.M.T.C. Ltd. and Anr. vs. Medchl Chemicals and Pharma (P) Ltd. and Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "First precedent on whether PoA/authorised agent can file Section 138 complaint; created apparent conflict with Janki Vashdeo Bhojwani",
+          "what_it_held": "Complaint under Section 138 NI Act can be made by the payee or holder in due course; the eligibility criterion of Section 142 is satisfied if the complaint is filed in the name of and on behalf of the payee company; complaints filed by Manager of Regional Office on behalf of company were held maintainable",
+          "source_paragraph": "Paras 7, 17, 19, 26"
+        },
+        {
+          "citation": "(2005) 2 SCC 217",
+          "case_name": "Janki Vashdeo Bhojwani and Anr. vs. Indusind Bank Ltd. and Ors.",
+          "treatment": "EXPLAINED",
+          "why_cited": "Created apparent conflict with MMTC; raised question whether PoA holder can depose in Section 138 proceedings; necessitated the reference",
+          "what_it_held": "Power of attorney holder cannot depose for acts done by principal or for facts within principal's exclusive personal knowledge; PoA holder can only appear as witness in respect of facts within his personal knowledge; word 'acts' in Order 3 Rule 2 CPC does not include 'deposing' in place of principal",
+          "source_paragraph": "Paras 7, 9, 18, 19, 26"
+        },
+        {
+          "citation": "(1983) 4 SCC 701",
+          "case_name": "Vishwa Mitter vs. O.P. Poddar and Ors. (also referred to as Vishwa Mitter of M/s Vijay Bharat Cigarette Stores vs. O.P. Poddar)",
+          "treatment": "FOLLOWED",
+          "why_cited": "Supports the general principle that criminal law can be set in motion by anyone; used to support proposition that Section 200 CrPC does not create embargo on PoA holder being complainant",
+          "what_it_held": "Anyone can set criminal law in motion by filing a complaint of facts constituting an offence; no court can decline cognizance solely because complainant was not competent; if special statute prescribes eligibility, that criterion must be satisfied",
+          "source_paragraph": "Paras 7 (within reference order), 13, 19"
+        },
+        {
+          "citation": "(1967) 1 SCR 807",
+          "case_name": "Ashwin Nanubhai Vyas vs. State of Maharashtra",
+          "treatment": "FOLLOWED",
+          "why_cited": "Supports the permissibility of persons other than the original payee initiating/continuing criminal proceedings",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT IN FULL — judgment states that a stranger to the transaction, such as a legal heir, can carry forward or initiate criminal action if the original complainant dies]",
+          "source_paragraph": "Para 19"
+        },
+        {
+          "citation": "AIR 1936 PC 253",
+          "case_name": "Nazir Ahmed vs. King Emperor",
+          "treatment": "MERELY_REFERRED",
+          "why_cited": "Relied upon by appellant's counsel to argue that PoA Act cannot override the specific mandate of Section 142 NI Act",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT IN FULL — cited for proposition that Section 2 of Power of Attorney Act cannot override specific statutory provisions requiring a particular act to be done in a particular manner]",
+          "source_paragraph": "Para 8"
+        },
+        {
+          "citation": "AIR 1956 SC 604",
+          "case_name": "Rao Bahasur Ravula Subba Rao & Ors. vs. Commissioner of Income Tax",
+          "treatment": "MERELY_REFERRED",
+          "why_cited": "Relied upon by appellant's counsel; followed in Jimmy Jahangir Madan (infra)",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT IN FULL — cited at pp. 612-613 for the proposition that PoA Act cannot override specific statutory requirements]",
+          "source_paragraph": "Para 8"
+        },
+        {
+          "citation": "(2004) 12 SCC 509",
+          "case_name": "Jimmy Jahangir Madan vs. Bolly Cariyappa Hindley (dead) by LRs",
+          "treatment": "MERELY_REFERRED",
+          "why_cited": "Relied upon by appellant's counsel as authority following Rao Bahasur Ravula",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT IN FULL — cited as following Rao Bahasur Ravula Subba Rao on the principle that PoA Act cannot override specific statutory procedures]",
+          "source_paragraph": "Para 8"
+        },
+        {
+          "citation": "2000 (1) Bom. L.R. 908",
+          "case_name": "Pradeep Mohanbay vs. Minguel Carlos Dias",
+          "treatment": "MERELY_REFERRED",
+          "why_cited": "Referred to in Janki Vashdeo Bhojwani as the Bombay HC decision that was overruled; mentioned to show conflict among High Courts",
+          "what_it_held": "PoA can file a complaint under Section 138 but cannot depose on behalf of the complainant; PoA can only appear as a witness",
+          "source_paragraph": "Paras 7, 18"
+        },
+        {
+          "citation": "2005 (2) Mah. L.J. 1003",
+          "case_name": "Mamatadevi Prafullakumar Bhansali vs. Pushpadevi Kailashkumar Agrawal & Anr.",
+          "treatment": "MERELY_REFERRED",
+          "why_cited": "Cited as part of conflict among High Courts noted in the reference order",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT IN FULL — referenced as one side of High Court conflict on PoA holder's competence]",
+          "source_paragraph": "Para 7"
+        },
+        {
+          "citation": "2002 Crl.L.J. 2621",
+          "case_name": "S.P. Sampathy vs. Manju Gupta and Anr.",
+          "treatment": "MERELY_REFERRED",
+          "why_cited": "Cited as part of conflict among High Courts noted in the reference order",
+          "what_it_held": "[NOT EXTRACTABLE FROM JUDGMENT TEXT IN FULL — referenced as the Andhra Pradesh HC view on the other side of the conflict]",
+          "source_paragraph": "Para 7"
+        }
+      ],
+      "procedural_journey": [
+        {
+          "date": "16.12.1997",
+          "forum": "IXth Additional Chief Metropolitan Magistrate, Bandra, Mumbai",
+          "stage": "Filing of Complaint",
+          "outcome": "Process issued under Section 204 CrPC",
+          "date_source": "Para (b) of Criminal Appeal No. 73 of 2007 facts",
+          "source_paragraph": "Para (b)",
+          "what_was_decided": "Cognizance taken and process issued for offences under Sections 138 and 142 NI Act vide order dated 04.04.1998"
+        },
+        {
+          "date": "29.11.2000",
+          "forum": "IXth Additional Chief Metropolitan Magistrate, Bandra, Mumbai",
+          "stage": "Application for Discharge/Recall of Process",
+          "outcome": "Applications dismissed",
+          "date_source": "Para (c)",
+          "source_paragraph": "Para (c)",
+          "what_was_decided": "Magistrate refused to discharge accused or recall process"
+        },
+        {
+          "date": "12.08.2005",
+          "forum": "High Court of Judicature at Bombay",
+          "stage": "High Court — Quashing Applications",
+          "outcome": "Applications dismissed — HC upheld issuance of process",
+          "date_source": "Para (d) and reference order para 7",
+          "source_paragraph": "Paras (d), 1",
+          "what_was_decided": "High Court held complaint by PoA holder was maintainable"
+        },
+        {
+          "date": "04.01.2007",
+          "forum": "Supreme Court of India — Division Bench",
+          "stage": "Reference to Three-Judge Bench",
+          "outcome": "Matter referred to larger bench",
+          "date_source": "Para 7",
+          "source_paragraph": "Para 7",
+          "what_was_decided": "Division Bench found conflict between MMTC and Janki Vashdeo Bhojwani and referred for authoritative pronouncement on Section 142(a) NI Act"
+        },
+        {
+          "date": "07.04.2008",
+          "forum": "Supreme Court of India",
+          "stage": "Tagging of Second Appeal",
+          "outcome": "Second appeal tagged with Criminal Appeal No. 73 of 2007",
+          "date_source": "Para (f) of S.L.P.(Crl.) No. 2724 of 2008 facts",
+          "source_paragraph": "Para (f)",
+          "what_was_decided": "Both appeals heard together"
+        },
+        {
+          "date": "13.09.2013",
+          "forum": "Supreme Court of India",
+          "stage": "Three-Judge Bench Reference Judgment",
+          "outcome": "Reference answered; matter remitted to appropriate bench for decision on merits",
+          "date_source": "Judgment date on face of judgment",
+          "source_paragraph": "Para 27",
+          "what_was_decided": "Five questions answered authoritatively on PoA holder's competence under Section 138/142 NI Act and Section 200 CrPC"
+        }
+      ],
+      "provisions_engaged": [
+        {
+          "role": "Substantive offence provision — defines the cheque dishonour offence",
+          "exact_text": "138. Dishonour of cheque for insufficiency, etc., of funds in the account.- Where any cheque drawn by a person on an account maintained by him with a banker for payment of any amount of money to another person from out of that account for the discharge, in whole or in part, of any debt or other liability, is returned by the bank unpaid, either because of the amount of money standing to the credit of that account is insufficient to honour the cheque or that it exceeds the amount arranged to be paid from that account by an agreement made with that bank, such person shall be deemed to have committed an offence and shall, without prejudice to any other provisions of this Act, be punished with imprisonment for a term which may be extended to two years, or with fine which may extend to twice the amount of the cheque, or with both: [Proviso clauses (a)(b)(c) and Explanation as reproduced in judgment]",
+          "text_source": "Reproduced in judgment para 7 (within reference order extract)",
+          "court_action": "Applied as the primary offence under which complaints were filed",
+          "provision_id": "NIA_S138",
+          "parent_statute": "Negotiable Instruments Act, 1881",
+          "source_paragraph": "Para 7",
+          "corresponding_new_provision": {
+            "language_status": "UNCHANGED — NI Act continues unrepealed as of extraction date",
+            "new_provision_id": "BNS — NOT APPLICABLE; NI Act not replaced by BNS",
+            "new_parent_statute": "Negotiable Instruments Act 1881 continues in force; Section 138 NI Act remains operative",
+            "verification_status": "VERIFIED — NI Act is a special statute not subsumed by BNS/BNSS"
+          }
+        },
+        {
+          "role": "Procedural eligibility provision — prescribes who may file complaint and conditions for cognizance",
+          "exact_text": "142. Cognizance of offences.- Notwithstanding anything contained in the Code of Criminal Procedure, 1973 (2 of 1974) - (a) no court shall take cognizance of any offence punishable under section 138 except upon a complaint, in writing, made by the payee or, as the case may be, the holder in due course of the cheque; [xxx]",
+          "text_source": "Reproduced in judgment para 7 (within reference order extract)",
+          "court_action": "Central provision interpreted — Court held complaint filed by PoA holder in the name of/on behalf of payee satisfies Section 142(a)",
+          "provision_id": "NIA_S142",
+          "parent_statute": "Negotiable Instruments Act, 1881",
+          "source_paragraph": "Paras 7, 8, 17, 19, 22, 26",
+          "corresponding_new_provision": {
+            "language_status": "REQUIRES INDEPENDENT VERIFICATION of any post-2013 amendments",
+            "new_provision_id": "NIA_S142 — unchanged; NI Act continues",
+            "new_parent_statute": "Negotiable Instruments Act, 1881",
+            "verification_status": "VERIFIED"
+          }
+        },
+        {
+          "role": "Enables evidence by way of affidavit in Section 138 proceedings, relied upon to hold that Magistrate's examination under Section 200 CrPC is discretionary not mandatory",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED. Judgment refers to it as inserted by Act No. 55 of 2002, relating to affidavit-based evidence in Section 138 complaints]",
+          "text_source": "Referenced in paras 7 (reference order), 22, 26(iv) but not reproduced verbatim",
+          "court_action": "Applied — Court held that in light of Section 145, Magistrate may rely on affidavit and is not mandatorily required to examine complainant under Section 200 CrPC",
+          "provision_id": "NIA_S145",
+          "parent_statute": "Negotiable Instruments Act, 1881",
+          "source_paragraph": "Paras 7, 22, 26(iv)",
+          "corresponding_new_provision": null
+        },
+        {
+          "role": "Procedure for examination of complainant at pre-cognizance stage — Court held this is not a bar on PoA holder acting as complainant and that examination is discretionary in light of Section 145 NI Act",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED. Judgment refers to it as requiring Magistrate taking cognizance on complaint to examine the complainant upon oath]",
+          "text_source": "Referenced in paras 11-13, 22, 26(iv) but not reproduced verbatim",
+          "court_action": "Harmoniously interpreted with Section 145 NI Act — held that Magistrate has discretion and is not mandatorily bound to examine complainant",
+          "provision_id": "CRPC_S200",
+          "parent_statute": "Code of Criminal Procedure, 1973",
+          "source_paragraph": "Paras 11-13, 20, 22, 26(iv)",
+          "corresponding_new_provision": {
+            "language_status": "REQUIRES_INDEPENDENT_VERIFICATION — whether BNSS Section 223 language is identical to CrPC Section 200",
+            "new_provision_id": "BNSS_S223",
+            "new_parent_statute": "Bharatiya Nagarik Suraksha Sanhita, 2023",
+            "verification_status": "CROSS_STATUTORY_MAPPING_REQUIRES_INDEPENDENT_VERIFICATION"
+          }
+        },
+        {
+          "role": "Process issuance provision — the Magistrate issued process under this section",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED. Section relates to issuance of process by Magistrate]",
+          "text_source": "Referenced in para (b) of facts",
+          "court_action": "Applied procedurally; not independently interpreted",
+          "provision_id": "CRPC_S204",
+          "parent_statute": "Code of Criminal Procedure, 1973",
+          "source_paragraph": "Para (b)",
+          "corresponding_new_provision": {
+            "language_status": "REQUIRES_INDEPENDENT_VERIFICATION",
+            "new_provision_id": "BNSS — CROSS_STATUTORY_MAPPING_REQUIRES_INDEPENDENT_VERIFICATION",
+            "new_parent_statute": "Bharatiya Nagarik Suraksha Sanhita, 2023",
+            "verification_status": "CROSS_STATUTORY_MAPPING_REQUIRES_INDEPENDENT_VERIFICATION"
+          }
+        },
+        {
+          "role": "Argued by appellant to be overridden by specific statutory provisions; court did not independently rule on this provision",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]",
+          "text_source": "Referenced in para 8 as argued by appellant's counsel",
+          "court_action": "Mentioned as part of appellant's argument; not expressly adopted or rejected as an independent ground",
+          "provision_id": "POA_ACT_S2",
+          "parent_statute": "Power of Attorney Act, 1882",
+          "source_paragraph": "Para 8",
+          "corresponding_new_provision": null
+        },
+        {
+          "role": "Civil procedure provision governing PoA holder's power to act — distinguished from criminal proceedings; Court noted Janki Vashdeo Bhojwani arose in CPC context",
+          "exact_text": "Order 3 Rules 1 and 2 CPC empowers the holder of power of attorney to 'act' on behalf of the principal. [As quoted from Janki Vashdeo Bhojwani in para 18 of the judgment]",
+          "text_source": "Quoted within the extract from Janki Vashdeo Bhojwani at para 18",
+          "court_action": "Distinguished — Court clarified that Janki Vashdeo Bhojwani's CPC context does not create a rigid bar in NI Act criminal proceedings but the personal knowledge principle was transplanted",
+          "provision_id": "CPC_O3R1R2",
+          "parent_statute": "Code of Civil Procedure, 1908",
+          "source_paragraph": "Paras 18, 19",
+          "corresponding_new_provision": null
+        }
+      ]
+    },
+    "extraction_metadata": {
+      "extractor": "Legal Genome Analyst v3.1",
+      "source_url": "NOT_EXTRACTABLE_FROM_JUDGMENT_TEXT",
+      "extraction_date": "2025-01-27",
+      "framework_version": "3.1.0",
+      "judgment_citation": "A.C. Narayanan vs State of Maharashtra & Anr, (2014) 11 SCC 790; AIR 2014 SC 630"
+    },
+    "dimension_3_invisible": {
+      "silent_arguments": [
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_1",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "Section 142's non-obstante clause overrides CrPC provisions; however, the clause specifically refers to CrPC, not to general principles of agency law or the Janki Vashdeo Bhojwani personal knowledge rule which was derived from CPC context; the argument conflates different legal domains",
+            "step_2_structural_validity": "Gate 3 analysis: Section 142 is a standalone eligibility/cognizance provision; Section 145 is a separate evidence provision; the non-obstante clause in Section 142 overrides CrPC but does not expressly override common law evidence principles or personal knowledge requirements; structurally, the argument is partially valid but overstated",
+            "step_3_adversarial_challenge": "Counter-argument: personal knowledge requirement is not from CrPC but from general evidence law (hearsay rule) and the Janki Vashdeo Bhojwani principle; Section 142's non-obstante clause covers CrPC specifically, not all other legal principles; further, allowing deposition without personal knowledge would undermine the accused's right to effective cross-examination"
+          },
+          "the_argument": "The non-obstante clause in Section 142 NI Act ('Notwithstanding anything contained in the Code of Criminal Procedure, 1973') excludes the application of the CPC's Order 3 Rules 1 and 2 framework and the Janki Vashdeo Bhojwani personal knowledge rule altogether in Section 138 proceedings — the NI Act's special regime should be entirely self-contained",
+          "why_it_matters": "If accepted, it would eliminate the personal knowledge qualification and explicit assertion requirement, simplifying the process for corporate and commercial complainants",
+          "provision_or_principle": "Section 142 NI Act (non-obstante clause); general principle of special law overriding general law (generalia specialibus non derogant)",
+          "who_should_have_made_it": "Respondents/complainants — would have supported a more complete victory (PoA holder with or without specific personal knowledge)"
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "argument_id": "SA_2",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "Section 200 CrPC provides for examination; para 22 of the judgment makes this discretionary, not mandatory; this argument would require the Court to read the discretion as mandatory in personal knowledge cases — a contradiction of RATIO_4",
+            "step_2_structural_validity": "Gate 3 analysis: Section 200 examination and the personal knowledge requirement operate at different stages; Section 200 is pre-cognizance procedural; personal knowledge is a substantive qualification for deposition; these are structurally distinct and the argument conflates them",
+            "step_3_adversarial_challenge": "Counter: para 26(iv) expressly says Magistrate is 'not mandatorily obliged'; forcing mandatory examination would contradict the three-judge bench ratio; the complaint's explicit assertion is the chosen mechanism; the accused can challenge knowledge at trial stage"
+          },
+          "the_argument": "The Magistrate's power to examine the complainant under Section 200 CrPC should apply specifically to verify the PoA holder's claimed personal knowledge of the transaction before issuing process, as a special gatekeeping measure — the assertion in the complaint is insufficient without judicial verification at the pre-cognizance stage",
+          "why_it_matters": "If the Magistrate must verify the PoA holder's personal knowledge before issuing process, many complaints filed with formulaic assertions would fail at the threshold",
+          "provision_or_principle": "Section 200 CrPC (examination of complainant), Section 202 CrPC [NOT EXTRACTABLE — INDEPENDENT VERIFICATION REQUIRED as to whether Section 202 inquiry was relevant]; the personal knowledge requirement from RATIO_2/RATIO_3",
+          "who_should_have_made_it": "Appellant/accused — would have strengthened the challenge to process issuance"
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_3",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "No specific NI Act provision differentiates between individual and corporate complainants; Section 142(a) treats both as 'payee or holder in due course' without distinction",
+            "step_2_structural_validity": "Gate 3: The argument would require reading a corporate exception into RATIO_3's explicit assertion requirement; the Court in para 26(iii) makes no such distinction and appears to apply the requirement uniformly",
+            "step_3_adversarial_challenge": "Counter: the explicit assertion requirement serves evidentiary integrity regardless of whether complainant is individual or company; a company can only 'know' through its officers, but the specific officer signing the complaint must have actual knowledge of the specific transactions — a blanket presumption would be too broad and open to abuse"
+          },
+          "the_argument": "A company complainant should be treated differently from an individual payee — for a company, any duly authorised officer or PoA holder necessarily represents the company's 'knowledge' since companies can only act through agents, and therefore the personal knowledge requirement should be presumed satisfied for corporate complainants",
+          "why_it_matters": "Corporate complainants form a large proportion of Section 138 cases; if corporate PoA holder's knowledge is presumed, the explicit assertion requirement in the complaint is effectively waived for companies",
+          "provision_or_principle": "Companies Act provisions on company representation [INDEPENDENT VERIFICATION REQUIRED for specific provision]; general principle that corporations act through agents",
+          "who_should_have_made_it": "Respondent in second appeal (M/s Surana Securities Ltd.) — would have simplified its position"
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "argument_id": "SA_4",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "Neither Section 142 NI Act nor Section 200/204 CrPC expressly requires production of the PoA instrument at the time of filing; the court in para 10 notes this argument but the judgment does not expressly rule on it as a mandatory requirement",
+            "step_2_structural_validity": "Gate 3: Section 204 process issuance is at Magistrate's discretion after considering the complaint and documents; the PoA instrument is a document supporting the complaint but its absence may be a curable defect rather than a jurisdictional bar",
+            "step_3_adversarial_challenge": "Counter: subsequent production of PoA (as happened in para 10 — produced with reply to discharge application) suggests it is not a mandatory pre-condition; the Court's para 26 answers do not make PoA production timing a mandatory requirement; treating it as mandatory would be adding a condition not found in the statute"
+          },
+          "the_argument": "The requirement that the Power of Attorney be produced at the time of filing the complaint (or at least before process is issued) should be treated as mandatory, not curable by subsequent production — the Magistrate should not issue process without verifying the PoA instrument",
+          "why_it_matters": "If production of PoA instrument is mandatory before process issuance, complaints without filed PoA instruments would be non-maintainable ab initio and process would be illegal",
+          "provision_or_principle": "Section 200 CrPC read with Section 204 CrPC; Section 142(a) NI Act eligibility requirement",
+          "who_should_have_made_it": "Appellant A.C. Narayanan — this specific point was raised (para 10) that PoA was not filed with complaint or verifying statement"
+        }
+      ],
+      "hidden_assumptions": [
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "This assumption has been accepted by a three-judge bench and is now authoritative; challenge would require a larger bench; practically difficult but theoretically available",
+          "assumption_id": "HA_1",
+          "why_it_matters": "Section 142 is a criminal statute with a non-obstante clause; criminal statutes are generally construed strictly; there is no express provision in the NI Act or CrPC incorporating agency law into the definition of 'complaint made by the payee'",
+          "how_to_challenge": "Argue that criminal law requires a strict reading; the non-obstante clause in Section 142 excludes CPC concepts; the Legislature could have expressly provided for PoA filing as it did in other statutes but did not; agency law is a civil construct and should not be read into criminal eligibility conditions",
+          "where_it_operates": "Para 21 — the entire reasoning supporting SYL_1 and RATIO_1 rests on transplanting civil agency law into the criminal domain of Section 142 NI Act",
+          "what_court_assumes": "That the general law of agency (acts of agent within authority = acts of principal) applies seamlessly to criminal proceedings under a special statute"
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "The synthesis is creative but functional; the real conflict may re-emerge in cases where the PoA holder has partial knowledge",
+          "assumption_id": "HA_2",
+          "why_it_matters": "The Division Bench that made the reference explicitly found conflict warranting larger bench consideration; characterising these as non-conflicting may obscure the genuine tension between the two",
+          "how_to_challenge": "Argue that Janki Vashdeo Bhojwani's holding that PoA holder 'cannot depose for the principal for the acts done by the principal and not by him' is genuinely in conflict with MMTC's broader permission; the personal knowledge synthesis is the Court's own creation, not present in either precedent",
+          "where_it_operates": "Para 26 — the framing of the resolution",
+          "what_court_assumes": "That there is 'no serious conflict' between MMTC and Janki Vashdeo Bhojwani (para 26)"
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "self_check": "Court's answer in para 22 shows that Magistrate has discretion to examine; this partially addresses the concern but the assumption remains that assertion alone is ordinarily sufficient",
+          "assumption_id": "HA_3",
+          "why_it_matters": "If the explicit assertion is false or exaggerated, the safeguard is meaningless at the process issuance stage; the accused has no opportunity to challenge the assertion before process is issued",
+          "how_to_challenge": "Argue that a mere pleading assertion of knowledge is insufficient; Magistrate should at minimum verify or examine the PoA holder on this specific aspect before issuing process",
+          "where_it_operates": "Paras 23, 26(iii) — the requirement of explicit assertion in the complaint is treated as a sufficient safeguard",
+          "what_court_assumes": "That 'due knowledge' can be sufficiently established by explicit assertion in the complaint without requiring the Magistrate to independently verify that knowledge at the pre-cognizance stage"
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "[PROVISION TEXT OF SECTION 145 NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED to assess whether Section 145 explicitly covers the Section 200 stage or is limited to trial stage evidence]",
+          "assumption_id": "HA_4",
+          "why_it_matters": "Section 200 CrPC uses 'shall' (mandatory language); Section 145 NI Act enables affidavit evidence but does not on its face say examination under Section 200 is dispensed with; the Court reads this discretionary effect into Section 145 through the non-obstante clause in Section 142",
+          "how_to_challenge": "Argue that Section 145 speaks to evidence at trial/hearing stage, not to the pre-cognizance examination under Section 200; the non-obstante clause in Section 142 applies to cognizance conditions, not to the manner of examination; the mandatory language of Section 200 ('shall') should prevail",
+          "where_it_operates": "Para 22, 26(iv) — the discretionary/mandatory question",
+          "what_court_assumes": "That Section 145 NI Act's affidavit mechanism effectively displaces the 'shall examine' language of Section 200 CrPC for Section 138 complaints"
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "self_check": "The term 'due knowledge' in para 26(ii) is deliberately broad and leaves this question open for future determination",
+          "assumption_id": "HA_5",
+          "why_it_matters": "A PoA holder who is 'in charge of business' may have second-hand knowledge through company records rather than first-hand personal experience of the transaction; the Court does not distinguish between these categories of knowledge",
+          "how_to_challenge": "Argue that 'due knowledge' cannot include knowledge derived solely from documents or third-party accounts; the PoA holder must have direct personal knowledge of the specific transaction",
+          "where_it_operates": "Para 23 — as a safeguard balancing complainant's convenience and accused's rights",
+          "what_court_assumes": "That the personal knowledge requirement protects the accused adequately against hearsay evidence at the complaint stage"
+        }
+      ],
+      "doctrinal_undercurrent": {
+        "tensions": [
+          "Tension between strict criminal construction (criminal statutes construed strictly, in favour of accused) and purposive/harmonious construction (adopted by Court) — the Court implicitly chooses purposive over strict in a criminal context",
+          "Tension between complainant's convenience/accessibility of remedy (permitting PoA filing) and accused's right to examine and cross-examine a witness with direct knowledge",
+          "Tension between the mandatory language of Section 200 CrPC ('shall examine') and the discretionary reading imposed by the Court through Section 145 NI Act — the non-obstante clause in Section 142 is doing heavy lifting here",
+          "Tension between the general principle (anyone can set criminal law in motion) and the specific eligibility restriction of Section 142(a) — the Court navigates this by using agency law rather than the general principle directly"
+        ],
+        "doctrines": [
+          "Agency Law — principal-agent doctrine (acts of authorised agent = acts of principal); para 21",
+          "Generalia specialibus non derogant — special law (NI Act) overrides general law (CrPC); para 22, SYL_4",
+          "Delegatus non potest delegare — delegate cannot sub-delegate without authority; para 25, RATIO_5",
+          "Personal knowledge rule in deposition — hearsay exclusion applied to witness testimony; paras 9, 18, 23",
+          "Remedial construction of special legislation — Section 138 NI Act as remedial provision to be construed to advance its remedy; para 19"
+        ]
+      },
+      "counterfactual_analysis": [
+        {
+          "cf_id": "CF_1",
+          "confidence": "VERIFIED",
+          "altered_fact": "Complaints filed in the name of Mrs. Doreen Shaikh as the complainant, without identifying the payees as the principal complainants",
+          "original_fact": "Complaints were filed in the name of the respective payees (not in the PoA holder's personal name)",
+          "likely_new_outcome": "Complaints would be held non-maintainable; Section 142(a) eligibility not satisfied; process would be quashed",
+          "broken_syllogism_id": "SYL_1",
+          "impact_on_reasoning": "SYL_1 would collapse — the agency law bridge (PoA holder filing in payee's name = payee filing through agent) requires that the complaint be in the payee's name; filing in personal name of PoA holder does not satisfy Section 142(a)",
+          "applicable_provision": "Section 142(a) NI Act",
+          "is_practically_plausible": true
+        },
+        {
+          "cf_id": "CF_2",
+          "confidence": "SOUND_INFERENCE",
+          "altered_fact": "PoA holder had no knowledge whatsoever of the underlying transactions (complete stranger appointed as mere formal representative)",
+          "original_fact": "PoA holder (Mrs. Doreen Shaikh) is described as having acted as constituted attorney of the payees",
+          "likely_new_outcome": "Process could still be issued on affidavit (RATIO_4); but at trial stage, the complaint may fail for want of admissible witness testimony from a knowledgeable deponent",
+          "broken_syllogism_id": "SYL_3",
+          "impact_on_reasoning": "RATIO_2 and RATIO_3 would apply to exclude deposition; however, under RATIO_1, the filing itself would still be valid; the consequence would be that the PoA holder could not be examined as a witness, potentially leaving the complaint without anyone to depose",
+          "applicable_provision": "Section 142(a), Section 145 NI Act, RATIO_2, RATIO_3",
+          "is_practically_plausible": true
+        },
+        {
+          "cf_id": "CF_3",
+          "confidence": "VERIFIED",
+          "altered_fact": "Section 145 had not been inserted — Section 200 CrPC's examination requirement applied without any special NI Act mechanism",
+          "original_fact": "Section 145 NI Act was inserted by Act 55 of 2002 before the judgment, enabling affidavit evidence",
+          "likely_new_outcome": "Magistrate would be mandatorily required to examine the complainant/PoA holder upon oath before issuing process; affidavit verification alone would be insufficient",
+          "broken_syllogism_id": "SYL_4",
+          "impact_on_reasoning": "SYL_4 would collapse; the Court's holding that Magistrate's examination is discretionary rests entirely on Section 145; without Section 145, Section 200 CrPC's mandatory language ('shall examine') would apply",
+          "applicable_provision": "Section 200 CrPC, Section 145 NI Act",
+          "is_practically_plausible": false
+        },
+        {
+          "cf_id": "CF_4",
+          "confidence": "SOUND_INFERENCE",
+          "altered_fact": "Shri Ravinder Singh was appointed by Shri V. Shankar Prasad (the original PoA holder) as a sub-delegate without a fresh PoA from the Company",
+          "original_fact": "The general power of attorney in Case 2 was cancelled and a fresh one given to Shri Ravinder Singh (implied from para (b) of Case 2 facts)",
+          "likely_new_outcome": "Complaint filed by or actions taken by Shri Ravinder Singh would be held unauthorised; complaint potentially non-maintainable or process potentially bad",
+          "broken_syllogism_id": "SYL_5",
+          "impact_on_reasoning": "RATIO_5 on sub-delegation would be triggered; without an explicit sub-delegation clause in the original PoA, the sub-delegation to Shri Ravinder Singh would be invalid; all acts done by Shri Ravinder Singh as sub-delegate would be without authority",
+          "applicable_provision": "Section 142(a) NI Act, para 25-26(v) of judgment",
+          "is_practically_plausible": true
+        }
+      ],
+      "fact_sensitivity_matrix": {
+        "ambiguous_facts": [
+          "Whether the PoA holder in Case 1 (Mrs. Doreen Shaikh) actually had personal knowledge of the specific transactions — the judgment does not resolve this factual question as it remits for merits [para 27]",
+          "The precise terms of the General Power of Attorney in Case 2 — specifically whether it contained a sub-delegation clause, which is now critical under RATIO_5 [para 25]",
+          "Whether the substitution of Shri Ravinder Singh for Shri V. Shankar Prasad constituted a 'sub-delegation' or a fresh grant of PoA (which would be valid under RATIO_5) [para (b) of Case 2 facts, para 26(v)]"
+        ],
+        "decorative_facts": [
+          "The specific investment scheme under which cheques were issued by A.C. Narayanan (para (a) of Case 1 facts)",
+          "The amount of individual cheques in Case 2 (Rs. 1,00,000 each + Rs. 1,21,174) [para (a) of Case 2 facts]",
+          "The specific dates of dishonour and notice in Case 2 [para (a) of Case 2 facts]",
+          "The name of the first PoA holder (Shri V. Shankar Prasad) who was subsequently substituted [para (b) of Case 2 facts]"
+        ],
+        "load_bearing_facts": [
+          "In Case 1 (A.C. Narayanan), complaints were filed in the name of the respective payees, not in the name of the PoA holder personally — this was critical to the finding that Section 142(a) was satisfied [para 7, reference order]",
+          "Mrs. Doreen Shaikh held a Special Power of Attorney executed by the payees on 28.11.1997, authorising her to file complaints [para 7, reference order]",
+          "In Case 2 (G. Kamalakar), the Board of Directors resolution authorised appointment of an agent by executing a General Power of Attorney; Shri Ravinder Singh was the operative PoA holder [para (b) of Case 2 facts]",
+          "Complaints were filed under Section 138 NI Act — a special statute with its own cognizance provision [para 7]"
+        ]
+      },
+      "alternative_interpretations": [
+        {
+          "alt_id": "ALT_1",
+          "confidence": "VERIFIED",
+          "is_defensible": false,
+          "why_not_adopted": "Would render corporate complainants unable to file complaints (companies can only act through agents); would conflict with Vishwa Mitter and MMTC; would frustrate the remedial purpose of Section 138 NI Act; would be disproportionate to the legislative intent",
+          "what_would_change": "Would render virtually all corporate Section 138 complaints and many individual complaints through agents non-maintainable; massive disruption to commercial litigation",
+          "what_it_would_have_been": "A strict literal reading of Section 142(a) holding that only the payee or holder in due course personally can file the complaint — PoA filing entirely excluded",
+          "statutory_structure_check": "Section 142(a) is a procedural eligibility condition nested within Section 142 which overrides CrPC; the literal reading would create practical impossibility for non-individual payees"
+        },
+        {
+          "alt_id": "ALT_2",
+          "confidence": "VERIFIED",
+          "is_defensible": false,
+          "why_not_adopted": "Would create an absurd result — PoA can file complaint but then nobody with knowledge of the complaint can depose; Section 138 remedy would be rendered ineffective for many payees who are absent/unable to depose",
+          "what_would_change": "PoA holder could file complaint but could not depose; payee would have to personally appear to depose — the exact problem the Court sought to remedy",
+          "what_it_would_have_been": "Janki Vashdeo Bhojwani applied strictly to exclude PoA holder from deposing in any Section 138 case — PoA can file but cannot depose at all",
+          "statutory_structure_check": "Janki Vashdeo Bhojwani arose under CPC; its strict application to the NI Act criminal context would require overriding the remedial purpose of Section 138 and ignoring Section 145 which specifically enables affidavit evidence"
+        },
+        {
+          "alt_id": "ALT_3",
+          "confidence": "SOUND_INFERENCE",
+          "is_defensible": true,
+          "why_not_adopted": "Would create procedural burden inconsistent with the streamlined mechanism of Section 138; the non-obstante clause in Section 142 signals that special NI Act procedure overrides CrPC; Section 145 affidavit mechanism would be meaningless if Section 200 CrPC examination remained mandatory",
+          "what_would_change": "Magistrates would be required to examine every complainant/PoA holder under oath before issuing process in Section 138 cases; significant procedural delay in high-volume cheque cases",
+          "what_it_would_have_been": "Holding that Section 200 CrPC examination is mandatory even in Section 138 cases — affidavit alone insufficient; Section 145 NI Act applies only to trial stage, not pre-cognizance stage",
+          "statutory_structure_check": "[PROVISION TEXT OF SECTION 145 NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED to determine if Section 145 on its face applies to pre-cognizance stage]; however the Court's harmonious construction reading is textually supportable through the Section 142 non-obstante clause"
+        }
+      ]
+    },
+    "dimension_5_synthesis": {
+      "genome_summary": {
+        "text": "A.C. Narayanan is the authoritative three-judge bench pronouncement on the Power of Attorney holder's role in Section 138 NI Act proceedings. It synthesises the apparent conflict between MMTC (liberal filing by PoA holder) and Janki Vashdeo Bhojwani (personal knowledge requirement for deposition) through harmonious construction and agency law. The judgment establishes a four-point framework: (1) PoA filing in the payee's name is valid under Section 142(a); (2) PoA holder may depose only with personal knowledge of the transaction; (3) such knowledge must be explicitly asserted in the complaint; (4) Section 145 NI Act makes Magistrate's Section 200 CrPC examination discretionary. A fifth rule on sub-delegation (explicit authorisation required) addresses corporate chain-of-authority issues. The judgment's primary vulnerability is the undefined 'due knowledge' standard and the explicit assertion requirement — both generate continuing fact-specific litigation without undermining the core holding.",
+        "consistency_check_passed": true,
+        "consistency_verified_against": [
+          "Section 1.6 — ratio_decidendi: genome_summary accurately reflects all five ratios",
+          "Section 2.1 — syllogisms: five syllogisms map onto the five-point framework",
+          "Section 3.1 — hidden_assumptions: HA_1 (agency law transplant) and HA_4 (Section 145 displacing Section 200) are reflected in the summary's acknowledgment of the interpretive method",
+          "Section 4.3 — vulnerability_map: VULN_1 and VULN_2 are accurately reflected as the primary ongoing vulnerabilities",
+          "Section 4.6 — temporal_vulnerability: HIGH survival probability is consistent with three-judge bench status"
+        ]
+      },
+      "questions_created": [
+        {
+          "why_new": "The Court used 'due knowledge' without defining it; the threshold between 'knowledge through records' and 'direct personal knowledge' is unresolved and will generate substantial litigation in corporate cheque cases",
+          "confidence": "VERIFIED",
+          "question_id": "Q_1",
+          "likely_forum": "High Court (in Section 482 CrPC petitions or criminal appeals) and subsequently Supreme Court",
+          "the_question": "What constitutes 'due knowledge' under para 26(ii) — does knowledge of the transaction through company records and financial statements satisfy the personal knowledge requirement, or is direct personal participation in the transaction required?",
+          "who_will_raise_first": "Accused in high-value corporate cheque dishonour cases seeking to exclude deposition of the company's PoA holder/authorised signatory"
+        },
+        {
+          "why_new": "Para 26(iii) mandates explicit assertion but the judgment does not state the consequence of its absence — whether it is curable or fatal; this creates uncertainty for complainants and accused alike",
+          "confidence": "VERIFIED",
+          "question_id": "Q_2",
+          "likely_forum": "High Court in Section 482 CrPC proceedings",
+          "the_question": "Is the failure to include an explicit assertion of the PoA holder's personal knowledge in the complaint a curable defect (amendable under Section 219 CrPC [INDEPENDENT VERIFICATION REQUIRED for correct provision]) or a jurisdictional/incurable defect that vitiates the complaint ab initio?",
+          "who_will_raise_first": "Accused seeking quashing of complaints where the explicit knowledge assertion is absent from the complaint"
+        },
+        {
+          "why_new": "The judgment's RATIO_4 is anchored in Section 200 CrPC; if the corresponding BNSS provision uses different language or has different scope, the ratio may need to be re-examined",
+          "confidence": "SOUND_INFERENCE",
+          "question_id": "Q_3",
+          "likely_forum": "Trial courts and High Courts across India as BNSS rolls out",
+          "the_question": "Does the ratio of A.C. Narayanan (specifically RATIO_4 on Section 145 NI Act making Section 200 CrPC examination discretionary) survive the introduction of the Bharatiya Nagarik Suraksha Sanhita, 2023, which replaces CrPC, and what is the corresponding provision and its language under BNSS?",
+          "who_will_raise_first": "Any party litigating Section 138 NI Act proceedings governed by BNSS procedure"
+        },
+        {
+          "why_new": "The judgment addresses formal PoA instruments but does not address the common corporate practice of authority chains through board resolutions and administrative delegations rather than formal PoA instruments",
+          "confidence": "SOUND_INFERENCE",
+          "question_id": "Q_4",
+          "likely_forum": "Supreme Court after conflict among High Courts develops",
+          "the_question": "Where a company's Board authorises its Managing Director by resolution to appoint agents to file complaints, and the MD appoints an officer without a further explicit PoA document — is this a valid delegation or an invalid sub-delegation under RATIO_5?",
+          "who_will_raise_first": "Accused in corporate cheque cases seeking to challenge the authority of the complainant's representative"
+        },
+        {
+          "why_new": "Para 19 says legal heirs can 'carry forward pending criminal complaint or initiate criminal action if the original complainant dies' — the phrase 'initiate criminal action' suggests fresh filing is possible but this is obiter and the scope is unclear; there may be limitation period complications",
+          "confidence": "SPECULATIVE",
+          "question_id": "Q_5",
+          "likely_forum": "High Courts in Section 482 CrPC petitions",
+          "the_question": "Can a legal heir of a deceased payee (who dies after the cheque dishonour but before filing the complaint) file a fresh Section 138 complaint, or only continue a pending complaint — and does A.C. Narayanan's OBITER_2 (citing Ashwin Nanubhai Vyas) extend the right to filing a fresh complaint?",
+          "who_will_raise_first": "Legal heirs of deceased payees seeking to file fresh Section 138 complaints"
+        }
+      ],
+      "extraction_confidence": {
+        "overall_confidence": "VERIFIED",
+        "extraction_limitations": [
+          "Section 145 NI Act text not reproduced — its exact scope (trial stage vs pre-cognizance stage) could not be independently verified against the judgment text",
+          "Section 200 CrPC text not reproduced — whether 'shall examine' language is truly mandatory could not be verified against the judgment text",
+          "Operative order at para 27 remits both appeals to appropriate bench for decision on merits — the ultimate fate of the parties on merits is not available from this judgment",
+          "Several precedents cited by appellant's counsel (Nazir Ahmed, Rao Bahasur Ravula, Jimmy Jahangir Madan) are only referenced, not substantively discussed — their precise impact on the ratio is uncertain"
+        ],
+        "judgment_clarity_grade": "A — The judgment is well-structured with a clear five-point operative answer at para 26; the reference questions at para 15 provide a useful analytical scaffold; the main source of difficulty is the undefined 'due knowledge' standard",
+        "highest_uncertainty_sections": [
+          "The exact text of Section 145 NI Act (not reproduced in judgment) — critical to RATIO_4 and SYL_4",
+          "The exact text of Section 200 CrPC (not reproduced in judgment) — important for RATIO_4",
+          "The corresponding BNSS provisions for CrPC Sections 200 and 204",
+          "Post-2013 amendments to NI Act (if any)"
+        ]
+      },
+      "interpretive_lineage_map": [
+        {
+          "timeline": [
+            {
+              "case": "Vishwa Mitter vs. O.P. Poddar (1983) 4 SCC 701",
+              "development": "General principle — anyone can set criminal law in motion; if special statute prescribes eligibility, that must be satisfied"
+            },
+            {
+              "case": "MMTC Ltd. vs. Medchl Chemicals (2002) 1 SCC 234",
+              "development": "Complaint filed in name of payee-company by its Manager/officer held to satisfy Section 142; High Court's restriction to Executive Director overruled"
+            },
+            {
+              "case": "Janki Vashdeo Bhojwani vs. Indusind Bank (2005) 2 SCC 217",
+              "development": "In CPC context — PoA holder can file complaint/plaint if he has personal knowledge of transaction; cannot depose for principal on matters of exclusive personal knowledge to principal; created apparent tension with MMTC"
+            },
+            {
+              "case": "A.C. Narayanan vs. State of Maharashtra (2014) 11 SCC 790",
+              "development": "Three-judge bench — SYNTHESIS: PoA filing in payee's name satisfies Section 142(a); PoA holder may depose if he has personal knowledge; complaint must explicitly assert such knowledge; Magistrate's Section 200 CrPC examination is discretionary under Section 145 NI Act; sub-delegation requires explicit authorisation"
+            }
+          ],
+          "provision": "Section 142(a) NI Act — eligibility to file complaint"
+        }
+      ],
+      "practitioners_cheat_sheet": {
+        "cite_when": [
+          "Defending maintainability of any Section 138 complaint filed by a PoA holder on behalf of the payee",
+          "Resisting challenge to affidavit-based verification in lieu of Section 200 CrPC examination in Section 138 cases",
+          "Challenging the deposition of a PoA holder who lacks personal knowledge of the underlying transaction",
+          "Challenging complaints filed by sub-delegates without explicit sub-delegation authority in the original PoA",
+          "In any special statute case arguing that authorised agent/PoA holder can satisfy personal filing requirements [subject to Gate 7 validation for each statute]"
+        ],
+        "hidden_gem": "Para 19 — the Court's articulation that this judgment is an exception to the general rule (anyone can set criminal law in motion) and is premised on practical necessity (sickness, old age, death, overseas residence). This para is the strongest policy-based argument for extending the ratio to unanticipated situations, and it also grounds the OBITER_1 observations about legal heirs continuing Section 138 proceedings.",
+        "do_not_cite_when": [
+          "The complaint was filed in the PoA holder's own name as complainant (not in the payee's name) — this case expressly prohibits such filing",
+          "Seeking to argue that ANY authorised person (without PoA) can file Section 138 complaint — A.C. Narayanan is about PoA holders specifically",
+          "Arguing that Magistrate's Section 200 CrPC examination was wrong because it happened — the judgment says examination is at Magistrate's discretion but does not say it was wrong to conduct it",
+          "In proceedings before the BNSS/new procedure without first verifying whether the Section 200 CrPC/Section 145 NI Act interface survives under the new Code [INDEPENDENT VERIFICATION REQUIRED]"
+        ],
+        "killer_paragraph": "Para 26 — the operative five-point answer to the reference questions; para 26(i) through 26(v) provide the complete, directly quotable holdings of the three-judge bench on each issue"
+      }
+    },
+    "dimension_2_structural": {
+      "syllogisms": {
+        "items": [
+          {
+            "label": "PoA filing satisfies Section 142(a) eligibility",
+            "conclusion": "The eligibility criterion of Section 142(a) is satisfied; the complaint is maintainable",
+            "feeds_into": [
+              "SYL_3"
+            ],
+            "syllogism_id": "SYL_1",
+            "major_premise": "Section 142(a) NI Act requires a complaint 'made by the payee or the holder in due course'; when a PoA holder files in the name and on behalf of the payee, the complaint is the payee's complaint through an agent",
+            "minor_premise": "In the present cases, the complaints were filed in the name of and on behalf of the respective payees through their constituted attorney/PoA holder; the PoA holder was not filing in his own name",
+            "is_independent": true,
+            "source_paragraphs": "Paras 17, 19, 21, 24, 26(i)"
+          },
+          {
+            "label": "Agency law principle supports PoA holder acting as complainant",
+            "conclusion": "The initiation of proceedings is by the grantor represented by the attorney holder, not by the attorney holder in personal capacity; this is consistent with Section 142(a)",
+            "feeds_into": [
+              "SYL_1"
+            ],
+            "syllogism_id": "SYL_2",
+            "major_premise": "The PoA holder is the agent of the grantor; acts done by the agent within authorised scope are acts of the principal (general agency law principle)",
+            "minor_premise": "The grantor authorised the PoA holder to initiate legal proceedings; the PoA holder did so on behalf of and in the name of the payee",
+            "is_independent": false,
+            "source_paragraphs": "Para 21"
+          },
+          {
+            "label": "Deposition by PoA holder conditional on personal knowledge",
+            "conclusion": "PoA holder may depose if he has personal knowledge of the transaction; this must be explicitly asserted in the complaint; if no such knowledge, PoA holder cannot be examined",
+            "feeds_into": [],
+            "syllogism_id": "SYL_3",
+            "major_premise": "Janki Vashdeo Bhojwani holds that a PoA holder can only depose on facts within his personal knowledge; he cannot depose for acts done by the principal alone; however, if the PoA holder was personally involved/aware of the transaction as agent, he can depose",
+            "minor_premise": "In NI Act Section 138 proceedings, the deponent must have personal knowledge of the transaction; where the PoA holder is in charge of business and alone is aware of transactions, he has that personal knowledge",
+            "is_independent": false,
+            "source_paragraphs": "Paras 18, 19, 23, 26(ii), 26(iii)"
+          },
+          {
+            "label": "Section 145 NI Act renders Section 200 CrPC examination discretionary",
+            "conclusion": "In Section 138 complaints, the Magistrate may rely on the affidavit verification and is not mandatorily bound to examine the complainant under Section 200 CrPC; the examination remains discretionary",
+            "feeds_into": [],
+            "syllogism_id": "SYL_4",
+            "major_premise": "Section 145 NI Act (inserted by Act 55 of 2002) enables evidence by affidavit in Section 138 proceedings; Section 200 CrPC examination is a general provision",
+            "minor_premise": "Section 142 NI Act has a non-obstante clause overriding CrPC; Section 145 specifically provides for affidavit-based verification; the special statute's mechanism applies",
+            "is_independent": true,
+            "source_paragraphs": "Paras 22, 26(iv)"
+          },
+          {
+            "label": "Sub-delegation requires explicit authorisation",
+            "conclusion": "Sub-delegation without explicit authorisation in the PoA instrument is invalid; however, the original PoA can be cancelled and a fresh one granted to another",
+            "feeds_into": [],
+            "syllogism_id": "SYL_5",
+            "major_premise": "An agent cannot sub-delegate authority unless the principal has expressly authorised sub-delegation (delegatus non potest delegare as modified by express authority)",
+            "minor_premise": "The general power of attorney's terms govern the scope of the PoA holder's authority; without an explicit sub-delegation clause, the PoA holder has no power to appoint a further agent",
+            "is_independent": true,
+            "source_paragraphs": "Para 25, 26(v)"
+          }
+        ],
+        "chain_logic": "SYL_2 feeds into SYL_1 (agency law underpins filing competence); SYL_1 feeds into SYL_3 (once filing is permitted, the deposition question arises with personal knowledge qualification); SYL_4 operates independently on the Section 200/Section 145 interface; SYL_5 operates independently on sub-delegation"
+      },
+      "dependency_tree": {
+        "nodes": [
+          {
+            "type": "ROOT_QUESTION",
+            "node_id": "DEP_1",
+            "premise": "Is a complaint filed by a PoA holder on behalf of a payee maintainable under Section 142(a) NI Act?",
+            "branch_id": "MAIN",
+            "is_critical": true,
+            "parent_node_id": null,
+            "source_paragraph": "Para 15(i)"
+          },
+          {
+            "type": "STATUTORY_INTERPRETATION",
+            "node_id": "DEP_2",
+            "premise": "Section 142(a) requires complaint by 'payee or holder in due course' — does PoA filing satisfy this?",
+            "branch_id": "A",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Paras 7, 8, 17"
+          },
+          {
+            "type": "PRECEDENT",
+            "node_id": "DEP_3",
+            "premise": "MMTC holds complaint in name and on behalf of payee is sufficient compliance with Section 142",
+            "branch_id": "A1",
+            "is_critical": true,
+            "parent_node_id": "DEP_2",
+            "source_paragraph": "Para 17"
+          },
+          {
+            "type": "LEGAL_PRINCIPLE",
+            "node_id": "DEP_4",
+            "premise": "Agency law — agent's acts within authority are principal's acts; PoA holder filing in payee's name is payee filing through agent",
+            "branch_id": "A2",
+            "is_critical": true,
+            "parent_node_id": "DEP_2",
+            "source_paragraph": "Para 21"
+          },
+          {
+            "type": "SUBSIDIARY_QUESTION",
+            "node_id": "DEP_5",
+            "premise": "Can PoA holder depose/verify on oath under Section 200 CrPC? — Is Janki Vashdeo Bhojwani a bar?",
+            "branch_id": "B",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Para 15(ii)"
+          },
+          {
+            "type": "PRECEDENT_DISTINCTION",
+            "node_id": "DEP_6",
+            "premise": "Janki Vashdeo Bhojwani arose under CPC — personal knowledge rule is transplanted but not as absolute bar in NI Act context",
+            "branch_id": "B1",
+            "is_critical": true,
+            "parent_node_id": "DEP_5",
+            "source_paragraph": "Paras 18, 19"
+          },
+          {
+            "type": "QUALIFICATION",
+            "node_id": "DEP_7",
+            "premise": "Personal knowledge of transaction is the qualifying criterion for deposition by PoA holder",
+            "branch_id": "B2",
+            "is_critical": true,
+            "parent_node_id": "DEP_5",
+            "source_paragraph": "Para 23"
+          },
+          {
+            "type": "STATUTORY_INTERACTION",
+            "node_id": "DEP_8",
+            "premise": "Does Section 145 NI Act modify the mandatory examination requirement under Section 200 CrPC?",
+            "branch_id": "C",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Paras 22, 26(iv)"
+          },
+          {
+            "type": "STATUTORY_CONSTRUCTION",
+            "node_id": "DEP_9",
+            "premise": "Section 142 non-obstante clause overrides CrPC; Section 145 specifically enables affidavit evidence; Magistrate's examination becomes discretionary",
+            "branch_id": "C1",
+            "is_critical": true,
+            "parent_node_id": "DEP_8",
+            "source_paragraph": "Para 22"
+          },
+          {
+            "type": "SUBSIDIARY_QUESTION",
+            "node_id": "DEP_10",
+            "premise": "Can PoA holder sub-delegate powers?",
+            "branch_id": "D",
+            "is_critical": false,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Para 25"
+          }
+        ],
+        "root_node": "DEP_1"
+      },
+      "interpretive_method": {
+        "method_basis": "Court harmoniously constructed Sections 138, 142 and 145 of the NI Act with Section 200 CrPC, and read MMTC and Janki Vashdeo Bhojwani together without holding them in direct conflict",
+        "primary_method": "HARMONIOUS",
+        "judges_tendency": "Pragmatic harmonious construction with sensitivity to commercial reality; reluctance to create procedural barriers that would frustrate NI Act's remedial purpose",
+        "method_explanation": "The Court adopted a harmonious construction approach: it held that there is no 'serious conflict' between MMTC and Janki Vashdeo Bhojwani (para 26) by reading the personal knowledge qualification from Janki Vashdeo Bhojwani into the MMTC principle of filing competence. It further harmonised Section 200 CrPC (general examination requirement) with Section 145 NI Act (special affidavit provision) by holding that the special provision prevails through Section 142's non-obstante clause, making examination discretionary. The Court also employed purposive interpretation in para 19 by reference to the practical need to accommodate inability of payees to appear due to sickness, old age, death or distance.",
+        "alternative_method_analysis": [
+          {
+            "method": "LITERAL",
+            "analysis_steps": [
+              "Step 1: Section 142(a) uses 'payee or holder in due course' — PoA holder is neither",
+              "Step 2: Agency law principle that agent's acts = principal's acts is NOT on the face of the statute",
+              "Step 3: This reading would render MMTC wrong and would prevent most corporate complaints from being filed"
+            ],
+            "analysis_narrative": "A purely literal reading of Section 142(a) — 'complaint made by the payee or holder in due course' — could exclude PoA holder filing entirely, as the PoA holder is neither the payee nor the holder in due course. Similarly, a literal reading of Section 200 CrPC requires examination of 'the complainant' which could be read as excluding affidavit substitution.",
+            "would_outcome_change": true,
+            "likely_alternative_outcome": "Complaints filed by PoA holders would be held non-maintainable; significant disruption to commercial practice"
+          },
+          {
+            "method": "PURPOSIVE",
+            "analysis_steps": [
+              "Step 1: Purpose of Section 138 is to deter cheque dishonour and provide effective remedy to payees",
+              "Step 2: Personal knowledge qualification may frustrate purpose where payee is genuinely unable to appear",
+              "Step 3: However, such approach would remove cross-examination protections for accused"
+            ],
+            "analysis_narrative": "A purely purposive reading focused on the mischief of cheque dishonour and the legislative intent to provide a quick remedy for payees could have gone further and dispensed with the personal knowledge requirement entirely, allowing any duly authorised agent to depose.",
+            "would_outcome_change": false,
+            "likely_alternative_outcome": "Outcome similar but personal knowledge requirement might have been softened further"
+          }
+        ]
+      },
+      "rhetorical_architecture": {
+        "tone": "Authoritative but conciliatory; avoids declaring either precedent wrong; emphasises practical necessity (sickness, old age, death, overseas residence at para 19)",
+        "opening_move": "Court begins by extracting the reference order verbatim (para 7), signalling deference to the prior Division Bench's identification of conflict, thereby legitimising the three-judge bench exercise",
+        "source_paragraphs": "Paras 19, 21, 23, 26",
+        "metaphor_or_analogy": "Agency law as the conceptual bridge — the Court uses the master-agent/principal-agent relationship as the organising metaphor throughout paras 21-24, treating the PoA holder's acts as the grantor's acts",
+        "strategic_ambiguity": "The phrase 'witnessed the transaction as an agent of the payee/holder in due course or possess due knowledge regarding the said transactions' (para 26(ii)) — 'due knowledge' is undefined and leaves room for future litigation on the threshold of knowledge required",
+        "persuasion_technique": "Resolution by synthesis — the Court characterises MMTC and Janki Vashdeo Bhojwani as not in 'serious conflict' (para 26) and synthesises them: MMTC provides the rule (PoA can file), Janki Vashdeo Bhojwani provides the qualification (personal knowledge required for deposition). This avoids overruling either precedent and presents the judgment as clarification, not correction."
+      }
+    },
+    "dimension_4_weaponizable": {
+      "sword_uses": [
+        {
+          "scenario": "Defending maintainability of a Section 138 complaint filed by a PoA holder on behalf of an individual or company payee",
+          "how_to_cite": "A.C. Narayanan vs State of Maharashtra, (2014) 11 SCC 790, para 26(i) — three-judge bench holding that filing of complaint petition under Section 138 NI Act through power of attorney is 'perfectly legal and competent'",
+          "use_case_id": "SWORD_1",
+          "draft_argument": "The complaint in question is filed in the name of the payee/complainant and signed by the constituted attorney holding a duly executed Power of Attorney. This Court's three-judge bench in A.C. Narayanan (2014) 11 SCC 790 has authoritatively held (para 26(i)) that filing of a complaint petition under Section 138 of the NI Act through a Power of Attorney is perfectly legal and competent. The eligibility criterion of Section 142(a) is satisfied when the complaint is filed in the name of and on behalf of the payee or holder in due course. The present complaint meets this standard.",
+          "stage_of_proceedings": "At process issuance stage; in response to quashing petition/discharge application",
+          "is_practically_common": true
+        },
+        {
+          "scenario": "Resisting a discharge application or Section 482 CrPC quashing petition challenging the PoA holder's verification/affidavit in lieu of Section 200 CrPC examination",
+          "how_to_cite": "A.C. Narayanan vs State of Maharashtra, (2014) 11 SCC 790, para 26(iv) — Magistrate is not mandatorily obliged to examine complainant and can rely on affidavit verification under Section 145 NI Act",
+          "use_case_id": "SWORD_2",
+          "draft_argument": "The Magistrate's reliance on the affidavit verification filed by the complainant in support of the complaint under Section 138 NI Act is fully justified under this Court's three-judge bench decision in A.C. Narayanan (2014) 11 SCC 790 (para 26(iv)). The Magistrate is neither mandatorily obliged to call upon the complainant to remain present before Court nor to examine the complainant under oath before deciding to issue process. The affidavit filed in support of the complaint is sufficient compliance with the procedure for issuance of process under Section 200 CrPC read with Section 145 NI Act.",
+          "stage_of_proceedings": "In High Court Section 482 CrPC petitions; in discharge applications before trial court",
+          "is_practically_common": true
+        },
+        {
+          "scenario": "Challenging a sub-delegated PoA's authority where original PoA holder has appointed a further agent without express authorisation in the PoA instrument",
+          "how_to_cite": "A.C. Narayanan vs State of Maharashtra, (2014) 11 SCC 790, para 26(v) — sub-delegation requires explicit clause in general power of attorney",
+          "use_case_id": "SWORD_3",
+          "draft_argument": "The complaint in the present case was filed by a person purporting to act under a power of attorney granted not by the payee/complainant directly, but by a sub-delegate of the original PoA holder. The three-judge bench in A.C. Narayanan (2014) 11 SCC 790 has specifically held (para 26(v)) that the authority to sub-delegate functions under a general power of attorney must be explicitly mentioned in the general power of attorney itself. In the absence of such explicit sub-delegation clause, the sub-delegation is inconsistent with the general power of attorney and invalid in law. The complaint filed by the unauthorised sub-delegate is therefore not maintainable under Section 142(a) NI Act.",
+          "stage_of_proceedings": "At process issuance stage; in discharge applications; in quashing petitions",
+          "is_practically_common": false
+        },
+        {
+          "scenario": "Challenging the deposition of a PoA holder who lacks personal knowledge of the transaction — attacking the evidentiary basis of the complainant's case at trial",
+          "how_to_cite": "A.C. Narayanan vs State of Maharashtra, (2014) 11 SCC 790, para 26(ii) and 26(iii) — PoA holder must have personal knowledge; no such knowledge = cannot be examined as witness",
+          "use_case_id": "SWORD_4",
+          "draft_argument": "The Power of Attorney holder who has deposed in support of the present complaint has not demonstrated personal knowledge of the transactions underlying the cheque dishonour. The complaint itself contains no explicit assertion as to the PoA holder's knowledge of the specific transactions, as mandated by this Court's three-judge bench in A.C. Narayanan (2014) 11 SCC 790 (para 26(iii)). Further, the PoA holder was not personally involved in the transactions and derives his purported knowledge solely from company records — this does not satisfy the personal knowledge requirement (para 26(ii)). The examination of such a PoA holder without personal knowledge is impermissible and the deposition cannot be relied upon.",
+          "stage_of_proceedings": "At trial stage during examination of complainant's witness; in appellate proceedings challenging conviction",
+          "is_practically_common": true
+        }
+      ],
+      "shield_uses": [
+        {
+          "scenario_id": "SHIELD_1",
+          "attack_being_faced": "Accused argues that complaint by PoA holder is not maintainable as PoA holder is not the payee or holder in due course under Section 142(a) NI Act",
+          "boundary_condition": "This shield fails if the complaint was filed in the PoA holder's own name as complainant rather than in the payee's name (CF_1; para 21 — PoA holder 'cannot file a complaint in his own name as if he was the complainant')",
+          "how_judgment_helps": "Para 26(i) — three-judge bench authoritatively holds that filing through PoA is perfectly legal and competent; RATIO_1 provides complete answer",
+          "key_factual_similarity": "Complaint must be filed in the name of/on behalf of the payee, not in the personal name of the PoA holder"
+        },
+        {
+          "scenario_id": "SHIELD_2",
+          "attack_being_faced": "Accused argues that the Magistrate was mandatorily required to examine the complainant under Section 200 CrPC before issuing process and failure to do so vitiates the process",
+          "boundary_condition": "This shield assumes Section 145 NI Act (inserted by Act 55 of 2002) applies; for complaints filed and processed before the 2002 amendment, this shield may not apply [INDEPENDENT VERIFICATION REQUIRED on the temporal scope of Section 145]",
+          "how_judgment_helps": "Para 26(iv) — examination under Section 200 CrPC is discretionary, not mandatory, in Section 138 cases in light of Section 145 NI Act; Magistrate can rely on affidavit verification",
+          "key_factual_similarity": "An affidavit in support of the complaint under Section 138 was filed by the complainant/PoA holder before process was issued"
+        },
+        {
+          "scenario_id": "SHIELD_3",
+          "attack_being_faced": "Accused argues that the PoA holder's testimony is inadmissible hearsay as he has no personal knowledge of the transactions",
+          "boundary_condition": "The complaint must explicitly assert the PoA holder's knowledge (para 26(iii)); shield fails if explicit assertion is absent from the complaint or if PoA holder's only knowledge is derived from documents/third parties",
+          "how_judgment_helps": "Paras 23 and 26(ii) — where the PoA holder is in charge of the business of the complainant-payee and the attorney holder alone is personally aware of the transactions, the PoA holder can depose as a witness",
+          "key_factual_similarity": "PoA holder must be in charge of business and must have direct personal knowledge of the specific transactions"
+        }
+      ],
+      "vulnerability_map": {
+        "vulnerabilities": [
+          {
+            "vuln_id": "VULN_1",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "The definition of 'due knowledge' in para 26(ii) is undefined — the Court does not distinguish between direct personal knowledge, knowledge through documents, and knowledge as business manager",
+            "stress_test": "Step 1: The Court uses 'due knowledge' without defining it — textual gap exists; Step 2: Janki Vashdeo Bhojwani requires 'personal knowledge' which is a higher standard than 'knowledge through records'; Step 3: Counter — commercial/corporate practice requires that business managers be treated as having sufficient knowledge of business transactions even if derived from records; verdict: INCLUDE_WITH_CAVEAT",
+            "attack_vector": "In appeals against conviction, argue that the PoA holder's 'knowledge' was derived solely from company records, not personal participation in the transaction; this is insufficient under Janki Vashdeo Bhojwani's personal knowledge standard which the Court incorporated",
+            "likelihood_of_success": "MEDIUM — Courts may accept this argument in cases where PoA holder clearly was not personally involved; however, in business contexts, knowledge through records may be treated as sufficient"
+          },
+          {
+            "vuln_id": "VULN_2",
+            "confidence": "VERIFIED",
+            "weak_point": "The requirement of 'explicit assertion as to knowledge' in the complaint (para 26(iii)) creates vulnerability where complainants use standard/template complaints without specific assertions",
+            "stress_test": "Step 1: Para 26(iii) explicitly states requirement for specific assertion; Step 2: This is a mandatory substantive requirement, not a curable defect; Step 3: Counter — courts may treat deficiency as curable by amendment; or may infer knowledge from overall context of complaint; verdict: INCLUDE",
+            "attack_vector": "Challenge the complaint at the pre-cognizance or discharge stage for failure to explicitly assert the PoA holder's personal knowledge of the specific transaction; if no such assertion is found, argue that the PoA holder cannot be examined and the complaint cannot proceed",
+            "likelihood_of_success": "HIGH — This is a specific, verifiable requirement; many standard complaints may lack such explicit assertion"
+          },
+          {
+            "vuln_id": "VULN_3",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "The Court's holding that Section 200 CrPC examination is discretionary rests on an inference from Section 145 NI Act whose text is not reproduced in the judgment",
+            "stress_test": "Step 1: Statutory text of Section 145 not in judgment — independent verification needed; Step 2: Even if Section 145 is confined to trial stage, Section 142's non-obstante clause provides alternative basis; Step 3: Counter — three-judge bench decision is binding; only Constitution Bench can overrule; verdict: INCLUDE_WITH_CAVEAT",
+            "attack_vector": "Challenge the discretionary reading by arguing that Section 145 NI Act (as it actually reads) applies to a different stage of proceedings and does not expressly displace the mandatory language of Section 200 CrPC; argue that the mandatory examination is required",
+            "likelihood_of_success": "LOW — Three-judge bench has authoritatively decided this; would require larger bench or legislative change"
+          },
+          {
+            "vuln_id": "VULN_4",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "The sub-delegation ruling (RATIO_5) creates uncertainty about the validity of complaints in corporate chain-of-authority situations where PoA holders routinely authorise subordinates informally",
+            "stress_test": "Step 1: Para 26(v) clearly states sub-delegation without explicit clause is invalid; Step 2: The structural rule is clear; Step 3: Counter — the distinction between 'cancellation and fresh grant' vs 'sub-delegation' may be blurred in practice; courts may read explicit sub-delegation clauses broadly; verdict: INCLUDE",
+            "attack_vector": "Where a company's authorised PoA holder has effectively sub-delegated complaint filing to a subordinate/clerk without an explicit sub-delegation clause, challenge the validity of the complaint as filed by an unauthorised person",
+            "likelihood_of_success": "MEDIUM — Depends heavily on the specific facts and the terms of the original PoA instrument"
+          }
+        ],
+        "durability_reasoning": "The judgment is from a three-judge bench of the Supreme Court resolving a reference — it has high precedential authority and cannot be challenged except before a larger bench or by legislative amendment. The ratio on filing competence (RATIO_1) is highly durable. The vulnerabilities are in the undefined 'due knowledge' standard (VULN_1) and the explicit assertion requirement (VULN_2), which will generate fact-specific litigation but will not undermine the core ratio. The Section 145/Section 200 CrPC interface (VULN_3) is the most theoretically vulnerable but practically unlikely to succeed given the bench strength.",
+        "overall_durability_score": 7
+      },
+      "temporal_vulnerability": {
+        "bench_strength": "3-judge bench (Criminal Appellate Jurisdiction, reference answered)",
+        "can_be_overruled_by": "A Constitution Bench (5 or more judges) of the Supreme Court, or a larger bench specifically constituted to reconsider",
+        "survival_probability": "HIGH_10_PLUS_YEARS",
+        "cross_statutory_mapping": {
+          "crpc_to_bnss": "CrPC Sections 200 and 204 have corresponding provisions in BNSS 2023 — [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION of exact BNSS section numbers and language]; if BNSS language differs from CrPC, the ratio on Section 200 CrPC being discretionary (RATIO_4) may need re-examination under BNSS",
+          "ni_act_status": "NI Act continues in force; not replaced by any new legislation as of extraction date — [INDEPENDENT VERIFICATION REQUIRED]"
+        },
+        "legislative_override_risk": "LOW-MEDIUM — Parliament could amend Section 142 NI Act to expressly address PoA filing (either permitting or restricting it); the present judgment fills a statutory gap. No indication of pending legislative change as of extraction date. [INDEPENDENT VERIFICATION REQUIRED for any post-2013 NI Act amendments]"
+      },
+      "distinguishing_playbook": [
+        {
+          "strategy_id": "DIST_1",
+          "draft_argument": "This Court in A.C. Narayanan (2014) 11 SCC 790 at para 21 has expressly held that 'the power of attorney holder cannot file a complaint in his own name as if he was the complainant.' The present complaint names the PoA holder as the complainant without identifying the payee as the principal. This is fundamentally different from the situation in A.C. Narayanan where the complaints were filed in the name of the respective payees through their PoA holder. The ratio of A.C. Narayanan does not apply and the complaint is not maintainable under Section 142(a).",
+          "factual_difference": "The PoA holder filed the complaint in his own name as if he were the complainant, rather than in the name of the payee/principal",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_2",
+          "draft_argument": "The ratio in A.C. Narayanan (2014) 11 SCC 790 at para 26(ii) specifically requires that the PoA holder must have 'witnessed the transaction as an agent of the payee/holder in due course or possess due knowledge regarding the said transactions.' In the present case, the PoA holder was appointed [after the transactions were complete / has no business connection to the underlying transaction]. Further, the complaint does not explicitly assert the PoA holder's knowledge as required by para 26(iii). These distinguishing facts take the present case outside the protective ratio of A.C. Narayanan.",
+          "factual_difference": "The PoA holder has no personal knowledge of the transactions whatsoever — was appointed as a nominee after the transaction was complete and has no involvement in the business",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_3",
+          "draft_argument": "A.C. Narayanan (2014) 11 SCC 790 at para 26(v) draws a critical distinction between a PoA holder (who can file complaints) and a sub-delegate appointed by the PoA holder without explicit authority. In the present case, [X] who filed the complaint was not appointed by the payee/complainant directly but was purportedly appointed by [Y], the original PoA holder, without any sub-delegation clause in the general power of attorney. The Court in A.C. Narayanan has held such sub-delegation to be invalid. The complaint is therefore filed by an unauthorised person and is not maintainable.",
+          "factual_difference": "The person who filed/verified the complaint was not a PoA holder at all but a sub-delegate appointed by the PoA holder without an express sub-delegation clause",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_4",
+          "draft_argument": "Para 26(iii) of A.C. Narayanan (2014) 11 SCC 790 requires that 'it is required by the complainant to make specific assertion as to the knowledge of the power of attorney holder in the said transaction explicitly in the complaint.' The present complaint contains no such explicit assertion. This is a specific mandatory requirement laid down by the three-judge bench; its absence distinguishes this case and renders the deposition of the PoA holder impermissible, undermining the evidentiary foundation of the complaint.",
+          "factual_difference": "The complaint does not contain any explicit assertion as to the PoA holder's personal knowledge of the transaction",
+          "is_material_to_ratio": true
+        }
+      ],
+      "cross_domain_transplants": [
+        {
+          "viability": "MEDIUM — the principle is analogous but applicability depends on the specific wording of each statute's eligibility/cognizance provision",
+          "target_domain": "Other special statutes requiring complaint by a specific person — e.g., Prevention of Food Adulteration Act, Drug and Cosmetics Act complaints by authorised persons",
+          "transplant_id": "TRANS_1",
+          "original_domain": "Negotiable Instruments Act — Section 138 cheque dishonour complaints",
+          "gate_7_validation": {
+            "verdict": "VIABLE",
+            "step_a_target_provision": "[SPECIFIC STATUTORY PROVISION IN TARGET DOMAIN REQUIRES INDEPENDENT VERIFICATION — each special statute has its own eligibility condition; cannot generalise without examining the exact text]",
+            "step_b_contextual_analogy": "The principle that agency law applies to satisfy personal complainant requirements is potentially transferable where: (i) the statute requires complaint by a specific person; (ii) there is no express exclusion of PoA holders; (iii) the statute's purpose is not defeated by PoA filing",
+            "step_c_specialized_override": "Many special statutes (e.g., Prevention of Money Laundering Act, certain SEBI regulations) have specific authorisation provisions that may override or supplement the general A.C. Narayanan principle; domain-specific framework may be complete in itself"
+          },
+          "analogous_principle": "Where a special statute requires a complaint to be filed by a specific person/category, a duly authorised PoA holder or agent acting in the name and on behalf of that specific person satisfies the eligibility criterion; the personal knowledge requirement for deposition applies"
+        },
+        {
+          "viability": "HIGH — Janki Vashdeo Bhojwani itself was a civil case; A.C. Narayanan endorsed the Janki Vashdeo Bhojwani personal knowledge principle; the civil domain is the original source of this principle",
+          "target_domain": "Civil proceedings — PoA holder as plaintiff or as witness in title suits, recovery suits",
+          "transplant_id": "TRANS_2",
+          "original_domain": "Criminal proceedings under NI Act — PoA holder deposition",
+          "gate_7_validation": {
+            "verdict": "VIABLE",
+            "step_a_target_provision": "Order 3 Rules 1 and 2 CPC — specifically mentioned in both Janki Vashdeo Bhojwani and A.C. Narayanan",
+            "step_b_contextual_analogy": "Direct — A.C. Narayanan transplants the CPC personal knowledge principle into the NI Act criminal domain; using it in reverse (back to civil domain) is even more direct",
+            "step_c_specialized_override": "CPC itself governs civil proceedings; no specialized override; Janki Vashdeo Bhojwani is the primary authority in civil domain and A.C. Narayanan reinforces it"
+          },
+          "analogous_principle": "A PoA holder with personal knowledge of the transaction can depose in civil proceedings for and on behalf of the principal in respect of acts done within the scope of the PoA; cannot depose on matters of which only the principal has personal knowledge"
+        },
+        {
+          "viability": "MEDIUM — the delegatus non potest delegare principle is well-established across domains; A.C. Narayanan applies it specifically in the PoA context; applicability to board resolutions depends on corporate law framework",
+          "target_domain": "Corporate law — board resolutions authorising sub-committees or officers to file complaints/initiate proceedings under other statutes (Companies Act, SEBI Act, etc.)",
+          "transplant_id": "TRANS_3",
+          "original_domain": "NI Act — sub-delegation of PoA",
+          "gate_7_validation": {
+            "verdict": "VIABLE",
+            "step_a_target_provision": "[SPECIFIC PROVISION IN COMPANIES ACT/SEBI ACT GOVERNING DELEGATION REQUIRES INDEPENDENT VERIFICATION — likely Sections 179, 180 Companies Act 2013 or relevant SEBI Regulations but cannot confirm without independent verification]",
+            "step_b_contextual_analogy": "The principle is analogous but corporate law has its own scheme of delegation (board resolution, committee delegation) which may be governed by specific statutory provisions that define the scope of sub-delegation differently",
+            "step_c_specialized_override": "Companies Act 2013 has specific provisions on delegation of powers; these may constitute a specialized framework that partially overrides or supplements the general A.C. Narayanan principle"
+          },
+          "analogous_principle": "Sub-delegation of authority requires explicit authorisation in the original instrument of delegation; without such express provision, sub-delegation is invalid; however, the principal can cancel the original delegation and grant a fresh one to another person"
+        }
+      ]
+    }
+  }
+}

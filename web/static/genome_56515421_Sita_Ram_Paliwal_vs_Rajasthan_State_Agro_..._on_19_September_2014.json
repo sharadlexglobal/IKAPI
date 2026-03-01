@@ -1,0 +1,1067 @@
+{
+  "tid": 56515421,
+  "case_title": "Sita Ram Paliwal vs Rajasthan State Agro ... on 19 September, 2014",
+  "genome": {
+    "document_id": "a3f7c2d1-8b4e-4f9a-b6c3-2e1d5a8f0c7b",
+    "schema_version": "3.1.0",
+    "dimension_1_visible": {
+      "story": {
+        "legal_language": "The reference arose from a conflict between two coordinate two-Judge Bench decisions of the Supreme Court — Narsingh Das Tapadia [(2000) 7 SCC 183] (holding that presentation of a premature complaint does not bar valid cognizance once 15 days elapse) and Sarav Investment & Financial Consultancy [(2007) 14 SCC 753] (holding that complaint cannot be filed before expiry of 15-day notice period under Section 138 proviso (c)). The three-Judge Bench resolved the conflict by holding: (i) a complaint filed before expiry of 15 days from service of notice under Section 138(c) is not a complaint in the eye of law and no cognizance can be taken thereon even if 15 days have elapsed by the date of cognizance; (ii) the complainant's remedy is to file a fresh complaint, and where the one-month period under Section 142(b) has expired, benefit of the proviso may be sought by showing sufficient cause; and (iii) for pending cases, a fresh complaint filed within one month of the decision in the criminal case shall be deemed to have condoned delay.",
+        "plain_language": "The complainant (appellant Yogendra Pratap Singh) had four cheques dishonoured by the bank. He sent a demand notice to the cheque-drawer (respondent Savitri Pandey), which was served on 23 September 2008. Before the drawer had the full 15 days to respond/pay (i.e., before 8 October 2008), the complainant rushed to court and filed a complaint under Section 138 of the Negotiable Instruments Act on 7 October 2008 — just 14 days after service of notice. The Magistrate nonetheless took cognizance on 14 October 2008 (by which date 15 days had elapsed) and issued summons. The accused challenged this before the Allahabad High Court under Section 482 CrPC, which held the complaint was premature and quashed it. The complainant appealed to the Supreme Court. Because two Supreme Court Benches had taken contradictory views on this issue, a three-Judge Bench was constituted to authoritatively resolve two questions: (1) Can cognizance be taken on a complaint filed before the 15-day notice period expires? (2) If not, can a fresh complaint be filed even if the one-month limitation under Section 142(b) has expired?",
+        "verification_note": "All factual assertions verified against paragraph references in the judgment text. [VERIFIED]"
+      },
+      "obiter_dicta": [
+        {
+          "obiter_id": "OBITER_1",
+          "observation": "The maxim 'Actus curiae neminem gravabit' (an act of the court shall prejudice no man) — invoked by the Delhi High Court in Zenith Fashion Makers to save a premature complaint — was impliedly rejected as inapplicable. The three-Judge Bench described the Delhi HC's holding as 'strangely held', signalling that a complainant's own premature filing cannot be attributed to an act of the court.",
+          "necessity_check": {
+            "verified": true,
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 25",
+          "future_significance": "Forecloses the invocation of 'Actus curiae neminem gravabit' to save a premature Section 138 complaint from being void; may be relevant in other contexts where a party argues that procedural delay caused by the court should excuse non-compliance with limitation."
+        },
+        {
+          "obiter_id": "OBITER_2",
+          "observation": "Special statutes that specify both the ingredients of an offence and the procedure require strict compliance with both — a principle derived from the AP HC reasoning in N. Venkata Sivaram Prasad which the Court effectively endorsed.",
+          "necessity_check": {
+            "verified": true,
+            "is_necessary_for_decision": false
+          },
+          "source_paragraph": "Para 14 (endorsing AP HC reasoning)",
+          "future_significance": "Reinforces the strict construction approach to Chapter XVII NI Act; applicable to arguments about other procedural requirements in Section 138–142 being mandatory vs. directory."
+        }
+      ],
+      "case_identity": {
+        "bench": {
+          "judges": [
+            "R.M. Lodha CJI",
+            "Kurian Joseph J.",
+            "Rohinton Fali Nariman J."
+          ],
+          "strength": 3,
+          "is_constitution_bench": false
+        },
+        "court": "Supreme Court of India",
+        "domain": "CRIMINAL",
+        "case_name": "Yogendra Pratap Singh v. Savitri Pandey & Anr.",
+        "case_number": "Criminal Appeal No. 605 of 2012 (with Criminal Appeal Nos. 1924 and 1925 of 2014)",
+        "case_origin": "SLP",
+        "domain_detail": "Negotiable Instruments — Dishonour of cheque — Premature complaint under Section 138 NI Act — Cognizance — Limitation",
+        "judgment_author": "R.M. Lodha CJI",
+        "date_of_judgment": "19 September 2014",
+        "dissenting_judges": [],
+        "source_paragraphs": "Para 1 (SLP (Crl.) No. 5761 of 2010 — leave granted by two-Judge Bench on 03.04.2012; reference to three-Judge Bench), Para 3"
+      },
+      "operative_order": {
+        "order_text": "Our answer to question (i) is, therefore, in the negative. [Para 40] ... Question (ii) is answered accordingly. [Para 42] ... Criminal appeals may now be listed for consideration by the regular Bench. [Para 43]",
+        "order_items": [
+          {
+            "action": "Question (i) answered",
+            "detail": "Cognizance of an offence under Section 138 NI Act CANNOT be taken on the basis of a complaint filed before expiry of the 15-day period stipulated in Section 138 proviso (c), even if 15 days have elapsed by the date of cognizance"
+          },
+          {
+            "action": "Question (ii) answered",
+            "detail": "Complainant CANNOT re-present the same premature complaint; must file a fresh complaint; if one-month limitation under Section 142(b) has expired, must seek condonation under the proviso to Section 142(b)"
+          },
+          {
+            "action": "Direction for pending cases",
+            "detail": "In all pending cases where the complaint does not proceed in view of the answer to question (i), a fresh complaint filed within one month of the decision in the criminal case shall be deemed to have delay condoned under the proviso to Section 142(b)"
+          },
+          {
+            "action": "Matter listed before regular bench",
+            "detail": "The criminal appeals are to be listed before the regular bench for final consideration on merits"
+          }
+        ],
+        "source_paragraph": "Paras 40, 42, 43"
+      },
+      "ratio_decidendi": [
+        {
+          "label": "Premature Complaint Is Not A Complaint In Law",
+          "ratio_id": "RATIO_1",
+          "proposition": "A complaint filed under Section 138 of the NI Act before the expiry of 15 days from the date on which notice has been served on the drawer/accused is not a complaint at all in the eye of law. Since commission of an offence is a sine qua non for filing a complaint (Section 2(d) CrPC), and the offence under Section 138 is not complete until the 15-day period in proviso (c) has elapsed, a complaint filed before that period is void ab initio — not merely premature.",
+          "source_paragraph": "Para 36",
+          "linked_syllogism_ids": [
+            "SYL_1",
+            "SYL_2"
+          ]
+        },
+        {
+          "label": "No Cognizance on Premature Complaint Even After 15 Days Elapse",
+          "ratio_id": "RATIO_2",
+          "proposition": "A court is barred in law from taking cognizance of an offence under Section 138 NI Act on the basis of a complaint filed before expiry of 15 days from service of notice, even if by the date of taking cognizance the 15-day period has elapsed. The passage of time does not cure the fundamental defect in the complaint.",
+          "source_paragraph": "Para 36, 37",
+          "linked_syllogism_ids": [
+            "SYL_2",
+            "SYL_3"
+          ]
+        },
+        {
+          "label": "All Five Ingredients of Section 138 Must Be Satisfied Before Filing Complaint",
+          "ratio_id": "RATIO_3",
+          "proposition": "All five essential ingredients enumerated in Kusum Ingots & Alloys Ltd. — including failure to pay within 15 days of notice under proviso (c) — must be satisfied for a complaint to be competently filed under Section 138 NI Act. The proviso's conditions are conditions precedent to the very existence of the offence, not merely procedural requirements.",
+          "source_paragraph": "Paras 31–33, 37",
+          "linked_syllogism_ids": [
+            "SYL_1"
+          ]
+        },
+        {
+          "label": "Remedy Is Fresh Complaint; Delay May Be Condoned",
+          "ratio_id": "RATIO_4",
+          "proposition": "Since the premature complaint is not a complaint in law and cannot be re-presented, the complainant's only remedy is to file a fresh complaint. Where the one-month period under Section 142(b) has expired, the complainant must seek benefit of the proviso to Section 142(b) by satisfying the court of sufficient cause. For pending cases where complaint does not proceed in view of RATIO_1, a fresh complaint filed within one month of the decision shall be treated as having condoned delay.",
+          "source_paragraph": "Para 42",
+          "linked_syllogism_ids": [
+            "SYL_4"
+          ]
+        },
+        {
+          "label": "Narsingh Das Tapadia Overruled",
+          "ratio_id": "RATIO_5",
+          "proposition": "The two-Judge Bench decision in Narsingh Das Tapadia v. Goverdhan Das Partani [(2000) 7 SCC 183] — holding that a premature complaint is merely defective and can be cured by passage of time before cognizance — is expressly overruled. All High Court decisions following Narsingh Das Tapadia are correspondingly disapproved.",
+          "source_paragraph": "Para 38",
+          "linked_syllogism_ids": [
+            "SYL_3"
+          ]
+        }
+      ],
+      "precedent_registry": [
+        {
+          "citation": "(2000) 7 SCC 183",
+          "case_name": "Narsingh Das Tapadia v. Goverdhan Das Partani and Anr.",
+          "treatment": "OVERRULED",
+          "why_cited": "Central conflicting precedent — the judgment being overruled by the three-Judge Bench",
+          "what_it_held": "Mere presentation of a premature complaint (filed before expiry of 15 days from service of notice) is not an act of taking cognizance under Section 142 NI Act. If on the date of taking cognizance the 15-day period has expired, the complaint is legally maintainable and the High Court erred in treating it as premature.",
+          "source_paragraph": "Paras 1, 2, 18, 19, 38"
+        },
+        {
+          "citation": "(2007) 14 SCC 753",
+          "case_name": "Sarav Investment & Financial Consultancy Private Limited and Anr. v. Llyods Register of Shipping Indian Office Staff Provident Fund and Anr.",
+          "treatment": "REAFFIRMED",
+          "why_cited": "The other conflicting coordinate bench decision — approved and followed by the three-Judge Bench",
+          "what_it_held": "Service of notice under Section 138 proviso (b) is part of cause of action; complaint cannot be filed before expiry of 15 days from service of notice; the 15-day period is imperative. A complaint filed before expiry of 15 days is not maintainable.",
+          "source_paragraph": "Paras 1, 2, 29, 39"
+        },
+        {
+          "citation": "AIR 2000 SC 954 : (2000) 2 SCC 745",
+          "case_name": "M/s. Kusum Ingots & Alloys Ltd. v. M/s. Pennar Peterson Securities Ltd. and ors.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Authoritative enumeration of five ingredients of Section 138 offence — adopted and approved by three-Judge Bench",
+          "what_it_held": "Enumerated five essential ingredients required for an offence under Section 138 NI Act, including: (i) drawing of cheque; (ii) presentation within 6 months/validity; (iii) dishonour; (iv) notice in writing within 15 days of information of dishonour; (v) failure to pay within 15 days of notice.",
+          "source_paragraph": "Paras 32, 33, 37"
+        },
+        {
+          "citation": "AIR 2003 SC 4789 : (2003) 8 SCC 300",
+          "case_name": "K.R. Indira v. Dr. G. Adinarayana",
+          "treatment": "FOLLOWED",
+          "why_cited": "Affirms that the five-ingredient test is conjunctive — all must be satisfied",
+          "what_it_held": "Offence under Section 138 NI Act is complete only if all prescribed components are satisfied.",
+          "source_paragraph": "Para 34"
+        },
+        {
+          "citation": "1993 Cri.L.J. 680",
+          "case_name": "Rakesh Nemkumar Porwal v. Narayan Dhondu Joglekar and Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "First High Court decision on the question (1992); Division Bench of Bombay HC — view ultimately approved",
+          "what_it_held": "Complaint filed within 15 days of service of notice is not maintainable; offence under Section 138 not committed until 15-day period has elapsed; reading Sections 138(c) and 142(b) together, no offence can be said to have been committed until 15 days have elapsed.",
+          "source_paragraph": "Paras 10, 11"
+        },
+        {
+          "citation": "(1995) 1 Bank CLR 103",
+          "case_name": "Ashok Verma v. Ritesh Agro Pvt. Ltd. and Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Punjab and Haryana HC decision following Bombay HC — view approved",
+          "what_it_held": "Under proviso (c), 15-day period is granted to drawer; unless this period has elapsed and no payment made, drawer not liable under Section 138.",
+          "source_paragraph": "Paras 11, 12"
+        },
+        {
+          "citation": "1996 Cri. L.J. 3409",
+          "case_name": "N. Venkata Sivaram Prasad v. M/s Rajeswari Constructions",
+          "treatment": "FOLLOWED",
+          "why_cited": "AP HC Division Bench — detailed reasoning adopted by the three-Judge Bench, particularly on Section 190 CrPC and Section 142(a) NI Act",
+          "what_it_held": "Premature complaint does not disclose an offence and is not a complaint at all in the eye of law; Magistrate cannot proceed with case even after lapse of 15-day period on basis of such premature complaint; Section 190 CrPC requires complaint disclosing facts constituting offence.",
+          "source_paragraph": "Paras 11, 13, 14"
+        },
+        {
+          "citation": "1997 Cril. L.J. 3691",
+          "case_name": "Ashok Hegde v. Jathin v. Attawan",
+          "treatment": "FOLLOWED",
+          "why_cited": "Karnataka HC single judge — view approved",
+          "what_it_held": "Cause of action had not arisen to file complaint and complaint was premature when filed before expiry of 15 days from date of receipt of notice.",
+          "source_paragraph": "Paras 11, 15"
+        },
+        {
+          "citation": "1998 (3) Crimes 188",
+          "case_name": "Sri Niranjan Sahoo v. M/s Utkal Sanitary, BBSR",
+          "treatment": "FOLLOWED",
+          "why_cited": "Orissa HC — view approved",
+          "what_it_held": "If complaint filed before expiry of 15 days under proviso (c) to Section 138, cognizance cannot be taken in view of Section 142(b); complaint liable to be quashed.",
+          "source_paragraph": "Paras 11, 16"
+        },
+        {
+          "citation": "2000 Cri.L.J. 3625",
+          "case_name": "M/s Harpreet Hosiery Rehari v. Nitu Mahajan",
+          "treatment": "FOLLOWED",
+          "why_cited": "J&K HC — view approved",
+          "what_it_held": "Drawer has 15 days from receipt of notice of dishonour to make payment; action under Section 138 can only be initiated after that period.",
+          "source_paragraph": "Paras 11, 17"
+        },
+        {
+          "citation": "ILR 2001 Kar. 3295",
+          "case_name": "Arun Hegde and Anr. v. M.J. Shetty",
+          "treatment": "OVERRULED",
+          "why_cited": "Karnataka HC post-Narsingh Das Tapadia — view overruled along with Narsingh Das Tapadia",
+          "what_it_held": "Relying on Narsingh Das Tapadia, held that if complaint was premature it can await maturity or be returned; mere presentation at earlier date need not render complaint liable to be dismissed.",
+          "source_paragraph": "Para 20"
+        },
+        {
+          "citation": "2002 Cri. L.J. 1522",
+          "case_name": "Smt. Hem Lata Gupta v. State of U.P. and Anr.",
+          "treatment": "OVERRULED",
+          "why_cited": "Allahabad HC — view overruled",
+          "what_it_held": "Bar of expiry of 15 days is for taking cognizance, not for filing complaint.",
+          "source_paragraph": "Para 21"
+        },
+        {
+          "citation": "RLW 2003 (1) Raj. 673",
+          "case_name": "Mahendra Agarwal v. Gopi Ram Mahajan",
+          "treatment": "OVERRULED",
+          "why_cited": "Rajasthan HC — view overruled",
+          "what_it_held": "Mere presentation of complaint is not cognizance; premature complaint can await maturity.",
+          "source_paragraph": "Para 22"
+        },
+        {
+          "citation": "2004 Cri. L.J. 1140",
+          "case_name": "Bapulal B. Kacchi v. Krupachand Jain",
+          "treatment": "OVERRULED",
+          "why_cited": "MP HC — view overruled",
+          "what_it_held": "Following Narsingh Das Tapadia, order dismissing complaint as premature was wrong.",
+          "source_paragraph": "Para 23"
+        },
+        {
+          "citation": "2004 (1) GLT 652",
+          "case_name": "Yunus Khan v. Mazhar Khan",
+          "treatment": "OVERRULED",
+          "why_cited": "Gauhati HC — view overruled",
+          "what_it_held": "Mere presentation of complaint is not cognizance; if 15 days elapsed by date of cognizance, complaint validly instituted.",
+          "source_paragraph": "Para 24"
+        },
+        {
+          "citation": "121 (2005) DLT 297",
+          "case_name": "Zenith Fashion Makers (P) Ltd. v. Ultimate Fashion Makers Ltd. and Anr.",
+          "treatment": "OVERRULED",
+          "why_cited": "Delhi HC — view impliedly overruled (described as 'strangely held' by three-Judge Bench)",
+          "what_it_held": "Premature complaint cannot be quashed on ground of prematurity if accused failed to plead that he would have paid had the time been given; invoked 'Actus curiae neminem gravabit'.",
+          "source_paragraph": "Para 25"
+        },
+        {
+          "citation": "2005 Cri. L.J. 3681",
+          "case_name": "Ganga Ram Singh v. State of U.P. and Ors.",
+          "treatment": "OVERRULED",
+          "why_cited": "Allahabad HC — view overruled",
+          "what_it_held": "Court should have waited and allowed complainant to establish case or cognizance should have been taken after expiry of stipulated period.",
+          "source_paragraph": "Para 26"
+        },
+        {
+          "citation": "2007 (2) JKJ 91",
+          "case_name": "S. Janak Singh v. Pritpal Singh",
+          "treatment": "OVERRULED",
+          "why_cited": "J&K HC — view overruled (insofar as it followed Narsingh Das Tapadia's 'await maturity' position)",
+          "what_it_held": "Complaint filed before accrual of cause of action cannot be legally entertained; but following Narsingh Das Tapadia, premature complaint can await maturity.",
+          "source_paragraph": "Para 28"
+        },
+        {
+          "citation": "2008 (3) CHN 214",
+          "case_name": "Sandip Guha v. Saktipada Ghosh and Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Calcutta HC post-Sarav Investment — view approved",
+          "what_it_held": "Complaint under Section 138 filed before expiry of 15 days of service of notice was premature and could not be treated as complaint in the eye of law; criminal proceedings liable to be quashed.",
+          "source_paragraph": "Para 30"
+        },
+        {
+          "citation": "2010 Cri. L.J. 706",
+          "case_name": "Rattan Chand v. Kanwar Ram Kripal and Anr.",
+          "treatment": "FOLLOWED",
+          "why_cited": "Himachal Pradesh HC post-Sarav Investment — view approved",
+          "what_it_held": "[Same line as Sandip Guha — complaint before expiry of 15 days is premature and proceedings liable to be quashed]",
+          "source_paragraph": "Para 30"
+        }
+      ],
+      "procedural_journey": [
+        {
+          "date": "7 October 2008",
+          "forum": "Court of Additional Civil Judge (J.D.)/Magistrate, Sonbhadra, Uttar Pradesh",
+          "stage": "Trial Court — Complaint Filed",
+          "outcome": "Complaint filed; cognizance taken on 14 October 2008; summons issued",
+          "date_source": "Para 4",
+          "source_paragraph": "Para 4",
+          "what_was_decided": "Magistrate took cognizance of offence under Section 138 NI Act and issued summons to accused"
+        },
+        {
+          "date": "[NOT EXTRACTABLE FROM JUDGMENT TEXT — date of HC order not stated]",
+          "forum": "High Court of Judicature at Allahabad",
+          "stage": "High Court — Section 482 CrPC Petition",
+          "outcome": "Complaint and all proceedings quashed",
+          "date_source": "Para 4",
+          "source_paragraph": "Para 4",
+          "what_was_decided": "High Court held complaint filed within 15 days of service of notice was premature; order of Magistrate taking cognizance was legally bad"
+        },
+        {
+          "date": "3 April 2012",
+          "forum": "Supreme Court of India — Two-Judge Bench",
+          "stage": "Supreme Court — SLP / Reference",
+          "outcome": "Leave granted; two questions formulated; matter referred to three-Judge Bench",
+          "date_source": "Para 1",
+          "source_paragraph": "Paras 1, 2, 3",
+          "what_was_decided": "Conflict between Narsingh Das Tapadia and Sarav Investment required authoritative resolution by larger bench"
+        },
+        {
+          "date": "19 September 2014",
+          "forum": "Supreme Court of India — Three-Judge Bench",
+          "stage": "Supreme Court — Three-Judge Bench (Present Judgment)",
+          "outcome": "Both questions answered; Narsingh Das Tapadia overruled; Sarav Investment approved; criminal appeals listed before regular bench",
+          "date_source": "Judgment header",
+          "source_paragraph": "Paras 38–43",
+          "what_was_decided": "(i) Cognizance cannot be taken on premature complaint; (ii) Fresh complaint permissible within one month of decision; delay condoned for pending cases"
+        }
+      ],
+      "provisions_engaged": [
+        {
+          "role": "Primary offence-creating provision; central to both questions referred",
+          "exact_text": "138. Dishonour of cheque for insufficiency, etc., of funds in the account.- Where any cheque drawn by a person on an account maintained by him with a banker for payment of any amount of money to another person from out of that account for the discharge, in whole or in part, of any debt or other liability, is returned by the bank unpaid, either because of the amount of money standing to the credit of that account is insufficient to honor the cheque or that it exceeds the amount arranged to be paid from that account by an agreement made with that bank, such person shall be deemed to have committed an offence and shall without prejudice to any other provisions of this Act, be punished with imprisonment for a term which may be extended to two years, or with fine which may extend to twice the amount of the cheque, or with both: Provided that nothing contained in this section shall apply unless- (a) the cheque has been presented to the bank within a period of six months from the date on which it is drawn or within the period of its validity, whichever is the earlier; (b) the payee or the holder in due course of the cheque, as the case may be, makes a demand for the payment of the said amount of money by giving a notice in writing, to the drawer of the cheque, within thirty days of the receipt of information by him from the bank regarding the return of the cheque as unpaid; and (c) the drawer of such cheque fails to make the payment of the said amount of money to the payee or, as the case may be, to the holder in due course of the cheque, within fifteen days of the receipt of the said notice. Explanation: For the purposes of this section, 'debt or other liability' means a legally enforceable debt or other liability.",
+          "text_source": "Reproduced in Para 5 of the judgment",
+          "court_action": "Interpreted — three-Judge Bench held all five ingredients (including proviso (c)) must be satisfied before offence is complete and before any complaint can be filed",
+          "provision_id": "NI_S138",
+          "parent_statute": "Negotiable Instruments Act, 1881 (as amended by Act 55 of 2002)",
+          "source_paragraph": "Paras 5, 31–37",
+          "corresponding_new_provision": {
+            "language_status": "[REQUIRES INDEPENDENT VERIFICATION — post-2014 amendments to NI Act (e.g., Amendment Act 2018) may have modified Section 142; independent verification required]",
+            "new_provision_id": "[CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION — NI Act 1881 not replaced; Section 138 continues under NI Act as amended]",
+            "new_parent_statute": "Negotiable Instruments Act, 1881 (continuing statute)",
+            "verification_status": "UNVERIFIED"
+          }
+        },
+        {
+          "role": "Procedural gateway — governs mode, form, and limitation period for complaints under Section 138; also determines court competence",
+          "exact_text": "142. Cognizance of offences.-Notwithstanding anything contained in the Code of Criminal Procedure, 1973 (2 of 1974) - (a) no court shall take cognizance of any offence punishable under section 138 except upon a complaint, in writing, made by the payee or, as the case may be, the holder in due course of the cheque; (b) such complaint is made within one month of the date on which the cause of action arises under clause (c) of the proviso to section 138: Provided that the cognizance of a complaint may be taken by the Court after the prescribed period, if the complainant satisfies the Court that he had sufficient cause for not making a complaint within such period. (c) no court inferior to that of a Metropolitan Magistrate or a Judicial Magistrate of the first class shall try any offence punishable under section 138.",
+          "text_source": "Reproduced in Para 6 of the judgment",
+          "court_action": "Interpreted — Section 142(b) limitation of one month runs from accrual of cause of action under Section 138 proviso (c); proviso to Section 142(b) applied as remedy for complainants whose premature complaints were quashed",
+          "provision_id": "NI_S142",
+          "parent_statute": "Negotiable Instruments Act, 1881 (as amended by Act 55 of 2002)",
+          "source_paragraph": "Paras 6, 36–37, 41–42",
+          "corresponding_new_provision": {
+            "language_status": "[REQUIRES INDEPENDENT VERIFICATION]",
+            "new_provision_id": "[CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION — NI Act Amendment Act 2018 inserted Section 143A and amended Section 148; Section 142 as interpreted here may have been further amended]",
+            "new_parent_statute": "Negotiable Instruments Act, 1881 (as amended)",
+            "verification_status": "UNVERIFIED"
+          }
+        },
+        {
+          "role": "Definitional — establishes that a 'complaint' presupposes commission of an offence; used to show premature filing is not a complaint at all",
+          "exact_text": "2(d) 'complaint' means any allegation made orally or in writing to a Magistrate, with a view to his taking action under this Code, that some person, whether known or unknown, has committed an offence, but does not include a police report.",
+          "text_source": "Reproduced in Para 8 of the judgment",
+          "court_action": "Relied upon — Court held commission of offence is sine qua non for a valid complaint under Section 2(d) CrPC; since offence under Section 138 is not complete until proviso (c) is satisfied, a premature filing is not a complaint in law",
+          "provision_id": "CRPC_S2D",
+          "parent_statute": "Code of Criminal Procedure, 1973",
+          "source_paragraph": "Paras 8, 36",
+          "corresponding_new_provision": {
+            "language_status": "[CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION — BNSS Section 2(1)(d) is the likely corresponding provision but exact text and any language change require independent verification]",
+            "new_provision_id": "BNSS_S2_1_d",
+            "new_parent_statute": "Bharatiya Nagarik Suraksha Sanhita, 2023",
+            "verification_status": "UNVERIFIED"
+          }
+        },
+        {
+          "role": "Jurisdictional foundation — empowers Magistrate to take cognizance 'upon receiving a complaint of facts which constitute such offence'; used to reinforce that a premature complaint does not disclose facts constituting the offence",
+          "exact_text": "190. Cognizance of offences by Magistrates. – (1) Subject to the provisions of this Chapter, any Magistrate of the first class, and any Magistrate of the second class specially empowered in this behalf under sub-section (2), may take cognizance of any offence— (a) upon receiving a complaint of facts which constitute such offence; (b) upon a police report of such facts; (c) upon information received from any person other than a police officer, or upon his own knowledge, that such offence has been committed. (2) The Chief Judicial Magistrate may empower any Magistrate of the second class to take cognizance under sub-section (1) of such offences as are within his competence to inquire into or try.",
+          "text_source": "Reproduced in Para 9 of the judgment",
+          "court_action": "Relied upon — Court held Section 190 CrPC read with Section 2(d) CrPC and Section 142 NI Act confirms that cognizance requires a valid complaint disclosing a constituted offence",
+          "provision_id": "CRPC_S190",
+          "parent_statute": "Code of Criminal Procedure, 1973",
+          "source_paragraph": "Paras 9, 14 (AP HC reasoning adopted), 36",
+          "corresponding_new_provision": {
+            "language_status": "[CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION]",
+            "new_provision_id": "BNSS_S210",
+            "new_parent_statute": "Bharatiya Nagarik Suraksha Sanhita, 2023",
+            "verification_status": "UNVERIFIED"
+          }
+        },
+        {
+          "role": "Procedural — inherent jurisdiction of High Court invoked by accused to quash premature complaint",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — only referred to as the vehicle for the petition before the High Court]",
+          "text_source": "Para 4 (mentioned as basis of petition before Allahabad HC)",
+          "court_action": "Not directly interpreted; mentioned as the procedural vehicle below",
+          "provision_id": "CRPC_S482",
+          "parent_statute": "Code of Criminal Procedure, 1973",
+          "source_paragraph": "Para 4",
+          "corresponding_new_provision": {
+            "language_status": "[CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION]",
+            "new_provision_id": "BNSS_S528",
+            "new_parent_statute": "Bharatiya Nagarik Suraksha Sanhita, 2023",
+            "verification_status": "UNVERIFIED"
+          }
+        },
+        {
+          "role": "Contextual — establishes that Sections 138–147 form a discrete statutory scheme inserted by amendment",
+          "exact_text": "[PROVISION TEXT NOT REPRODUCED IN JUDGMENT — only referenced as comprising Sections 138 to 147]",
+          "text_source": "Para 7",
+          "court_action": "Referenced for context only",
+          "provision_id": "NI_CHAPTERXVII",
+          "parent_statute": "Negotiable Instruments Act, 1881 (inserted by Act 66 of 1988 w.e.f. 01.04.1989)",
+          "source_paragraph": "Para 7",
+          "corresponding_new_provision": null
+        }
+      ]
+    },
+    "extraction_metadata": {
+      "extractor": "Legal Genome Analyst — Meta-Cognitive Extraction System",
+      "source_url": "https://indiankanoon.org/doc/[NOT EXTRACTABLE FROM JUDGMENT TEXT - URL NOT PROVIDED IN JUDGMENT]",
+      "extraction_date": "2025-01-31",
+      "framework_version": "Legal Genome Analyst v3.1.0",
+      "judgment_citation": "Yogendra Pratap Singh v. Savitri Pandey & Anr., Criminal Appeal No. 605 of 2012 (with Criminal Appeal Nos. 1924 and 1925 of 2014), Supreme Court of India, decided 19 September 2014 [REPORTABLE]"
+    },
+    "dimension_3_invisible": {
+      "silent_arguments": [
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_1",
+          "stress_test": {
+            "verdict": "REMOVE",
+            "step_1_statutory_basis": "Section 142(b) NI Act refers to 'cause of action arises under clause (c) of the proviso to section 138'. The provision expressly ties cause of action to proviso (c). Section 2(d) CrPC requires that an offence 'has been committed'. Both provisions point against a 'conditional filing becomes effective' interpretation.",
+            "step_2_structural_validity": "The structure of Section 138 treats the proviso conditions as prerequisites to the offence, not to the remedy. The 'conditional filing' argument effectively imports civil procedure concepts (conditional plaint) into a criminal complaint framework. There is no statutory basis in CrPC for a 'conditionally effective' complaint — Section 2(d) and Section 190 CrPC require an offence to have been committed at the time of complaint.",
+            "step_3_adversarial_challenge": "Counter-argument (for accused/respondent): The plain text of Sections 138 and 2(d) CrPC is fatal to the 'conditional filing' theory. A complaint is either a complaint in law or it is not. There is no intermediate category. The absence of any statutory provision for conditional filings in CrPC is dispositive."
+          },
+          "the_argument": "The complainant could have argued that the proviso to Section 138 creates three INDEPENDENT conditions, not one cumulative cause of action, and that the cause of action for Section 142(b) purposes accrues at a different point than the completion of the offence. The cause of action 'arising under clause (c) of the proviso' under Section 142(b) could be interpreted as the moment the drawer fails to pay within 15 days — but for purposes of filing, one could argue the complaint is conditionally valid and becomes operative on day 15.",
+          "why_it_matters": "This argument, if accepted, would have preserved the Narsingh Das Tapadia position while giving it a more principled textual foundation — distinguishing between offence completion (day 15) and complaint filing (conditional, becomes effective day 15).",
+          "provision_or_principle": "Section 142(b) NI Act ('cause of action arises under clause (c) of the proviso to section 138') read with Section 138 proviso (c); general principles of conditional filings in civil procedure (Order VII CPC — [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION for CPC applicability to criminal proceedings])",
+          "who_should_have_made_it": "The complainant/appellant (Yogendra Pratap Singh) and/or amicus curiae (if appointed in the reference). The referral order's framing of Question 1 suggests the argument was considered implicitly but not made with sufficient doctrinal force."
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_2",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "Section 142 NI Act's non-obstante clause ('Notwithstanding anything contained in the Code of Criminal Procedure, 1973') is textually present and reproduced in Para 6. The non-obstante clause modifies the CrPC but does not eliminate it entirely — it only overrides CrPC to the extent of inconsistency. Section 142 adds conditions; it does not replace the definitional architecture of 'complaint' under CrPC.",
+            "step_2_structural_validity": "The non-obstante clause in Section 142 is directed at the conditions in clauses (a), (b), (c) of Section 142 — not at the definitional provisions of CrPC. Section 2(d) CrPC's definition of 'complaint' operates as a foundational concept that Section 142 builds upon (requiring a 'complaint in writing'). The structural relationship is: CrPC Section 2(d) defines complaint; CrPC Section 190 empowers cognizance; Section 142 NI Act adds specific conditions. There is no inconsistency between them that the non-obstante clause resolves in favour of abandoning Section 2(d).",
+            "step_3_adversarial_challenge": "Counter-argument (for accused): The non-obstante clause in Section 142 is directed at Chapter XIV CrPC (conditions for initiation of proceedings), not at the definitional provisions. Section 2(d) CrPC is not overridden. The AP HC reasoning endorsed by the Supreme Court correctly reads Section 2(d) as a continuing foundational requirement. The special law argument cuts both ways — the special statute (NI Act) also requires strict compliance with its own prerequisites."
+          },
+          "the_argument": "Neither the complainant nor the referral order appears to have squarely argued that Section 142 NI Act creates an EXHAUSTIVE cognizance regime that overrides Section 190 CrPC entirely (given the non-obstante clause 'notwithstanding anything contained in the Code of Criminal Procedure'). Under this reading, the NI Act's Section 142 is the only source of cognizance authority, and whether a premature complaint is 'void' or 'premature' should be determined solely by reference to Section 142's language — which only mentions 'a complaint made within one month' without using the word 'void' for premature filings.",
+          "why_it_matters": "If Section 142 is exhaustive and its language does not render premature filings void — only out-of-time filings — then the Section 2(d) CrPC bridge used by the three-Judge Bench would be inapplicable to NI Act complaints, potentially weakening RATIO_1.",
+          "provision_or_principle": "Section 142 NI Act (non-obstante clause: 'notwithstanding anything contained in the Code of Criminal Procedure, 1973'); Section 190 CrPC; principles of special law overriding general law",
+          "who_should_have_made_it": "Complainant/appellant; State (as amicus). The AP HC in N. Venkata Sivaram Prasad engaged Section 190 CrPC extensively, but the argument about the non-obstante clause potentially narrowing the inquiry to Section 142 alone was not fully explored."
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_3",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "Sections 203 and 204 CrPC govern the Magistrate's power post-receipt of complaint. Neither is reproduced or cited in the judgment. [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]",
+            "step_2_structural_validity": "The 'void ab initio' characterisation is the Court's legal conclusion about the status of the premature complaint for purposes of cognizance jurisdiction. It does not necessarily mean the court registry cannot receive the document. The void characterisation operates at the level of cognizance jurisdiction, not physical receipt. This distinction partially answers the SA_3 tension — but the Magistrate's power to 'return' a void complaint remains theoretically problematic.",
+            "step_3_adversarial_challenge": "Counter-argument: The 'void for cognizance purposes' reading is functionally coherent even if technically the Magistrate receives the document. Courts routinely receive documents that cannot be acted upon. 'Void ab initio' for cognizance purposes is a legal status, not a physical fact about the document's existence."
+          },
+          "the_argument": "The three-Judge Bench did not consider whether the 'void ab initio' characterisation of a premature complaint creates an absurdity: if the complaint is void, the Magistrate has no jurisdiction to return it, correct it, or adjourn it — the Magistrate must simply ignore it. But the Magistrate in Narsingh Das Tapadia 'returned' the premature complaint for correction of verification, which the Supreme Court treated as not constituting cognizance. If the complaint was void, the Magistrate had no power to even receive it. This internal tension was not addressed.",
+          "why_it_matters": "Exposes a potential inconsistency in RATIO_1: if the premature complaint is void, it has no legal existence and cannot be 'returned' for correction or 'kept pending until 15 days elapse'. The court direction in Para 42 itself (telling complainants to file fresh complaints rather than re-present the original) implicitly acknowledges that the original has no amendable legal existence. But if courts have been 'returning' premature complaints with directions to re-file, those directions themselves were arguably ultra vires.",
+          "provision_or_principle": "General principles of void acts in law; Section 204 CrPC (process issuance) [PROVISION TEXT NOT REPRODUCED IN JUDGMENT]; Section 203 CrPC (dismissal of complaint) [PROVISION TEXT NOT REPRODUCED IN JUDGMENT]; RATIO_1",
+          "who_should_have_made_it": "The respondent (accused) or the Court itself, given its reference power. The tension between 'void ab initio' and the procedural reality of court reception was present in the facts of Narsingh Das Tapadia but not examined by the three-Judge Bench."
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "argument_id": "SA_4",
+          "stress_test": {
+            "verdict": "INCLUDE_WITH_CAVEAT",
+            "step_1_statutory_basis": "Section 142(b) proviso is reproduced in Para 6. Article 142 Constitution [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]. The statutory basis for automatic condonation by judicial direction is not established on the face of the judgment.",
+            "step_2_structural_validity": "The Court's direction in Para 42 may be understood as an exercise of Article 142 jurisdiction to do 'complete justice' in the peculiar circumstances created by the overruling of Narsingh Das Tapadia. As a three-Judge Bench of the Supreme Court, the direction carries Article 141 force. Whether it overrides the proviso's 'sufficient cause' requirement is genuinely arguable.",
+            "step_3_adversarial_challenge": "Counter-argument: The Supreme Court under Article 142 can modify the operation of statutory provisions to do complete justice. The Para 42 direction can be read as the Court itself making the finding of 'sufficient cause' for a defined class of cases (those pending when the law changed) — a permissible judicial exercise. The direction is not ultra vires but an authoritative application of the proviso."
+          },
+          "the_argument": "The direction in Para 42 — granting a fresh one-month window from the date of decision and treating delay as automatically condoned — may amount to a modification of a statutory limitation period by judicial order without legislative authority, potentially ultra vires Article 141 read with the NI Act's Section 142(b). The proviso to Section 142(b) requires the complainant to 'satisfy the Court that he had sufficient cause' — it is a discretionary judicial power, not a blanket automatic condonation. The three-Judge Bench effectively converted a discretionary condonation into an automatic one for an entire class of cases.",
+          "why_it_matters": "If challenged, the Para 42 direction may not bind courts as a mandatory rule — courts may insist on satisfaction of 'sufficient cause' even for complainants relying on Para 42. Conversely, the direction may be challengeable as exceeding the Court's judicial function.",
+          "provision_or_principle": "Section 142(b) NI Act proviso ('complainant satisfies the Court that he had sufficient cause'); Article 141 Constitution (law declared by Supreme Court); Article 142 Constitution (directions in complete justice — if applicable)",
+          "who_should_have_made_it": "[SOUND_INFERENCE — no party could have raised this against its own interests in the reference proceedings; this is a scholarly/appellate challenge]"
+        }
+      ],
+      "hidden_assumptions": [
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "The Court expressly states at Para 31 that 'the offence under Section 138 is made effective only on fulfillment of the eventualities contained in clauses (a), (b) and (c) of the proviso' and at Para 36 that 'commission of an offence is a sine qua non for filing a complaint'. The assumption is therefore embedded in the ratio and is at minimum VERIFIED as the court's holding. The question is whether the assumption is legally sustainable — which is SOUND_INFERENCE level.",
+          "assumption_id": "HA_1",
+          "why_it_matters": "If challenged, this assumption determines whether 'premature = void' or 'premature = defective but curable'. The entire RATIO_1 collapses if the assumption is rejected.",
+          "how_to_challenge": "Argue that the proviso's language ('nothing contained in this section shall apply unless') is a bar to conviction, not a condition of offence commission. Compare with Section 300 IPC proviso structure. Cite K.R. Indira's formulation carefully — it says 'offence could be completed if all components satisfied', not 'offence is committed only when proviso is exhausted'.",
+          "where_it_operates": "The entire ratio rests on this assumption. If the proviso were recharacterised as a bar to prosecution (not a bar to offence commission), then the offence could be complete at the moment of dishonour, and the proviso conditions would be procedural prerequisites to prosecution — not elements of the actus reus. Under that reading, a complaint filed before 15 days might be premature but not void.",
+          "what_court_assumes": "That the proviso to Section 138 contains conditions precedent to the commission of the offence itself — not merely conditions precedent to prosecution or remedy. The Court treats the proviso as definitional of the offence, not as a defence or procedural bar."
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "The Court explicitly links Section 2(d) CrPC to the void ab initio conclusion at Para 36. The assumption is embedded in the ratio. However, whether it survives doctrinal scrutiny is SOUND_INFERENCE since the textual basis is not airtight.",
+          "assumption_id": "HA_2",
+          "why_it_matters": "The definition of 'complaint' in Section 2(d) CrPC uses past tense ('has committed'), but it is a definitional provision, not a substantive bar. The assumption that this creates a temporal void-ab-initio rule is judicially created, not textually commanded. Section 2(d) could equally be read as descriptive of the type of allegation (an allegation that X has committed an offence) without creating a temporal void rule for premature filings.",
+          "how_to_challenge": "Argue that Section 2(d) CrPC is a general definitional provision applicable across all offences; it does not specifically address the question of a complaint filed before cause of action in a special statute. Section 142 NI Act governs cognizance for NI Act complaints, and Section 142 only bars cognizance — not filing. Separate the act of filing from the act of cognizance.",
+          "where_it_operates": "SYL_2 — the bridge between 'no offence yet' and 'no complaint at all'.",
+          "what_court_assumes": "That Section 2(d) CrPC's definition of 'complaint' — requiring that a person 'has committed an offence' — operates as a temporal filter such that a complaint filed while the offence is still in the process of being constituted is void from inception."
+        },
+        {
+          "confidence": "SPECULATIVE",
+          "self_check": "The Court does not engage with 'Actus curiae' directly — it merely notes the Delhi HC's reliance on it as 'strangely held'. The rejection is implicit. Whether the rejection extends to all fact-specific 'Actus curiae' scenarios is speculative.",
+          "assumption_id": "HA_3",
+          "why_it_matters": "If a court registry accepts a premature complaint and the Magistrate takes cognizance without raising the issue, the prejudice is not caused by the complainant alone. In such cases, the 'Actus curiae' argument is stronger.",
+          "how_to_challenge": "In a case where the complainant clearly stated in the complaint that 15 days had not elapsed (or where the Magistrate had information before it about premature filing) and yet proceeded, the 'Actus curiae' argument could be revived. The three-Judge Bench's rejection of 'Actus curiae' was in the context of criticising the Delhi HC's use of it as a general saving principle — the Court did not consider fact-specific applications.",
+          "where_it_operates": "OBITER_1 — rejection of Zenith Fashion Makers' 'Actus curiae' reasoning. Also underpins the remedial direction in Para 42 (requiring the complainant to seek condonation, suggesting some culpability).",
+          "what_court_assumes": "That the problem of premature complaints is entirely the complainant's fault and not a court/registry act — thereby foreclosing the 'Actus curiae' argument. The Court implicitly assumes that the complainant made a deliberate choice to file early."
+        },
+        {
+          "confidence": "SOUND_INFERENCE",
+          "self_check": "The direction is expressly stated in Para 42. The ambiguity about 'date of decision' is a textual gap in the judgment. [VERIFIED as to existence of direction; SOUND_INFERENCE as to scope]",
+          "assumption_id": "HA_4",
+          "why_it_matters": "If the direction is treated as prospective and binding on all pending cases, it creates a quasi-legislative dispensation from the proviso to Section 142(b). Courts and parties may dispute whether their case falls within 'pending cases' and whether the 'one month from decision' period has been complied with.",
+          "how_to_challenge": "Argue that the direction in Para 42 does not specify what 'decision in the criminal case' means — does it mean the High Court's order quashing the complaint? The trial court's order? Or the Supreme Court's present judgment? If it means the present judgment, then all complainants whose cases were pending as of 19 September 2014 had one month i.e. until approximately 19 October 2014 to file fresh complaints — a window that has long closed. The direction's temporal scope is genuinely ambiguous.",
+          "where_it_operates": "The remedial direction in Para 42 for 'all such pending cases'. This assumption has significant practical consequences.",
+          "what_court_assumes": "That the direction in Para 42 (fresh complaint within one month of decision, delay deemed condoned) is an exercise of jurisdiction by the Supreme Court under Article 142 of the Constitution or as an interlocutory direction in the reference, and will bind all courts across the country in similar pending cases."
+        }
+      ],
+      "doctrinal_undercurrent": {
+        "tensions": [
+          "Tension between strict construction (protecting the accused from premature prosecution) and the remedial purpose of Chapter XVII NI Act (protecting payees from dishonoured cheques). The Court resolves this in favour of strict construction but then creates a pro-complainant remedial direction in Para 42 — suggesting awareness of the tension. [SOUND_INFERENCE]",
+          "Tension between 'void ab initio' characterisation and the practical reality that courts received, registered, and acted on premature complaints for years. The Para 42 direction effectively acknowledges that complainants acting on the Narsingh Das Tapadia understanding are not at fault — inconsistent with the 'no complaint at all' characterisation which implicitly blames the complainant. [SOUND_INFERENCE]",
+          "Tension between the finality of 'void ab initio' and the Court's own direction that complainants can file 'fresh' complaints — if the original was legally non-existent, the concept of 'fresh' complaint implies there was something to be 'freshened', which is itself conceptually inconsistent with pure nullity. [SPECULATIVE]"
+        ],
+        "doctrines": [
+          "Strict construction of penal statutes — penal provisions interpreted narrowly in favour of the accused, but here applied to narrow the complainant's right to file prematurely [Para 29]",
+          "Conditions precedent vs. procedural prerequisites — the distinction between statutory conditions that must be fulfilled before an offence is constituted vs. conditions that must be fulfilled before prosecution begins [Paras 31–34]",
+          "Nullity vs. voidability — a premature filing is characterised as legally non-existent (nullity) rather than defective (voidable), with no scope for post-facto cure [Para 36]",
+          "Judicial power to direct condonation for a class of cases — the Court's exercise in Para 42 of what is effectively a blanket condonation direction under Article 142 [SOUND_INFERENCE — Para 42]",
+          "Stare decisis and overruling of coordinate bench decisions — a three-Judge Bench's authority to overrule a two-Judge Bench [Paras 38, 19, 29]"
+        ]
+      },
+      "counterfactual_analysis": [
+        {
+          "cf_id": "CF_1",
+          "confidence": "VERIFIED",
+          "altered_fact": "Complaint filed on day 16 after service of notice — one day after 15-day period expired",
+          "original_fact": "Complaint filed 14 days after service of notice — before 15-day period expired [Para 4]",
+          "likely_new_outcome": "Complaint valid; cognizance correctly taken; no reference to three-Judge Bench required; Narsingh Das Tapadia would have been irrelevant",
+          "broken_syllogism_id": "SYL_1",
+          "impact_on_reasoning": "Entire ratio collapses. SYL_1 fails (offence is now complete). SYL_2 fails (complaint discloses a completed offence). SYL_3 becomes irrelevant. The only remaining question would be whether the complaint was filed within one month under Section 142(b).",
+          "applicable_provision": "Section 138 proviso (c); Section 142(b) NI Act",
+          "is_practically_plausible": true
+        },
+        {
+          "cf_id": "CF_2",
+          "confidence": "SPECULATIVE",
+          "altered_fact": "Narsingh Das Tapadia had itself been a three-Judge or Constitution Bench decision",
+          "original_fact": "Narsingh Das Tapadia and Sarav Investment took conflicting views, necessitating a reference",
+          "likely_new_outcome": "Either a Constitution Bench reference (further delay) or the survival of Narsingh Das Tapadia's more pragmatic position",
+          "broken_syllogism_id": "SYL_3",
+          "impact_on_reasoning": "The present three-Judge Bench would have lacked authority to overrule it; a five-Judge Constitution Bench reference would have been required. The resolution might have taken years longer and might have produced a different outcome.",
+          "applicable_provision": "Article 145(3) Constitution (Constitution Bench for substantial questions of law involving interpretation of Constitution — though this is not a constitutional question, a larger bench would be needed only for overruling a larger bench [SOUND_INFERENCE]); Principles of stare decisis",
+          "is_practically_plausible": false
+        },
+        {
+          "cf_id": "CF_3",
+          "confidence": "VERIFIED",
+          "altered_fact": "The Magistrate had taken cognizance on 6 October 2008 — still within the 15-day period",
+          "original_fact": "The Magistrate took cognizance on 14 October 2008 — after 15 days had elapsed from notice service [Para 4]",
+          "likely_new_outcome": "Same outcome; the 'cure by cognizance after 15 days' argument would have been definitively inapplicable on facts, simplifying the analysis",
+          "broken_syllogism_id": "SYL_3",
+          "impact_on_reasoning": "The Narsingh Das Tapadia argument ('cognizance after 15 days have elapsed') would have been completely inapplicable even on its own terms. The case would have been cleaner and the first question would have been more directly answered without needing to address the Narsingh Das Tapadia cure.",
+          "applicable_provision": "Section 142 NI Act; Section 138 proviso (c)",
+          "is_practically_plausible": true
+        },
+        {
+          "cf_id": "CF_4",
+          "confidence": "VERIFIED",
+          "altered_fact": "The drawer paid on day 12 after service of notice — within the 15-day window",
+          "original_fact": "The drawer (Savitri Pandey) did not pay within 15 days of notice, constituting the offence eventually [Para 4]",
+          "likely_new_outcome": "No offence; complaint dismissed; no cognizance possible at any time",
+          "broken_syllogism_id": "SYL_1",
+          "impact_on_reasoning": "No offence ever committed under Section 138. The entire complaint would have been a nullity regardless of when it was filed. The question about premature complaints would have been moot and no Section 138 liability would have arisen.",
+          "applicable_provision": "Section 138 proviso (c) NI Act",
+          "is_practically_plausible": true
+        }
+      ],
+      "fact_sensitivity_matrix": {
+        "ambiguous_facts": [
+          "Whether the drawer (Savitri Pandey) actually intended to pay within the 15-day window — the judgment notes this as legally irrelevant (see Para 25's rejection of Delhi HC's reasoning that the accused failed to allege willingness to pay), but in fact-specific future cases this may matter for the 'Actus curiae' argument [SOUND_INFERENCE]",
+          "Whether the Magistrate was aware the complaint was premature when he took cognizance on 14 October 2008 — this is not addressed in the judgment but could affect the 'Actus curiae' analysis",
+          "The exact relationship between 'pending cases' in Para 42 and cases where High Courts had already quashed complaints before the judgment — whether Para 42 applies to such cases is genuinely unclear [SOUND_INFERENCE]"
+        ],
+        "decorative_facts": [
+          "The cheques were four in number [Para 4]",
+          "The state of filing was Uttar Pradesh [Para 4]",
+          "The original case is Criminal Appeal No. 605 of 2012 [Judgment header]",
+          "The Magistrate was Additional Civil Judge (J.D.) [Para 4]",
+          "The name of the complainant/appellant is Yogendra Pratap Singh [Judgment header]"
+        ],
+        "load_bearing_facts": [
+          "Notice served on 23 September 2008 [Para 4]",
+          "Complaint filed on 7 October 2008 — 14 days after service, before expiry of 15-day period [Para 4]",
+          "Magistrate took cognizance on 14 October 2008 — after 15-day period had elapsed [Para 4]",
+          "The offence complained of is under Section 138 NI Act — a special penal statute with specific procedural requirements [Para 5]",
+          "Section 138 proviso (c) requires failure to pay within 15 days — this is an ingredient of the offence [Paras 31–33]"
+        ]
+      },
+      "alternative_interpretations": [
+        {
+          "alt_id": "ALT_1",
+          "confidence": "SOUND_INFERENCE",
+          "is_defensible": true,
+          "why_not_adopted": "The Court expressly rejected this interpretation at Paras 31–33, holding that the offence under Section 138 'is made effective only on fulfillment of the eventualities contained in clauses (a), (b) and (c) of the proviso'. The language of the proviso ('nothing contained in this section shall apply unless') was read as making all three conditions prerequisites to the section's operation — i.e., prerequisites to the offence, not defences.",
+          "what_would_change": "If adopted: premature complaint would not be void; it would disclose an offence (dishonoured cheque) and the accused's premature-filing defence would be available but waivable or estoppable. The Narsingh Das Tapadia position would have been defensible. Section 138 would be read as creating an offence of dishonour simpliciter with qualified prosecution conditions.",
+          "what_it_would_have_been": "The proviso to Section 138 creates conditions precedent to prosecution (defences available to the accused) rather than conditions precedent to the commission of the offence. Under this reading, the offence is committed at the moment of dishonour, but the accused has a statutory defence if the complainant failed to give notice or file after 15 days. A premature complaint is therefore not void but the accused has a complete defence.",
+          "statutory_structure_check": "The proviso's introductory language ('nothing contained in this section shall apply unless') grammatically applies to the entire section, including the main part which creates the offence. This supports the Court's reading that the proviso conditions are prerequisites to the section's application — hence prerequisites to offence commission. However, some legal systems treat similarly-worded provisos as creating defences rather than elements. The issue is genuinely contestable. [SOUND_INFERENCE]"
+        },
+        {
+          "alt_id": "ALT_2",
+          "confidence": "SPECULATIVE",
+          "is_defensible": true,
+          "why_not_adopted": "The Court held at Para 36 that filing before 15 days 'is no complaint at all in the eye of law' and that 'it is not the question of prematurity'. The Court drew a categorical distinction between 'premature' (a temporal defect) and 'no complaint at all' (a nullity). This distinction, while doctrinally significant, rests on the assumed equation: no offence → no allegation of offence → no complaint. The Court did not engage with the 'document vs. legal act' distinction.",
+          "what_would_change": "If adopted: filing before 15 days is a valid complaint that the court cannot act upon until cause of action accrues; no new complaint needed; limitation runs from filing date; the Narsingh Das Tapadia 'await maturity' approach would have been upheld.",
+          "what_it_would_have_been": "The 'complaint' in Section 142(a) NI Act and Section 2(d) CrPC is a document/filing, not a legal act that must exist in a legally perfect state at the time of physical presentation. Under this reading, the limitation period under Section 142(b) governs when a complaint must be presented to avoid being time-barred — not when the complaint becomes legally valid. A complaint presented before 15 days simply cannot be acted upon until day 15, but is not void.",
+          "statutory_structure_check": "Section 2(d) CrPC defines complaint as 'any allegation made...to a Magistrate'. The word 'allegation' is forward-looking and does not require that the fact alleged be already true at the moment of allegation. A complaint could allege that X 'has committed' an offence that the complainant reasonably believes to have been committed — even if, technically, proviso (c) had not expired. This alternative reading has textual purchase. [SPECULATIVE]"
+        }
+      ]
+    },
+    "dimension_5_synthesis": {
+      "genome_summary": {
+        "text": "Yogendra Pratap Singh v. Savitri Pandey (2014) is a three-Judge Bench judgment of the Supreme Court (authored by R.M. Lodha CJI) that authoritatively resolves a longstanding judicial conflict on the maintainability of complaints under Section 138 NI Act filed before the expiry of the 15-day notice period under proviso (c). The core holding (RATIO_1–RATIO_5) is that such a complaint is not a 'complaint at all in the eye of law' — it is void ab initio, not merely premature — because Section 138's proviso conditions are prerequisites to the very commission of the offence, and Section 2(d) CrPC requires commission of an offence before a valid complaint can exist. Consequently, a court cannot take cognizance on such a complaint even if 15 days have elapsed by the cognizance date. The two-Judge Bench decision in Narsingh Das Tapadia [(2000) 7 SCC 183] is expressly overruled; the two-Judge Bench decision in Sarav Investment [(2007) 14 SCC 753] is approved. For complainants whose premature complaints were quashed, the remedy is a fresh complaint; delay under Section 142(b) may be condoned under the proviso; and for cases pending at the time of the judgment, a fresh complaint within one month of the criminal court's decision shall be treated as having delay automatically condoned. The judgment employs strict construction of a penal special statute, treats the proviso conditions as elements of the offence rather than procedural prerequisites, and creates a transitional remedial regime for affected complainants. [GENOME SUMMARY CONSISTENCY VERIFIED — consistent with RATIO_1 (Para 36), RATIO_2 (Para 37), RATIO_4 (Para 42), VULN_1 (HA_1/ALT_1), SA_4 (Para 42 direction)]",
+        "consistency_check_passed": true,
+        "consistency_verified_against": [
+          "Section 1.6 (ratio_decidendi — RATIO_1 through RATIO_5): CONSISTENT",
+          "Section 2.1 (syllogisms SYL_1 through SYL_4): CONSISTENT",
+          "Section 3.1 (hidden assumptions HA_1, HA_2): CONSISTENT — genome summary acknowledges the inferential step in 'void ab initio' characterisation",
+          "Section 4.3 (vulnerability map — VULN_1, VULN_2): CONSISTENT — genome summary identifies the textual basis and residual uncertainty",
+          "Section 4.6 (temporal vulnerability): CONSISTENT — survival probability HIGH_10_PLUS_YEARS reflected"
+        ]
+      },
+      "questions_created": [
+        {
+          "why_new": "The judgment does not define 'pending cases' or 'date of decision'. The transitional direction's temporal scope has not been authoritatively clarified.",
+          "confidence": "VERIFIED",
+          "question_id": "Q_1",
+          "likely_forum": "High Courts; ultimately Supreme Court",
+          "the_question": "Does the Para 42 blanket condonation direction in Yogendra Pratap Singh apply to cases where the premature complaint was not quashed before 19 September 2014 but was quashed in subsequent proceedings following the judgment? And what is the 'date of decision in the criminal case' from which the one-month window runs?",
+          "who_will_raise_first": "Complainants whose cases were adjudicated post-September 2014 in light of the judgment, seeking to file fresh complaints"
+        },
+        {
+          "why_new": "The Karnataka HC in Ashok Hegde (Para 15) said 'the respondent ought to have filed this complaint after the expiry of 15 days' (suggesting day 16 onward is safe), but the three-Judge Bench did not expressly address the day-15 scenario. 'Within fifteen days' could mean: (a) any time during the 15-day period (so day 15 is the last day to pay; day 16 is when the offence is complete); or (b) the 15-day period ends at midnight of day 15 (so complaint on day 15 is still premature unless the 15th day has fully elapsed).",
+          "confidence": "SOUND_INFERENCE",
+          "question_id": "Q_2",
+          "likely_forum": "High Courts (Section 482 CrPC); ultimately Supreme Court",
+          "the_question": "Is a complaint filed on the 15th day from receipt of notice — the exact last day of the notice period — premature, valid, or in a third category? The judgment addresses complaints filed before the 15-day period expires but does not definitively address the exact boundary day.",
+          "who_will_raise_first": "Accused in Section 138 cases where complaint was filed on the 15th day"
+        },
+        {
+          "why_new": "The judgment is NI Act-specific. The cross-domain transplant question has not been answered by a coordinate or larger bench.",
+          "confidence": "SPECULATIVE",
+          "question_id": "Q_3",
+          "likely_forum": "High Courts in diverse statutory contexts",
+          "the_question": "Does the principle in Yogendra Pratap Singh — that a complaint filed before cause of action accrues under a special statute is void ab initio — apply to complaints under other special statutes (SARFAESI Act notice periods, MSME Act's pre-reference notice requirements, etc.) where similar mandatory waiting periods precede the right to file?",
+          "who_will_raise_first": "Accused/respondents in proceedings under other special statutes with mandatory pre-filing notice periods"
+        },
+        {
+          "why_new": "BNSS came into force after this judgment. The ratio's dependency on Section 2(d) CrPC means any language change in the BNSS could affect the reasoning. [CROSS-STATUTORY MAPPING REQUIRES INDEPENDENT VERIFICATION]",
+          "confidence": "SPECULATIVE",
+          "question_id": "Q_4",
+          "likely_forum": "Trial courts initially; High Courts on revision/Section 528 BNSS applications",
+          "the_question": "Post the BNSS 2023 replacing CrPC 2 (in force from 01 July 2024), if the definition of 'complaint' in the corresponding BNSS provision differs in any respect from Section 2(d) CrPC, does the ratio of Yogendra Pratap Singh require modification? Specifically, does the BNSS's language continue to support the 'sine qua non' reasoning?",
+          "who_will_raise_first": "Practitioners in Section 138 cases filed or cognised post-01.07.2024"
+        },
+        {
+          "why_new": "The 2018 amendment is post-judgment. Its interaction with the ratio is unaddressed by the present judgment. [INDEPENDENT VERIFICATION REQUIRED]",
+          "confidence": "UNVERIFIED",
+          "question_id": "Q_5",
+          "likely_forum": "Trial courts and High Courts",
+          "the_question": "Does the NI Act Amendment Act 2018 (if it amended Section 142 or the cognizance regime) alter the statutory foundation of Yogendra Pratap Singh's ratio? Specifically, did the 2018 amendment to Section 142 affect the one-month limitation or the condonation proviso in a manner that changes the Para 42 direction's operation?",
+          "who_will_raise_first": "Complainants relying on Para 42 post-2018; accused challenging fresh complaints as time-barred under post-2018 Section 142"
+        }
+      ],
+      "extraction_confidence": {
+        "overall_confidence": "HIGH",
+        "extraction_limitations": [
+          "The case title in the judgment caption appears to reference 'Sita Ram Paliwal vs Rajasthan State Agro' (from the source URL/caption) but the actual judgment parties are Yogendra Pratap Singh v. Savitri Pandey — this may reflect a URL/indexing issue in the source database. The judgment text itself is clear as to parties [VERIFIED — judgment header]",
+          "Post-2014 legislative changes (BNSS 2023, NI Act Amendment 2018) cannot be assessed from the judgment text alone",
+          "High Court citations [3]–[18] are listed with reporters but exact page numbers not extractable from the judgment",
+          "The substantive merits of the underlying appeals were not decided — the judgment only resolves the two reference questions and lists criminal appeals before the regular bench (Para 43)"
+        ],
+        "judgment_clarity_grade": "A — The judgment is well-structured, provisions are reproduced in full, ratio is clearly stated, overruling is explicit, and the remedial direction is specific. Minor clarity gaps in Para 42's temporal scope.",
+        "highest_uncertainty_sections": [
+          "SA_4 (Para 42 direction's legal basis under Article 142 — not addressed in judgment)",
+          "Q_2 (Day-15 boundary — not resolved in judgment)",
+          "Cross-statutory mapping to BNSS (post-judgment legislation)",
+          "NI Act 2018 Amendment interaction (post-judgment legislation)",
+          "HA_4 (scope of 'pending cases' in Para 42)"
+        ]
+      },
+      "interpretive_lineage_map": [
+        {
+          "timeline": [
+            {
+              "period": "1992–2000 (Pre-Narsingh Das Tapadia)",
+              "interpretation": "Bombay, Punjab & Haryana, AP, Karnataka, Orissa, J&K High Courts: Premature complaint void; offence not complete until 15 days expire; no cognizance possible [Paras 10–17]"
+            },
+            {
+              "period": "2000 (Narsingh Das Tapadia)",
+              "interpretation": "Supreme Court (2-Judge Bench): Premature complaint merely defective; if cognizance taken after 15 days, complaint valid; presentation ≠ cognizance [Paras 18–19]"
+            },
+            {
+              "period": "2000–2007 (Post-Narsingh Das Tapadia)",
+              "interpretation": "Most High Courts follow Narsingh Das Tapadia — premature complaint can await maturity; mere presentation at earlier date insufficient to dismiss [Paras 20–28]"
+            },
+            {
+              "period": "2007 (Sarav Investment)",
+              "interpretation": "Supreme Court (2-Judge Bench, per incuriam of Narsingh Das Tapadia): Notice under Section 138 proviso (b) is part of cause of action; complaint cannot be filed before 15 days; 15-day period imperative [Para 29]"
+            },
+            {
+              "period": "2007–2014 (Split post-Sarav Investment)",
+              "interpretation": "Calcutta, HP High Courts follow Sarav Investment; other High Courts continue to follow Narsingh Das Tapadia; direct conflict [Para 30]"
+            },
+            {
+              "period": "2014 (Yogendra Pratap Singh — present judgment)",
+              "interpretation": "Supreme Court (3-Judge Bench): Premature complaint = void ab initio (no complaint at all in law); no cognizance possible even after 15 days; fresh complaint remedy only; Narsingh Das Tapadia overruled; Sarav Investment approved [Paras 36–42]"
+            }
+          ],
+          "provision": "Section 138 NI Act — Proviso (c) (15-day payment window)"
+        },
+        {
+          "timeline": [
+            {
+              "period": "Pre-2014",
+              "interpretation": "One month runs from accrual of cause of action under proviso (c); proviso allows condonation on sufficient cause; courts applied this as a standard limitation provision"
+            },
+            {
+              "period": "2014 (Yogendra Pratap Singh)",
+              "interpretation": "Confirmed: one month runs from cause of action under proviso (c). NEW: For cases where premature complaint was quashed, a fresh complaint filed within one month of the decision in the criminal case shall have delay condoned — a blanket transitional direction [Para 42]"
+            }
+          ],
+          "provision": "Section 142(b) NI Act — One month limitation for complaint"
+        }
+      ],
+      "practitioners_cheat_sheet": {
+        "cite_when": [
+          "Seeking to quash a Section 138 NI Act complaint filed before the 15-day notice period under proviso (c) expired",
+          "Arguing that cognizance taken on a premature NI Act complaint is jurisdictionally void even if 15 days had elapsed by cognizance date",
+          "Resisting a prosecution that was initiated on a complaint filed before cause of action accrued under Section 138",
+          "Arguing (as complainant) that delay in filing fresh complaint after quashing of premature complaint should be condoned — cite Para 42 specifically",
+          "Establishing that the five-ingredient test from Kusum Ingots is conjunctive and all ingredients must be satisfied before filing",
+          "Arguing in analogous statutory contexts that pre-cause-of-action filings are void ab initio (with appropriate gate-7 validation)"
+        ],
+        "hidden_gem": "Para 42's direction that for pending cases, a fresh complaint filed within one month of the decision in the criminal case shall be deemed to have delay condoned — this is a proactive remedy for complainants caught between the overruling of Narsingh Das Tapadia and the one-month limitation under Section 142(b). In practice, this remains relevant for any case where the original proceeding is still 'pending' (whether in appeal or revision) — courts have interpreted 'date of decision in the criminal case' as the date on which the proceeding finally terminates, not necessarily the date of the Supreme Court's judgment. [SOUND_INFERENCE — exact scope requires case-by-case verification]",
+        "do_not_cite_when": [
+          "The complaint was filed after the 15-day period expired — this judgment is irrelevant to timeliness in that scenario",
+          "The issue is whether the notice itself was validly served or conforming to Section 138 proviso (b) — this judgment does not address notice validity, only timing of complaint vis-à-vis notice period",
+          "The accused seeks double jeopardy protection from a fresh complaint — this judgment explicitly authorises fresh complaints",
+          "Arguing that limitation for fresh complaint has expired without also arguing that the complainant cannot show 'sufficient cause' — Para 42 gives complainants a route to condonation",
+          "Non-NI Act contexts without first conducting Gate 7 validation of the analogy"
+        ],
+        "killer_paragraph": "Para 36: 'Can an offence under Section 138 of the NI Act be said to have been committed when the period provided in clause (c) of the proviso has not expired?...Commission of an offence is a sine qua non for filing a complaint and for taking cognizance of such offence. A bare reading of the provision contained in clause (c) of the proviso makes it clear that no complaint can be filed for an offence under Section 138 of the NI Act unless the period of 15 days has elapsed. Any complaint before the expiry of 15 days from the date on which the notice has been served on the drawer/accused is no complaint at all in the eye of law. It is not the question of prematurity of the complaint where it is filed before expiry of 15 days from the date on which notice has been served on him, it is no complaint at all under law.' [VERIFIED — Para 36]"
+      }
+    },
+    "dimension_2_structural": {
+      "syllogisms": {
+        "items": [
+          {
+            "label": "The Offence Is Not Complete Until Proviso (c) Is Exhausted",
+            "conclusion": "At the time the complaint was filed, no offence under Section 138 had been committed.",
+            "feeds_into": [
+              "SYL_2",
+              "SYL_4"
+            ],
+            "syllogism_id": "SYL_1",
+            "major_premise": "Under Section 138 NI Act, an offence is committed only when all five ingredients are satisfied, including: the drawer's failure to pay within 15 days of receipt of notice (proviso (c)). Until the 15-day period elapses, no offence exists.",
+            "minor_premise": "In the present case, the complaint was filed on 7 October 2008, only 14 days after service of notice on 23 September 2008 — before the 15-day period expired.",
+            "is_independent": true,
+            "source_paragraphs": "Paras 31–33, 35, 36"
+          },
+          {
+            "label": "No Offence Means No Valid Complaint",
+            "conclusion": "The filing on 7 October 2008 was not a complaint in the eye of law — it was void ab initio, not merely premature.",
+            "feeds_into": [
+              "SYL_3"
+            ],
+            "syllogism_id": "SYL_2",
+            "major_premise": "A 'complaint' under Section 2(d) CrPC is an allegation to a Magistrate that a person 'has committed an offence'. Commission of an offence is therefore a sine qua non for a valid complaint. Section 142 NI Act requires a complaint in writing as a condition for cognizance. A filing that does not disclose a committed offence is not a complaint in law.",
+            "minor_premise": "Since no offence had been committed at the time of filing (SYL_1), the filing on 7 October 2008 did not disclose a committed offence.",
+            "is_independent": false,
+            "source_paragraphs": "Paras 8, 36"
+          },
+          {
+            "label": "A Void Complaint Cannot Be Cured By Passage Of Time",
+            "conclusion": "The Magistrate had no jurisdiction to take cognizance on the basis of the premature complaint; the cognizance order was legally bad; Narsingh Das Tapadia's contrary holding is wrong and must be overruled.",
+            "feeds_into": [
+              "SYL_4"
+            ],
+            "syllogism_id": "SYL_3",
+            "major_premise": "A filing that is not a complaint in law cannot become a valid complaint by the mere passage of time. The court's jurisdiction to take cognizance under Section 142 NI Act is conditioned on the existence of a valid complaint. A jurisdictional defect in the complaint-foundation cannot be cured by the subsequent elapse of the 15-day period.",
+            "minor_premise": "The filing on 7 October 2008 was void ab initio (SYL_2). The fact that the Magistrate took cognizance on 14 October 2008 (when 15 days had elapsed) does not retroactively validate the void complaint.",
+            "is_independent": false,
+            "source_paragraphs": "Paras 36, 37, 38"
+          },
+          {
+            "label": "Remedy: Fresh Complaint With Condonation",
+            "conclusion": "Such complainants may file a fresh complaint within one month of the court's decision; delay shall be treated as condoned under the proviso to Section 142(b).",
+            "feeds_into": [],
+            "syllogism_id": "SYL_4",
+            "major_premise": "Since the premature complaint is void and cannot be re-presented, Section 142(b) NI Act provides that a fresh complaint must be filed within one month of cause of action. The proviso to Section 142(b) allows condonation on showing sufficient cause. Filing a fresh complaint after judicial determination that the original was void constitutes sufficient cause.",
+            "minor_premise": "Complainants whose premature complaints have been or will be quashed in view of RATIO_1 have not had a valid opportunity to file within the one-month period.",
+            "is_independent": false,
+            "source_paragraphs": "Para 42"
+          }
+        ],
+        "chain_logic": "SYL_1 (no offence) → SYL_2 (no valid complaint) → SYL_3 (passage of time does not cure void) → SYL_4 (remedy via fresh complaint). The chain is linear and each step is load-bearing. Disruption of SYL_1 would collapse the entire chain."
+      },
+      "dependency_tree": {
+        "nodes": [
+          {
+            "type": "LEGAL_RULE",
+            "node_id": "DEP_1",
+            "premise": "Section 138 NI Act requires all five ingredients (including proviso (c) — 15-day payment window) before offence is complete",
+            "branch_id": "ROOT",
+            "is_critical": true,
+            "parent_node_id": null,
+            "source_paragraph": "Paras 31–33"
+          },
+          {
+            "type": "DEFINITIONAL_PREMISE",
+            "node_id": "DEP_2",
+            "premise": "Section 2(d) CrPC — 'complaint' presupposes commission of an offence",
+            "branch_id": "BRANCH_A",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Para 8, 36"
+          },
+          {
+            "type": "LEGAL_RULE",
+            "node_id": "DEP_3",
+            "premise": "Section 190 CrPC — cognizance only upon complaint of facts constituting offence",
+            "branch_id": "BRANCH_A",
+            "is_critical": true,
+            "parent_node_id": "DEP_1",
+            "source_paragraph": "Paras 9, 14"
+          },
+          {
+            "type": "CONCLUSION",
+            "node_id": "DEP_4",
+            "premise": "Filing before expiry of 15 days does not allege a committed offence → not a complaint at all",
+            "branch_id": "BRANCH_A",
+            "is_critical": true,
+            "parent_node_id": "DEP_2",
+            "source_paragraph": "Para 36"
+          },
+          {
+            "type": "LEGAL_RULE",
+            "node_id": "DEP_5",
+            "premise": "Section 142 NI Act creates legal bar on cognizance except upon valid complaint in writing",
+            "branch_id": "BRANCH_A",
+            "is_critical": true,
+            "parent_node_id": "DEP_4",
+            "source_paragraph": "Para 36"
+          },
+          {
+            "type": "CONCLUSION",
+            "node_id": "DEP_6",
+            "premise": "A void complaint cannot be cured by subsequent passage of time — no retroactive jurisdiction",
+            "branch_id": "BRANCH_A",
+            "is_critical": true,
+            "parent_node_id": "DEP_5",
+            "source_paragraph": "Paras 36–37"
+          },
+          {
+            "type": "REMEDIAL_PROVISION",
+            "node_id": "DEP_7",
+            "premise": "Section 142(b) proviso — condonation of delay on sufficient cause",
+            "branch_id": "BRANCH_B",
+            "is_critical": false,
+            "parent_node_id": "DEP_6",
+            "source_paragraph": "Para 42"
+          },
+          {
+            "type": "COURT_DIRECTION",
+            "node_id": "DEP_8",
+            "premise": "Court direction: fresh complaint within 1 month of decision = deemed condonation for pending cases",
+            "branch_id": "BRANCH_B",
+            "is_critical": false,
+            "parent_node_id": "DEP_7",
+            "source_paragraph": "Para 42"
+          }
+        ],
+        "root_node": "DEP_1"
+      },
+      "interpretive_method": {
+        "method_basis": "Para 29 (Sarav Investment approach: Section 138 is penal provision; special statute; severe penalty; strict construction warranted); Para 14 (endorsing AP HC: special law specifying both ingredients and procedure requires strict compliance)",
+        "primary_method": "STRICT_CONSTRUCTION",
+        "judges_tendency": "The bench (authored by CJI Lodha) showed a strong preference for textual fidelity and strict construction of penal provisions, particularly Chapter XVII NI Act. The Court was unwilling to import purposive mitigation into a criminal statute imposing severe penalties, and treated the Narsingh Das Tapadia approach as result-oriented rather than text-grounded.",
+        "method_explanation": "The Court employed strict construction of a penal, special statute. It read the proviso to Section 138 as defining conditions precedent to the very existence of the offence — not merely procedural steps. Consequently, non-fulfilment of proviso (c) means no offence exists, no complaint exists, and no jurisdiction arises. The Court rejected the purposive/purposive-mitigating approach of Narsingh Das Tapadia that would have allowed complaints to 'await maturity'.",
+        "alternative_method_analysis": [
+          {
+            "method": "PURPOSIVE",
+            "analysis_steps": [
+              "Identify legislative purpose of Section 138 — deterrence of dishonour of cheques, protection of commercial credit",
+              "Ask whether strict voiding of premature complaints advances that purpose",
+              "Conclude that allowing complaint to 'await maturity' or taking cognizance after 15 days elapse better serves the legislative purpose without prejudicing the accused"
+            ],
+            "analysis_narrative": "Narsingh Das Tapadia employed what was effectively a purposive approach — construing the provision to avoid technical dismissals that would harm innocent complainants who filed slightly early. The Court's purpose-inquiry focused on preventing the accused from escaping liability due to a minor procedural misstep by the complainant.",
+            "would_outcome_change": true,
+            "likely_alternative_outcome": "Premature complaint would be treated as defective but not void; cognizance after 15 days would be valid; Narsingh Das Tapadia would have been upheld"
+          },
+          {
+            "method": "HARMONIOUS",
+            "analysis_steps": [
+              "Read Section 142(b) as fixing when a complaint becomes effective, not when it is physically presented",
+              "Treat physical presentation before 15 days as a conditional filing that becomes effective on cause of action accruing",
+              "This harmonises Section 138 (no offence before 15 days) with the reality of court filings"
+            ],
+            "analysis_narrative": "One could harmonise Sections 138 and 142 by reading Section 142's one-month limitation as running from actual expiry of 15-day notice period (cause of action), while treating the complaint as effective only from that date — i.e., the complaint is 'filed' for limitation purposes from the moment 15 days expire, not the moment of physical presentation.",
+            "would_outcome_change": true,
+            "likely_alternative_outcome": "Premature complaint would become effective complaint on day 15; no fresh complaint needed; limitation issue would not arise"
+          }
+        ]
+      },
+      "rhetorical_architecture": {
+        "tone": "Authoritative, decisive, unsentimental. No equivocation on the overruling of Narsingh Das Tapadia. The Court acknowledges the potential hardship to complainants but addresses it through the remedial direction in Para 42 rather than by softening the core holding.",
+        "opening_move": "The Court begins by framing the issue as a conflict between two coordinate bench decisions requiring authoritative resolution — establishing the necessity and legitimacy of the three-Judge Bench intervention (Para 1–3). This immediately elevates the judgment's binding force.",
+        "source_paragraphs": "Paras 1–3, 36, 38, 40, 42",
+        "metaphor_or_analogy": "The Court uses the phrase 'no complaint at all in the eye of law' — a phrase of absolute legal nullity — deliberately contrasted with the word 'premature' which the previous case law employed. This rhetorical choice (nullity vs. prematurity) is the pivot of the entire judgment. [VERIFIED — Para 36]",
+        "strategic_ambiguity": "The direction in Para 42 ('filed within one month of the date of decision in the criminal case') is strategically broad — it applies to 'all such pending cases' without defining 'pending cases' with precision. This creates interpretive room for future courts to apply it generously or restrictively.",
+        "persuasion_technique": "Exhaustive precedential survey (18+ High Court decisions and 2 SC decisions) followed by a textual analysis that is presented as the only internally consistent reading of the statutory text. The Court creates a sense of doctrinal inevitability — once the text is correctly read, the conclusion is inescapable. It also uses the sheer volume of disapproved decisions to demonstrate that the wrong view had proliferated for 7 years, adding urgency to the correction."
+      }
+    },
+    "dimension_4_weaponizable": {
+      "sword_uses": [
+        {
+          "scenario": "Accused seeks quashing of a Section 138 NI Act complaint where the complaint was filed before the 15-day period from service of notice had expired",
+          "how_to_cite": "Yogendra Pratap Singh v. Savitri Pandey & Anr., Crl. A. No. 605 of 2012, Supreme Court of India, decided 19.09.2014 (three-Judge Bench — R.M. Lodha CJI, Kurian Joseph J., Rohinton Fali Nariman J.) — RATIO_1: A complaint under Section 138 NI Act filed before expiry of 15 days from service of notice is not a complaint in the eye of law. No cognizance can be taken thereon, even if 15 days have elapsed by the date of cognizance.",
+          "use_case_id": "SWORD_1",
+          "draft_argument": "The complaint in the present case was filed on [DATE], being [X] days after service of notice on [DATE] — which is [Y] days before the expiry of the mandatory 15-day period under Section 138 proviso (c) NI Act. As authoritatively held by the Supreme Court in Yogendra Pratap Singh v. Savitri Pandey (2014), a complaint filed before the 15-day period expires is 'no complaint at all in the eye of law'. The commission of an offence under Section 138 requires the satisfaction of all five ingredients including the drawer's failure to pay within 15 days of notice. No offence having been committed at the time of filing, the complaint does not satisfy Section 2(d) CrPC's definition of a complaint. It is not a question of prematurity (which might be curable) but of fundamental non-existence. This Court is therefore barred from taking cognizance under Section 142 NI Act. The fact that cognizance was taken after 15 days had elapsed does not cure the defect. This Court is respectfully requested to quash the complaint and all proceedings thereunder.",
+          "stage_of_proceedings": "Section 482 CrPC / inherent jurisdiction petition before High Court; or revision before Sessions Court",
+          "is_practically_common": true
+        },
+        {
+          "scenario": "Accused challenges cognizance taken by Magistrate on basis of a premature complaint, arguing that Section 190 CrPC read with Section 2(d) CrPC bars the court from exercising jurisdiction",
+          "how_to_cite": "Yogendra Pratap Singh v. Savitri Pandey (2014) — Para 36: 'A complaint filed before expiry of 15 days from the date on which notice has been served on drawer/accused cannot be said to disclose the cause of action in terms of clause (c) of the proviso to Section 138 and upon such complaint which does not disclose the cause of action the Court is not competent to take cognizance.'",
+          "use_case_id": "SWORD_2",
+          "draft_argument": "Under Section 190(1)(a) CrPC, a Magistrate may take cognizance 'upon receiving a complaint of facts which constitute such offence'. Section 2(d) CrPC defines a complaint as an allegation that a person 'has committed an offence'. By the Supreme Court's binding ruling in Yogendra Pratap Singh v. Savitri Pandey, a premature Section 138 complaint does not contain facts constituting the offence. The Magistrate therefore had no jurisdiction under Section 190 CrPC. The taking of cognizance is a jurisdictional nullity, not a mere irregularity, and cannot be cured by subsequent passage of time.",
+          "stage_of_proceedings": "Revision before Sessions Court; Section 482 CrPC petition before High Court",
+          "is_practically_common": true
+        },
+        {
+          "scenario": "Accused argues that a fresh complaint filed by the complainant after quashing of premature complaint is barred by limitation under Section 142(b) and the complainant cannot benefit from the Para 42 direction because the 'one month from date of decision' window has closed",
+          "how_to_cite": "Yogendra Pratap Singh v. Savitri Pandey (2014) — Para 42: 'the complainant cannot be permitted to present the very same complaint at any later stage. His remedy is only to file a fresh complaint; and if the same could not be filed within the time prescribed under Section 142(b), his recourse is to seek the benefit of the proviso, satisfying the Court of sufficient cause.'",
+          "use_case_id": "SWORD_3",
+          "draft_argument": "The complainant seeks to benefit from the blanket condonation direction in Para 42 of Yogendra Pratap Singh. However, that direction applies to 'all such pending cases where the complaint does not proceed further in view of our answer to question (i)'. The present case was decided on [DATE] — well beyond one month from the Supreme Court's judgment dated 19.09.2014. The complainant cannot claim automatic condonation under Para 42. They must independently satisfy this Court of 'sufficient cause' for the delay under the proviso to Section 142(b) NI Act, as mandated by the statutory text. The Para 42 blanket condonation was a one-time transitional relief for cases pending as of 19.09.2014.",
+          "stage_of_proceedings": "Trial court (objection to fresh complaint); or Section 482 CrPC application for quashing time-barred fresh complaint",
+          "is_practically_common": true
+        }
+      ],
+      "shield_uses": [
+        {
+          "scenario_id": "SHIELD_1",
+          "attack_being_faced": "Complainant whose premature complaint was quashed faces argument that fresh complaint is time-barred under Section 142(b) and that the delay cannot be condoned",
+          "boundary_condition": "The shield is strongest for cases that were genuinely 'pending' as of 19 September 2014 and where the quashing/non-proceeding was directly caused by the Supreme Court's ruling. For cases decided long after the judgment, independent sufficient cause must be shown.",
+          "how_judgment_helps": "Para 42 of Yogendra Pratap Singh directly addresses this: complainant may file fresh complaint within one month of the decision in the criminal case; delay treated as condoned under proviso to Section 142(b) for pending cases. The Supreme Court has itself made the 'sufficient cause' finding for this class of cases.",
+          "key_factual_similarity": "The original complaint was filed before expiry of 15 days from service of notice; the complaint was not proceeded with on account of the Supreme Court's holding in this case"
+        },
+        {
+          "scenario_id": "SHIELD_2",
+          "attack_being_faced": "Accused argues that fresh complaint after quashing of premature complaint amounts to double jeopardy or abuse of process",
+          "boundary_condition": "Does not apply where an accused has been tried and acquitted (even on a premature complaint) — double jeopardy would apply. The shield is for cases where proceedings were quashed before trial completion.",
+          "how_judgment_helps": "Yogendra Pratap Singh itself authorises the filing of a fresh complaint. Since the premature complaint was 'no complaint at all in the eye of law' (Para 36), there was no valid prior complaint, no valid cognizance, and no jeopardy attached. A fresh complaint is not a second prosecution — it is the first valid prosecution.",
+          "key_factual_similarity": "The original complaint was premature and therefore legally non-existent; no valid cognizance was ever taken"
+        }
+      ],
+      "vulnerability_map": {
+        "vulnerabilities": [
+          {
+            "vuln_id": "VULN_1",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "RATIO_1's characterisation of the premature complaint as 'no complaint at all' rather than 'premature' is judicially constructed, not textually compelled. Section 2(d) CrPC uses past tense ('has committed') but does not explicitly state that a complaint filed before cause of action is void ab initio.",
+            "stress_test": "Step 1 (Statutory basis): Section 2(d) CrPC is textually ambiguous on this point. Step 2 (Structure): The void characterisation requires treating Section 2(d) as a temporal rule, which is inferential. Step 3 (Adversarial): Counter-argument — Section 138 NI Act expressly defines when offence is committed (proviso (c)); reading this with Section 2(d) CrPC's 'has committed' language necessarily means a pre-15-day filing does not allege a committed offence. The textual chain is tight even if not airtight. Verdict: Vulnerability exists but is low-probability.",
+            "attack_vector": "A future bench could hold that 'has committed' in Section 2(d) CrPC is descriptive of the type of allegation being made, not a temporal condition precedent to the complaint's legal existence. The 'void ab initio' characterisation rests on a chain of inferences (no offence → no valid allegation of offence → no complaint) that is not textually certain. A Constitution Bench could revisit this.",
+            "likelihood_of_success": "LOW — three-Judge Bench ruling with clear ratio; consistent with Sarav Investment (approved); significant legislative history and policy support for strict reading of penal special statute"
+          },
+          {
+            "vuln_id": "VULN_2",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "The Para 42 direction (automatic condonation within one month of decision) may be challenged as exceeding judicial power — converting a discretionary statutory proviso into an automatic rule for a class of cases.",
+            "stress_test": "Step 1: Section 142(b) proviso requires 'sufficient cause' — statutory text clear. Step 2: Para 42 effectively converts discretionary condonation into automatic for a class. Step 3: Counter-argument — Article 142 jurisdiction allows Supreme Court to do complete justice, including making class-wide directions. The transitional rationale for Para 42 is strong. Verdict: Vulnerability is real but limited in practical impact given courts' general compliance with Para 42.",
+            "attack_vector": "Accused in a fresh complaint case argues: (i) the Para 42 direction was an Article 142 exercise that cannot override the statutory requirement of 'sufficient cause'; (ii) each complainant must independently demonstrate sufficient cause; (iii) the blanket direction was time-limited to cases pending in 2014 and does not operate in perpetuity.",
+            "likelihood_of_success": "MEDIUM — the Para 42 direction is pragmatically sensible and courts have generally followed it; but the legal basis is not entirely clear and in individual cases where 'sufficient cause' is genuinely absent, courts may insist on independent satisfaction."
+          },
+          {
+            "vuln_id": "VULN_3",
+            "confidence": "SOUND_INFERENCE",
+            "weak_point": "Narsingh Das Tapadia was overruled without reference to it in the Sarav Investment decision, which the Court acknowledged (Para 29: 'there is no reference of the decision of this Court in Narsingh Das Tapadia'). The three-Judge Bench justified overruling Narsingh Das Tapadia based on textual analysis, but acknowledged the Sarav Investment decision was per incuriam of Narsingh Das Tapadia.",
+            "stress_test": "Step 1: The three-Judge Bench expressly noted Sarav Investment did not refer to Narsingh Das Tapadia (Para 29). Step 2: The three-Judge Bench conducted independent analysis at Paras 31–37 before approving Sarav Investment at Para 39. Step 3: The per incuriam argument is weak because the three-Judge Bench's analysis is standalone. Verdict: Vulnerability is nominal.",
+            "attack_vector": "An argument could be made that Sarav Investment itself was rendered per incuriam of Narsingh Das Tapadia (as a coordinate bench that did not consider the earlier decision), and therefore Sarav Investment should not have been the approved precedent. The three-Judge Bench should instead have independently resolved the conflict without endorsing a per incuriam decision.",
+            "likelihood_of_success": "VERY LOW — the three-Judge Bench independently conducted its own textual analysis and independently approved Sarav Investment's reasoning (Para 39). The approval was not blind reliance on Sarav Investment but was based on the three-Judge Bench's own independent conclusion. Per incuriam of the earlier case would affect Sarav Investment's precedential weight in other contexts, not the three-Judge Bench's independent reasoning."
+          }
+        ],
+        "durability_reasoning": "The judgment is a three-Judge Bench decision of the Supreme Court expressly overruling a prior SC decision (Narsingh Das Tapadia) and settling a split across multiple High Courts. The textual analysis is coherent with the statutory text as reproduced. The ratio has been widely followed. The primary vulnerability (VULN_1 — inferential step in 'void ab initio' characterisation) is real but low-probability of being disturbed given the volume of judicial support. The Para 42 direction creates some ongoing interpretive uncertainty (VULN_2) but does not threaten the core ratio. Score: 8/10.",
+        "overall_durability_score": 8
+      },
+      "temporal_vulnerability": {
+        "bench_strength": "Three-Judge Bench (not Constitution Bench)",
+        "can_be_overruled_by": "Another three-Judge Bench of the Supreme Court (coordinate bench — rare and requires notice of overruling intent); or a larger bench (five-Judge or more) if a substantial question of law of general importance is identified. Given this bench itself overruled a two-Judge Bench, a future three-Judge Bench could theoretically take a different view, though stare decisis makes this unlikely without fresh reference.",
+        "survival_probability": "HIGH_10_PLUS_YEARS",
+        "cross_statutory_mapping": {
+          "crpc_to_bnss": "Section 2(d) CrPC → likely Section 2(1)(d) BNSS; Section 190 CrPC → likely Section 210 BNSS; Section 482 CrPC → likely Section 528 BNSS. [ALL MAPPINGS REQUIRE INDEPENDENT VERIFICATION — BNSS 2023 came into force 01.07.2024; exact section numbers and language changes require verification against official BNSS text]",
+          "ni_act_mapping": "NI Act 1881 is not replaced by any new code. Sections 138–142 NI Act continue. Post-2014 NI Act Amendment Act 2018 (Act 20 of 2018) introduced Sections 143A and 148 and may have amended Section 142 — [INDEPENDENT VERIFICATION REQUIRED]",
+          "verification_status": "UNVERIFIED"
+        },
+        "legislative_override_risk": "MEDIUM — Parliament has amended the NI Act several times (e.g., Act 55 of 2002, Act 2018). A specific amendment to Section 142 or the proviso to Section 138 could alter the statutory architecture on which the ratio depends. For instance, an amendment treating premature complaints as conditionally valid pending cause of action accrual would legislatively reverse the holding. [SOUND_INFERENCE — specific amendment text not before court; future legislative action is speculative]"
+      },
+      "distinguishing_playbook": [
+        {
+          "strategy_id": "DIST_1",
+          "draft_argument": "In the present case, the complaint was filed on the 15th day from service of notice. Section 138 proviso (c) requires failure to pay 'within fifteen days'. 'Within fifteen days' means the drawer has 15 days to pay. On the 15th day itself, the drawer may still pay. The question is whether filing on day 15 is premature. [SPECULATIVE — this precise factual scenario was addressed obliquely in the Karnataka HC's Ashok Hegde (Para 15) which was approved by the Supreme Court, but the exact day-15 scenario was not definitively resolved in the judgment text. Independent research required.]",
+          "factual_difference": "The complaint filed on the 15th day itself (not before the 15-day period) — i.e., exactly on the last day of the notice period",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_2",
+          "draft_argument": "Yogendra Pratap Singh v. Savitri Pandey is specifically concerned with Section 138 read with Section 142 of the Negotiable Instruments Act, 1881, and the specific five-ingredient test for that offence. The ratio is expressly tied to the statutory architecture of the NI Act (Paras 31–37). In the present case, the offence arises under [different statute], which has a different statutory scheme for notice and payment. The 'void ab initio' characterisation is specific to the NI Act's unique structure where the proviso conditions are part of the offence definition itself. This Court should not apply the ratio of Yogendra Pratap Singh to [different statute] without examining whether that statute's proviso conditions operate as conditions of the offence or as procedural prerequisites.",
+          "factual_difference": "The complaint does not relate to Section 138 NI Act but to another special statute with similar notice-and-payment provisions (e.g., a dishonoured cheque complaint under a different statute or jurisdiction)",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_3",
+          "draft_argument": "Yogendra Pratap Singh v. Savitri Pandey addresses the scenario where notice was validly served and the complaint was filed before the 15-day period expired. In the present case, the issue is not prematurity of the complaint but the validity of the notice under Section 138 proviso (b). The ratio of Yogendra Pratap Singh — which deals with proviso (c) — does not address the independent question of notice validity under proviso (b). Separate analysis of whether a defective notice renders the complaint void ab initio is required. [SOUND_INFERENCE]",
+          "factual_difference": "The 15-day period had actually expired before the complaint was filed, but the accused argues that the notice itself was defective (e.g., not served properly, or not in conformity with Section 138 proviso (b))",
+          "is_material_to_ratio": true
+        },
+        {
+          "strategy_id": "DIST_4",
+          "draft_argument": "While Yogendra Pratap Singh holds that cognizance on a premature complaint is void even if cognizance is taken after 15 days, the present case involves same-day filing and same-day cognizance before the 15-day period expired. This is not a case where there was any delay between filing and cognizance, and no argument about the Magistrate 'waiting' could arise. The Zenith Fashion Makers scenario (Para 25) was implicitly overruled by Yogendra Pratap Singh. This distinguishing argument is therefore LIMITED in scope — it does not escape the ratio but may affect the characterisation of the Magistrate's conduct. [SPECULATIVE — limited practical utility as a distinguishing strategy]",
+          "factual_difference": "The cognizance order was passed on the same day as the filing, and both the filing and cognizance preceded the expiry of 15 days — the present judgment directly addresses cognizance but the question of simultaneous same-day filing and cognizance (as in Zenith Fashion Makers, Para 25) adds a factual element not squarely addressed in the core ratio",
+          "is_material_to_ratio": false
+        }
+      ],
+      "cross_domain_transplants": [
+        {
+          "viability": "MEDIUM — the principle is transferable but depends critically on whether the target statute's notice-and-cure provision is part of the offence/cause of action definition or merely a procedural bar",
+          "target_domain": "Consumer Protection Act / other special statutes with mandatory notice-and-cure provisions before filing complaints",
+          "transplant_id": "TRANS_1",
+          "original_domain": "Negotiable Instruments Act — dishonour of cheque (criminal)",
+          "gate_7_validation": {
+            "caveat": "Use analogically with caution; distinguish on whether notice period is part of offence definition or merely procedural",
+            "verdict": "VIABLE",
+            "contexts_genuinely_analogous": "Analogous IF target statute: (a) has a specific notice-and-cure/waiting period; (b) the period is a condition precedent to cause of action accrual; (c) a penal or special statutory context requiring strict construction. NOT analogous if target statute treats notice as a procedural requirement or if the target statute has its own condonation mechanism.",
+            "specialized_framework_override": "Each target statute must be independently examined. No blanket application is appropriate. The NI Act's framework is unique in that proviso (c) of Section 138 is expressly incorporated as an element of the offence by the court's interpretation.",
+            "specific_provision_in_target_domain": "Consumer Protection Act, 2019 — mediation and pre-institution requirements [SPECIFIC PROVISION NOT VERIFIED — INDEPENDENT VERIFICATION REQUIRED]; RERA Act, 2016 — notice requirements before approaching authority [SPECIFIC PROVISION NOT VERIFIED — INDEPENDENT VERIFICATION REQUIRED]"
+          },
+          "analogous_principle": "Where a special statute creates a notice-and-cure period as a condition precedent to the existence of the cause of action (not merely a procedural prerequisite), a complaint/plaint filed before that period expires is void ab initio — not premature. The passage of time does not cure the defect."
+        },
+        {
+          "viability": "HIGH — this principle already has civil law support independently of Yogendra Pratap Singh, but the judgment provides strong analogical reinforcement",
+          "target_domain": "Civil law — premature plaint before accrual of cause of action",
+          "transplant_id": "TRANS_2",
+          "original_domain": "Criminal law — Section 138 NI Act (premature complaint)",
+          "gate_7_validation": {
+            "caveat": "Straightforward — Yogendra Pratap Singh can be cited analogically in civil rejection of plaint applications to reinforce the principle that premature filing = no cause of action = no valid pleading",
+            "verdict": "VIABLE",
+            "contexts_genuinely_analogous": "Analogous: both contexts require cause of action to have accrued before filing; both treat premature filing as a fundamental defect. The CPC has an explicit mechanism (Order VII Rule 11) for rejecting plaints that do not disclose a cause of action — the NI Act situation is analogous.",
+            "specialized_framework_override": "Civil courts have extensive power under Order VII Rule 11 CPC to reject plaints — this is a well-developed framework. The criminal law analogy reinforces but does not replace the civil framework. No override concern.",
+            "specific_provision_in_target_domain": "Order VII Rule 1 CPC (contents of plaint including cause of action); Order VII Rule 11 CPC (rejection of plaint where no cause of action disclosed) [PROVISION TEXT NOT REPRODUCED IN JUDGMENT — INDEPENDENT VERIFICATION REQUIRED]"
+          },
+          "analogous_principle": "A plaint filed before the cause of action accrues is not a plaint in the eye of law and the court has no jurisdiction to entertain it; no amount of waiting by the court cures the defect"
+        }
+      ]
+    }
+  }
+}
