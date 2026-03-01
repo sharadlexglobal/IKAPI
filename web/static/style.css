@@ -2464,3 +2464,332 @@ body {
 .btn-secondary:hover {
     background: #b2bec3;
 }
+
+.taxonomy-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.taxonomy-stats-bar {
+    display: flex;
+    gap: 20px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.taxonomy-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.taxonomy-stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.taxonomy-stat-label {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.taxonomy-search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.taxonomy-search-row .search-input {
+    flex: 1;
+}
+
+.taxonomy-content {
+    display: flex;
+    gap: 16px;
+    min-height: 500px;
+}
+
+.taxonomy-sidebar {
+    width: 280px;
+    min-width: 280px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+.taxonomy-sidebar-header {
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #636e72;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    position: sticky;
+    top: 0;
+}
+
+.taxonomy-category-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.taxonomy-cat-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.taxonomy-cat-item:hover {
+    background: #f0f7ff;
+}
+
+.taxonomy-cat-item.active {
+    background: #e3f2fd;
+    border-left: 3px solid #2196f3;
+}
+
+.taxonomy-cat-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #2d3436;
+    flex: 1;
+}
+
+.taxonomy-cat-count {
+    font-size: 0.75rem;
+    background: #e0e0e0;
+    color: #636e72;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+}
+
+.taxonomy-cat-item.active .taxonomy-cat-count {
+    background: #2196f3;
+    color: white;
+}
+
+.taxonomy-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.taxonomy-topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.taxonomy-topic-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.taxonomy-topic-card:hover {
+    border-color: #90caf9;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+}
+
+.taxonomy-topic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.taxonomy-topic-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2d3436;
+}
+
+.taxonomy-topic-count {
+    font-size: 0.75rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.taxonomy-topic-desc {
+    font-size: 0.8rem;
+    color: #636e72;
+    margin-top: 4px;
+}
+
+.taxonomy-topic-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.taxonomy-keyword-tag {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    color: #636e72;
+    border-radius: 4px;
+}
+
+.taxonomy-back-btn {
+    margin-bottom: 12px;
+}
+
+.taxonomy-genome-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.taxonomy-genome-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.taxonomy-genome-card:hover {
+    border-color: #90caf9;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.12);
+}
+
+.taxonomy-genome-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #2d3436;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.taxonomy-genome-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: #636e72;
+}
+
+.taxonomy-genome-meta span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.taxonomy-durability-bar {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.taxonomy-durability-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s;
+}
+
+.taxonomy-confidence-badge {
+    font-size: 0.7rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.taxonomy-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.taxonomy-search-result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.taxonomy-search-result:hover {
+    background: #f0f7ff;
+}
+
+.taxonomy-result-type {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 65px;
+    text-align: center;
+}
+
+.taxonomy-result-type.type-category {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.taxonomy-result-type.type-topic {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.taxonomy-result-type.type-provision {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.taxonomy-result-name {
+    font-weight: 500;
+    font-size: 0.85rem;
+    flex: 1;
+}
+
+.taxonomy-result-detail {
+    font-size: 0.75rem;
+    color: #636e72;
+}
+
+.taxonomy-result-count {
+    font-size: 0.75rem;
+    color: #636e72;
+    font-weight: 600;
+}

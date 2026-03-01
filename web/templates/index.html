@@ -265,6 +265,7 @@
                 <button class="genome-sub-tab" data-subtab="questionExtract">Research Questions</button>
                 <button class="genome-sub-tab" data-subtab="genomeImport">Import Genome</button>
                 <button class="genome-sub-tab" data-subtab="genomeDatabase">Genome Database</button>
+                <button class="genome-sub-tab" data-subtab="taxonomyBrowser">Taxonomy</button>
             </div>
 
             <div id="genomeExtractPanel" class="genome-panel active">
@@ -453,6 +454,36 @@
                         <div id="genomeDbCheatSheet" class="genome-cheat-sheet"></div>
                         <div class="genome-dim-tabs" id="genomeDbDimTabs"></div>
                         <div id="genomeDbDimContent" class="genome-dim-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="taxonomyBrowserPanel" class="genome-panel">
+                <div class="taxonomy-layout">
+                    <div class="taxonomy-stats-bar" id="taxonomyStatsBar"></div>
+                    <div class="taxonomy-search-row">
+                        <input type="text" id="taxonomySearchInput" class="search-input" placeholder="Search categories, topics, provisions...">
+                        <button id="taxonomySearchBtn" class="btn-sm">Search</button>
+                        <button id="taxonomyRetagBtn" class="btn-sm btn-secondary">Re-tag All</button>
+                    </div>
+                    <div class="taxonomy-content">
+                        <div class="taxonomy-sidebar" id="taxonomySidebar">
+                            <div class="taxonomy-sidebar-header">Categories</div>
+                            <div id="taxonomyCategoryList" class="taxonomy-category-list"></div>
+                        </div>
+                        <div class="taxonomy-main" id="taxonomyMain">
+                            <div id="taxonomyTopicList" class="taxonomy-topic-list">
+                                <div class="empty-state">
+                                    <p>Select a category to browse topics and linked genomes.</p>
+                                </div>
+                            </div>
+                            <div id="taxonomyGenomeList" class="taxonomy-genome-list" style="display:none;">
+                                <button id="taxonomyBackToTopics" class="btn-sm taxonomy-back-btn">Back to Topics</button>
+                                <h4 id="taxonomyGenomeListTitle"></h4>
+                                <div id="taxonomyGenomeCards" class="taxonomy-genome-cards"></div>
+                            </div>
+                            <div id="taxonomySearchResults" class="taxonomy-search-results" style="display:none;"></div>
+                        </div>
                     </div>
                 </div>
             </div>

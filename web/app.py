@@ -19,7 +19,11 @@ from db import (
     get_cached_judgments_with_fulltext,
     save_question_extraction, get_question_extraction,
     create_research_job, get_research_job, update_research_job,
-    get_all_research_jobs, get_pipeline_queries, get_pipeline_results
+    get_all_research_jobs, get_pipeline_queries, get_pipeline_results,
+    get_all_taxonomy_categories, get_taxonomy_topics,
+    get_genomes_for_category, get_genomes_for_topic,
+    get_all_provisions, search_taxonomy, get_genome_tags,
+    get_taxonomy_stats,
 )
 from gemini_service import summarize_judgments, estimate_tokens
 from genome_config import (
@@ -803,6 +807,11 @@ def api_genome_extract():
                 cert_level=cert_level,
                 durability=durability,
             )
+            try:
+                from auto_tagger import tag_genome as _tag
+                _tag(tid, genome_data)
+            except Exception as tag_err:
+                logging.getLogger(__name__).warning(f"Auto-tag failed for TID {tid}: {tag_err}")
 
         return jsonify({
             "genome": genome_data,
@@ -941,6 +950,11 @@ def api_genome_import():
         saved = save_genome(tid, genome_json, model=extraction_model,
                             schema_version=schema_ver, doc_id=doc_id,
                             cert_level=cert_level, durability=durability)
+        try:
+            from auto_tagger import tag_genome as _tag
+            _tag(tid, genome_json)
+        except Exception as tag_err:
+            logging.getLogger(__name__).warning(f"Auto-tag failed for TID {tid}: {tag_err}")
         return jsonify({
             "success": True,
             "tid": tid,
@@ -1390,6 +1404,146 @@ def api_pipeline_list():
                 "genomes_completed_at": j["genomes_completed_at"].isoformat() if j.get("genomes_completed_at") else None,
                 "synthesis_completed_at": j["synthesis_completed_at"].isoformat() if j.get("synthesis_completed_at") else None,
             })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/categories")
+def api_taxonomy_categories():
+    try:
+        cats = get_all_taxonomy_categories()
+        result = []
+        for c in cats:
+            result.append({
+                "id": c["id"],
+                "name": c["name"],
+                "parent_statute": c.get("parent_statute", ""),
+                "description": c.get("description", ""),
+                "genome_count": c.get("genome_count", 0),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/categories/<cat_id>/genomes")
+def api_taxonomy_category_genomes(cat_id):
+    try:
+        genomes = get_genomes_for_category(cat_id)
+        result = []
+        for g in genomes:
+            result.append({
+                "tid": g["tid"],
+                "title": g.get("title", ""),
+                "court_source": g.get("court_source", ""),
+                "publish_date": g["publish_date"].isoformat() if g.get("publish_date") else "",
+                "num_cited_by": g.get("num_cited_by", 0),
+                "durability_score": g.get("overall_durability_score"),
+                "extraction_model": g.get("extraction_model", ""),
+                "certification_level": g.get("certification_level", ""),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/topics")
+def api_taxonomy_topics():
+    try:
+        category_id = request.args.get("category_id")
+        topics = get_taxonomy_topics(category_id)
+        result = []
+        for t in topics:
+            result.append({
+                "id": t["id"],
+                "category_id": t.get("category_id", ""),
+                "name": t["name"],
+                "description": t.get("description", ""),
+                "keywords": t.get("keywords", []),
+                "genome_count": t.get("genome_count", 0),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/topics/<topic_id>/genomes")
+def api_taxonomy_topic_genomes(topic_id):
+    try:
+        genomes = get_genomes_for_topic(topic_id)
+        result = []
+        for g in genomes:
+            result.append({
+                "tid": g["tid"],
+                "title": g.get("title", ""),
+                "court_source": g.get("court_source", ""),
+                "publish_date": g["publish_date"].isoformat() if g.get("publish_date") else "",
+                "num_cited_by": g.get("num_cited_by", 0),
+                "durability_score": g.get("overall_durability_score"),
+                "extraction_model": g.get("extraction_model", ""),
+                "certification_level": g.get("certification_level", ""),
+                "confidence": g.get("confidence", 1.0),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/provisions")
+def api_taxonomy_provisions():
+    try:
+        provs = get_all_provisions()
+        result = []
+        for p in provs:
+            result.append({
+                "id": p["id"],
+                "canonical_name": p["canonical_name"],
+                "parent_statute": p.get("parent_statute", ""),
+                "aliases": p.get("aliases", []),
+                "category_id": p.get("category_id", ""),
+                "category_name": p.get("category_name", ""),
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/search")
+def api_taxonomy_search():
+    try:
+        q = request.args.get("q", "").strip()
+        if not q or len(q) < 2:
+            return jsonify([])
+        results = search_taxonomy(q)
+        return jsonify([dict(r) for r in results])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/genome/<int:tid>/tags")
+def api_genome_tags(tid):
+    try:
+        tags = get_genome_tags(tid)
+        return jsonify(tags)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/stats")
+def api_taxonomy_stats():
+    try:
+        stats = get_taxonomy_stats()
+        return jsonify(dict(stats))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/taxonomy/retag", methods=["POST"])
+def api_taxonomy_retag():
+    try:
+        from auto_tagger import tag_all_genomes
+        result = tag_all_genomes()
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -164,6 +164,57 @@ def init_db():
             cur.execute("""
                 ALTER TABLE research_jobs ADD COLUMN IF NOT EXISTS cost_breakdown_json JSONB DEFAULT '{}';
             """)
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS taxonomy_categories (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    parent_statute TEXT,
+                    description TEXT,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+
+                CREATE TABLE IF NOT EXISTS taxonomy_topics (
+                    id TEXT PRIMARY KEY,
+                    category_id TEXT REFERENCES taxonomy_categories(id) ON DELETE CASCADE,
+                    name TEXT NOT NULL,
+                    description TEXT,
+                    keywords TEXT[] DEFAULT '{}',
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+                CREATE INDEX IF NOT EXISTS idx_taxonomy_topics_category ON taxonomy_topics(category_id);
+                CREATE INDEX IF NOT EXISTS idx_taxonomy_topics_keywords ON taxonomy_topics USING GIN(keywords);
+
+                CREATE TABLE IF NOT EXISTS genome_categories (
+                    genome_tid BIGINT,
+                    category_id TEXT REFERENCES taxonomy_categories(id) ON DELETE CASCADE,
+                    auto_tagged BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    PRIMARY KEY (genome_tid, category_id)
+                );
+                CREATE INDEX IF NOT EXISTS idx_genome_categories_cat ON genome_categories(category_id);
+
+                CREATE TABLE IF NOT EXISTS genome_topics (
+                    genome_tid BIGINT,
+                    topic_id TEXT REFERENCES taxonomy_topics(id) ON DELETE CASCADE,
+                    auto_tagged BOOLEAN DEFAULT TRUE,
+                    confidence FLOAT DEFAULT 1.0,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    PRIMARY KEY (genome_tid, topic_id)
+                );
+                CREATE INDEX IF NOT EXISTS idx_genome_topics_topic ON genome_topics(topic_id);
+
+                CREATE TABLE IF NOT EXISTS provision_index (
+                    id TEXT PRIMARY KEY,
+                    canonical_name TEXT NOT NULL,
+                    parent_statute TEXT,
+                    aliases TEXT[] DEFAULT '{}',
+                    category_id TEXT REFERENCES taxonomy_categories(id) ON DELETE SET NULL,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+                CREATE INDEX IF NOT EXISTS idx_provision_index_aliases ON provision_index USING GIN(aliases);
+                CREATE INDEX IF NOT EXISTS idx_provision_index_category ON provision_index(category_id);
+            """)
     finally:
         conn.close()
 
@@ -679,6 +730,290 @@ def bulk_update_relevance(job_id, relevance_data):
                     SET relevance_score = %s, relevance_reasoning = %s, is_relevant = %s
                     WHERE job_id = %s AND tid = %s
                 """, (score, reasoning, is_relevant, str(job_id), tid))
+    finally:
+        conn.close()
+
+
+def upsert_taxonomy_category(cat_id, name, parent_statute=None, description=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO taxonomy_categories (id, name, parent_statute, description)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    parent_statute = COALESCE(EXCLUDED.parent_statute, taxonomy_categories.parent_statute),
+                    description = COALESCE(EXCLUDED.description, taxonomy_categories.description)
+                RETURNING *
+            """, (cat_id, name, parent_statute, description))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def upsert_taxonomy_topic(topic_id, category_id, name, description=None, keywords=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO taxonomy_topics (id, category_id, name, description, keywords)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    category_id = EXCLUDED.category_id,
+                    description = COALESCE(EXCLUDED.description, taxonomy_topics.description),
+                    keywords = EXCLUDED.keywords
+                RETURNING *
+            """, (topic_id, category_id, name, description, keywords or []))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def upsert_provision(prov_id, canonical_name, parent_statute=None, aliases=None, category_id=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                INSERT INTO provision_index (id, canonical_name, parent_statute, aliases, category_id)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET
+                    canonical_name = EXCLUDED.canonical_name,
+                    parent_statute = COALESCE(EXCLUDED.parent_statute, provision_index.parent_statute),
+                    aliases = EXCLUDED.aliases,
+                    category_id = COALESCE(EXCLUDED.category_id, provision_index.category_id)
+                RETURNING *
+            """, (prov_id, canonical_name, parent_statute, aliases or [], category_id))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def tag_genome_category(genome_tid, category_id, auto_tagged=True):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO genome_categories (genome_tid, category_id, auto_tagged)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (genome_tid, category_id) DO NOTHING
+            """, (genome_tid, category_id, auto_tagged))
+    finally:
+        conn.close()
+
+
+def tag_genome_topic(genome_tid, topic_id, auto_tagged=True, confidence=1.0):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO genome_topics (genome_tid, topic_id, auto_tagged, confidence)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (genome_tid, topic_id) DO UPDATE SET
+                    confidence = GREATEST(genome_topics.confidence, EXCLUDED.confidence)
+            """, (genome_tid, topic_id, auto_tagged, confidence))
+    finally:
+        conn.close()
+
+
+def clear_genome_tags(genome_tid, auto_only=True):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            if auto_only:
+                cur.execute("DELETE FROM genome_categories WHERE genome_tid = %s AND auto_tagged = TRUE", (genome_tid,))
+                cur.execute("DELETE FROM genome_topics WHERE genome_tid = %s AND auto_tagged = TRUE", (genome_tid,))
+            else:
+                cur.execute("DELETE FROM genome_categories WHERE genome_tid = %s", (genome_tid,))
+                cur.execute("DELETE FROM genome_topics WHERE genome_tid = %s", (genome_tid,))
+    finally:
+        conn.close()
+
+
+def get_all_taxonomy_categories():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT c.*, COUNT(gc.genome_tid) AS genome_count
+                FROM taxonomy_categories c
+                LEFT JOIN genome_categories gc ON c.id = gc.category_id
+                GROUP BY c.id
+                ORDER BY genome_count DESC, c.name
+            """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_taxonomy_topics(category_id=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if category_id:
+                cur.execute("""
+                    SELECT t.*, COUNT(gt.genome_tid) AS genome_count
+                    FROM taxonomy_topics t
+                    LEFT JOIN genome_topics gt ON t.id = gt.topic_id
+                    WHERE t.category_id = %s
+                    GROUP BY t.id
+                    ORDER BY genome_count DESC, t.name
+                """, (category_id,))
+            else:
+                cur.execute("""
+                    SELECT t.*, COUNT(gt.genome_tid) AS genome_count
+                    FROM taxonomy_topics t
+                    LEFT JOIN genome_topics gt ON t.id = gt.topic_id
+                    GROUP BY t.id
+                    ORDER BY genome_count DESC, t.name
+                """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_genomes_for_category(category_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT g.tid, g.overall_durability_score, g.extraction_model,
+                       g.extraction_date, g.certification_level,
+                       j.title, j.court_source, j.publish_date, j.num_cited_by
+                FROM genome_categories gc
+                JOIN judgment_genomes g ON gc.genome_tid = g.tid
+                LEFT JOIN judgments j ON g.tid = j.tid
+                WHERE gc.category_id = %s
+                ORDER BY g.overall_durability_score DESC NULLS LAST
+            """, (category_id,))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_genomes_for_topic(topic_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT g.tid, g.overall_durability_score, g.extraction_model,
+                       g.extraction_date, g.certification_level,
+                       gt.confidence,
+                       j.title, j.court_source, j.publish_date, j.num_cited_by
+                FROM genome_topics gt
+                JOIN judgment_genomes g ON gt.genome_tid = g.tid
+                LEFT JOIN judgments j ON g.tid = j.tid
+                WHERE gt.topic_id = %s
+                ORDER BY gt.confidence DESC, g.overall_durability_score DESC NULLS LAST
+            """, (topic_id,))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_all_provisions():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT p.*, c.name AS category_name
+                FROM provision_index p
+                LEFT JOIN taxonomy_categories c ON p.category_id = c.id
+                ORDER BY p.parent_statute, p.canonical_name
+            """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def find_provision_by_alias(alias):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT * FROM provision_index
+                WHERE %s = ANY(aliases) OR id = %s
+            """, (alias, alias))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def search_taxonomy(query_text):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            like = f"%{query_text}%"
+            cur.execute("""
+                SELECT 'category' AS result_type, c.id, c.name, c.parent_statute AS detail,
+                       COUNT(gc.genome_tid) AS genome_count
+                FROM taxonomy_categories c
+                LEFT JOIN genome_categories gc ON c.id = gc.category_id
+                WHERE c.name ILIKE %s OR c.parent_statute ILIKE %s OR c.description ILIKE %s
+                GROUP BY c.id
+                UNION ALL
+                SELECT 'topic' AS result_type, t.id, t.name, tc.name AS detail,
+                       COUNT(gt.genome_tid) AS genome_count
+                FROM taxonomy_topics t
+                LEFT JOIN taxonomy_categories tc ON t.category_id = tc.id
+                LEFT JOIN genome_topics gt ON t.id = gt.topic_id
+                WHERE t.name ILIKE %s OR t.description ILIKE %s
+                      OR EXISTS (SELECT 1 FROM unnest(t.keywords) kw WHERE kw ILIKE %s)
+                GROUP BY t.id, tc.name
+                UNION ALL
+                SELECT 'provision' AS result_type, p.id, p.canonical_name AS name,
+                       p.parent_statute AS detail, 0 AS genome_count
+                FROM provision_index p
+                WHERE p.canonical_name ILIKE %s OR p.parent_statute ILIKE %s
+                      OR p.id ILIKE %s
+                      OR EXISTS (SELECT 1 FROM unnest(p.aliases) a WHERE a ILIKE %s)
+                ORDER BY genome_count DESC
+                LIMIT 50
+            """, (like, like, like, like, like, like, like, like, like, like))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def get_genome_tags(genome_tid):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT c.id, c.name, c.parent_statute, gc.auto_tagged
+                FROM genome_categories gc
+                JOIN taxonomy_categories c ON gc.category_id = c.id
+                WHERE gc.genome_tid = %s
+            """, (genome_tid,))
+            categories = cur.fetchall()
+            cur.execute("""
+                SELECT t.id, t.name, t.category_id, gt.auto_tagged, gt.confidence,
+                       c.name AS category_name
+                FROM genome_topics gt
+                JOIN taxonomy_topics t ON gt.topic_id = t.id
+                LEFT JOIN taxonomy_categories c ON t.category_id = c.id
+                WHERE gt.genome_tid = %s
+            """, (genome_tid,))
+            topics = cur.fetchall()
+            return {"categories": categories, "topics": topics}
+    finally:
+        conn.close()
+
+
+def get_taxonomy_stats():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT
+                    (SELECT COUNT(*) FROM taxonomy_categories) AS total_categories,
+                    (SELECT COUNT(*) FROM taxonomy_topics) AS total_topics,
+                    (SELECT COUNT(*) FROM provision_index) AS total_provisions,
+                    (SELECT COUNT(DISTINCT genome_tid) FROM genome_categories) AS tagged_genomes,
+                    (SELECT COUNT(*) FROM judgment_genomes) AS total_genomes
+            """)
+            return cur.fetchone()
     finally:
         conn.close()
 

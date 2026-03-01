@@ -843,6 +843,11 @@ def _step_extract_genomes(job_id, job, cost_tracker):
 
                 save_genome(r["tid"], genome_data, APIConfig.model(), "3.1.0",
                             doc_id, cert_level, durability)
+                try:
+                    from auto_tagger import tag_genome as _tag
+                    _tag(r["tid"], genome_data)
+                except Exception:
+                    pass
                 update_pipeline_result(r["id"], genome_extracted=True)
                 extracted += 1
                 logger.info(f"[{job_id}] Genome extracted for tid {r['tid']} ({extracted}/{len(to_extract)})")

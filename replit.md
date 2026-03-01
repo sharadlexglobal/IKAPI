@@ -15,6 +15,8 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── synthesis.py        # Dual-perspective research memo synthesis
 │   ├── query_generator.py  # Question-to-IK-search-query converter
 │   ├── cost_tracker.py     # Pipeline cost tracking (Claude API + IK API, USD/INR)
+│   ├── taxonomy_seed.py    # Taxonomy seed script (categories, topics, provisions)
+│   ├── auto_tagger.py      # Auto-tagger engine (provision matching, keyword matching)
 │   ├── templates/
 │   │   └── index.html       # Search + Analysis + Genome Lab + Pipeline page
 │   └── static/
@@ -97,6 +99,20 @@ Four sub-tabs for deep legal analysis:
 - Click any card to open full genome viewer with all 6 dimensions, cheat sheet, download
 - API: GET /api/genome/database?q=search_term
 
+**Taxonomy Browser (Tab 5)**
+- Two-level taxonomy system: Categories (broad legal areas) → Topics (narrow legal issues)
+- Categories sidebar with genome counts (e.g., "Negotiable Instruments Act, 1881" → 37 genomes)
+- Click category → shows topics within it (e.g., "Service of Legal Notice" → 13 genomes, "Territorial Jurisdiction" → 11 genomes)
+- Click topic → shows genome cards linked to that topic with durability scores and confidence badges
+- Click genome card → opens full genome viewer in Genome Database tab
+- Taxonomy search: search across categories, topics, provisions
+- Re-tag All button: re-runs auto-tagger on all genomes
+- Stats bar: total categories, topics, provisions, tagged/untagged genomes
+- Auto-tagging: new genomes automatically tagged on save (extraction, pipeline, manual import)
+- No AI calls — pure string matching against provision index and topic keywords
+- 17 categories, 28 topics, 56 canonical provisions seeded from existing genome data
+- API: GET /api/taxonomy/categories, topics, provisions, search, genome tags, stats; POST /api/taxonomy/retag
+
 ### Pipeline Tab (Autonomous Research)
 Full end-to-end legal research pipeline. Submit a pleading and the system autonomously:
 
@@ -151,8 +167,13 @@ COMPLETED / FAILED
 - `research_jobs` — UUID PK, status, pleading_text, case context fields, step counters, research_memo (JSONB), cost_estimate_usd, cost_breakdown_json (JSONB), step timestamps
 - `pipeline_queries` — job_id (FK), question_id, generated_ik_query, search_completed, results_count
 - `pipeline_results` — job_id (FK), query_id (FK), tid, relevance_score, is_relevant, genome_extracted, UNIQUE(job_id, tid)
+- `taxonomy_categories` — id TEXT PK (e.g., CAT_NI_ACT), name, parent_statute, description
+- `taxonomy_topics` — id TEXT PK (e.g., TOP_NI138_NOTICE), category_id (FK), name, description, keywords TEXT[]
+- `genome_categories` — genome_tid + category_id PK, auto_tagged BOOLEAN, many-to-many
+- `genome_topics` — genome_tid + topic_id PK, auto_tagged BOOLEAN, confidence FLOAT, many-to-many
+- `provision_index` — id TEXT PK (canonical, e.g., NI_ACT_S138), canonical_name, parent_statute, aliases TEXT[], category_id (FK)
 
-Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_search_queries_text`, `idx_genomes_tid`, `idx_research_jobs_status`, `idx_pipeline_queries_job`, `idx_pipeline_results_job`, `idx_pipeline_results_relevant`
+Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_search_queries_text`, `idx_genomes_tid`, `idx_research_jobs_status`, `idx_pipeline_queries_job`, `idx_pipeline_results_job`, `idx_pipeline_results_relevant`, `idx_taxonomy_topics_category`, `idx_taxonomy_topics_keywords` (GIN), `idx_genome_categories_cat`, `idx_genome_topics_topic`, `idx_provision_index_aliases` (GIN), `idx_provision_index_category`
 
 ## API Endpoints
 
@@ -184,6 +205,17 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 - `GET /api/pipeline/result/<job_id>` — Get completed research memo
 - `POST /api/pipeline/retry/<job_id>` — Resume failed pipeline from last step
 - `GET /api/pipeline/list` — List all research jobs with metadata
+
+### Taxonomy (Genome Cross-Linking)
+- `GET /api/taxonomy/categories` — List categories with genome counts
+- `GET /api/taxonomy/categories/<cat_id>/genomes` — List genomes in a category
+- `GET /api/taxonomy/topics?category_id=` — List topics, optionally filtered by category
+- `GET /api/taxonomy/topics/<topic_id>/genomes` — List genomes for a topic
+- `GET /api/taxonomy/provisions` — List all canonical provisions with aliases
+- `GET /api/taxonomy/search?q=` — Search across categories, topics, provisions
+- `GET /api/taxonomy/genome/<tid>/tags` — Get category/topic tags for a genome
+- `GET /api/taxonomy/stats` — Taxonomy overview stats
+- `POST /api/taxonomy/retag` — Re-run auto-tagger on all genomes
 
 ## Environment Variables
 
