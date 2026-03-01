@@ -1,0 +1,94 @@
+# REPLIT AI — MASTER POST-IMPLEMENTATION AUDIT PROTOCOL
+
+## ⛔ ABSOLUTE RULE: ZERO CHANGES ALLOWED
+
+**You are in READ-ONLY AUDIT MODE. You will NOT fix, modify, patch, refactor, update, or touch a single character of code during this entire process.**
+
+Your ONLY job is to find every bug, mismatch, incomplete piece, and potential failure point — then report them in a structured list. That's it. Nothing else.
+
+**If you feel the urge to "quickly fix" something while auditing — STOP. Write it down instead. Move on.**
+
+---
+
+## WHY THIS PROTOCOL EXISTS
+
+When you implement features, you work fast. Speed causes these recurring problems:
+
+- Function calls that don't match function definitions
+- Parameters passed in wrong order or with wrong types
+- Import statements pointing to files/functions that don't exist
+- Hardcoded values that should be dynamic
+- Copy-pasted code with unchanged variable names
+- Half-finished implementations left behind
+- API routes defined but never connected to frontend
+- Frontend calling endpoints that don't exist or have different names
+- Environment variables referenced but never set
+- Database fields used in code but missing from schema
+- Error handling that catches but does nothing
+- Async/await missing or misapplied
+- Return statements that return wrong shape of data
+- Console.logs and debug code left in production
+- Commented-out code that was supposed to be uncommented
+- CSS classes referenced but never defined
+- State variables initialized but never updated
+- Event handlers attached to wrong elements or with wrong signatures
+
+**This audit catches ALL of the above and more — BEFORE production breaks.**
+
+---
+
+## THE 10-LAYER DEEP AUDIT
+
+Work through every layer sequentially. Do NOT skip any layer. Report ALL findings.
+
+---
+
+### LAYER 1: FILE & STRUCTURE INTEGRITY
+
+Verify the project skeleton is complete and coherent.
+
+**Check:**
+- [ ] Are all files that should exist actually present? (No phantom imports)
+- [ ] Are there any orphaned files that nothing references?
+- [ ] Does the folder structure match what the code expects? (Correct paths everywhere)
+- [ ] Are there any duplicate files or conflicting versions of the same file?
+- [ ] Is the entry point file correct and properly configured?
+- [ ] Does `.replit` / `replit.nix` / config reference the right start command?
+- [ ] Are build scripts pointing to actual files and correct output directories?
+
+**Report format:**
+```
+LAYER 1 FINDINGS:
+[✅ PASS] or [❌ ISSUE] — Description
+  File: [path]
+  Problem: [exact mismatch]
+  Expected: [what should be there]
+  Actual: [what is actually there]
+```
+
+---
+
+### LAYER 2: IMPORT & DEPENDENCY CHAIN
+
+Trace every import to its source. Verify every dependency exists and is correct.
+
+**Check:**
+- [ ] Every `import` / `require` statement — does the target file/module actually export what's being imported?
+- [ ] Named imports — does `import { functionX } from './file'` match an actual `export { functionX }` or `export function functionX` in that file?
+- [ ] Default imports — is there actually a default export in the source file?
+- [ ] Package imports — is every imported package listed in `package.json` / `requirements.txt`?
+- [ ] Package versions — are there any known breaking changes in the installed versions?
+- [ ] Circular dependencies — do any files import each other in a loop?
+- [ ] Path accuracy — are relative paths (`./`, `../`) resolving to the correct files?
+- [ ] Alias paths — if using `@/` or `~/` aliases, are they configured correctly?
+- [ ] Missing type definitions — for TypeScript, are `@types/*` packages installed where needed?
+- [ ] ESM vs CommonJS — are `import` and `require` used consistently with the project's module system?
+
+**For each import in the project, verify:**
+```
+File: [source file]
+Import: [exact import statement]
+Target: [target file/module]
+Exported? [YES/NO — does the target actually export this?]
+Name match? [YES/NO — exact spelling, case sensitivity]
+Type match? [YES/NO — default vs named vs na
