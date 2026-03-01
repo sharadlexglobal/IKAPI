@@ -263,6 +263,8 @@
             <div class="genome-sub-tabs">
                 <button class="genome-sub-tab active" data-subtab="genomeExtract">Judgment Genome</button>
                 <button class="genome-sub-tab" data-subtab="questionExtract">Research Questions</button>
+                <button class="genome-sub-tab" data-subtab="genomeImport">Import Genome</button>
+                <button class="genome-sub-tab" data-subtab="genomeDatabase">Genome Database</button>
             </div>
 
             <div id="genomeExtractPanel" class="genome-panel active">
@@ -374,6 +376,83 @@
                             <div id="questionGates" class="question-gates"></div>
                             <div id="questionCategories" class="question-categories"></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="genomeImportPanel" class="genome-panel">
+                <div class="genome-layout">
+                    <div class="genome-input-panel">
+                        <h3>Import Genome JSON</h3>
+                        <p class="import-desc">Paste a genome JSON extracted from any LLM. It will be validated against the v3.1 schema before saving.</p>
+                        <div class="analysis-section">
+                            <label for="importTidInput">Indian Kanoon TID (optional)</label>
+                            <input type="text" id="importTidInput" class="search-input" placeholder="e.g. 529907 (auto-generated if blank)">
+                        </div>
+                        <div class="analysis-section">
+                            <label for="importTitleInput">Case Title</label>
+                            <input type="text" id="importTitleInput" class="search-input" placeholder="e.g. K. Bhaskaran vs Sankaran Vaidhyan Balan">
+                        </div>
+                        <div class="analysis-section">
+                            <label for="importCourtInput">Court</label>
+                            <input type="text" id="importCourtInput" class="search-input" placeholder="e.g. Supreme Court of India">
+                        </div>
+                        <div class="analysis-section">
+                            <label for="importModelInput">Extraction Model (optional)</label>
+                            <input type="text" id="importModelInput" class="search-input" placeholder="e.g. gemini-1.5-pro, gpt-4o, manual" value="manual-import">
+                        </div>
+                        <div class="analysis-section">
+                            <label for="importGenomeText">Genome JSON</label>
+                            <textarea id="importGenomeText" class="genome-textarea import-textarea" rows="18" placeholder='Paste the full genome JSON here...'></textarea>
+                        </div>
+                        <div class="import-btn-row">
+                            <button id="validateGenomeBtn" class="btn-sm">Validate</button>
+                            <button id="importGenomeBtn" class="genome-extract-btn" disabled>Save to Database</button>
+                        </div>
+                        <div id="importProgress" class="genome-progress" style="display:none;">
+                            <div class="spinner"></div>
+                            <p>Saving genome...</p>
+                        </div>
+                    </div>
+                    <div class="genome-viewer-panel">
+                        <div id="importValidationResult" class="import-validation-panel">
+                            <div class="empty-state">
+                                <h3>Validation Result</h3>
+                                <p>Paste genome JSON and click Validate to check it against the 6-dimension schema.</p>
+                                <p class="empty-hint">Required: document_id, schema_version, extraction_metadata, dimension_1 through dimension_6.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="genomeDatabasePanel" class="genome-panel">
+                <div class="genome-db-layout">
+                    <div class="genome-db-header">
+                        <h3>Genome Database</h3>
+                        <div class="genome-db-search-row">
+                            <input type="text" id="genomeDbSearch" class="search-input genome-db-search-input" placeholder="Search by case name, provision, legal concept...">
+                            <button id="genomeDbSearchBtn" class="btn-sm">Search</button>
+                            <button id="genomeDbRefreshBtn" class="btn-sm btn-secondary">Refresh</button>
+                        </div>
+                        <div class="genome-db-stats" id="genomeDbStats"></div>
+                    </div>
+                    <div id="genomeDbList" class="genome-db-list">
+                        <div class="empty-state">
+                            <h3>Loading genome database...</h3>
+                        </div>
+                    </div>
+                    <div id="genomeDbViewer" class="genome-db-viewer" style="display:none;">
+                        <button id="genomeDbBackBtn" class="btn-sm genome-db-back-btn">Back to List</button>
+                        <div class="genome-header-bar">
+                            <div class="genome-meta" id="genomeDbMetaInfo"></div>
+                            <div class="genome-header-actions">
+                                <button class="btn-sm" id="genomeDbDownloadBtn">Download JSON</button>
+                            </div>
+                        </div>
+                        <div id="genomeDbCheatSheet" class="genome-cheat-sheet"></div>
+                        <div class="genome-dim-tabs" id="genomeDbDimTabs"></div>
+                        <div id="genomeDbDimContent" class="genome-dim-content"></div>
                     </div>
                 </div>
             </div>

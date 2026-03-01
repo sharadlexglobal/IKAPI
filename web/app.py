@@ -14,7 +14,8 @@ from db import (
     save_search_query, get_saved_queries, get_judgments_for_query,
     get_judgments_by_tids, get_prompt_templates, save_prompt_template,
     update_prompt_template, delete_prompt_template, seed_default_templates,
-    get_cached_genome, save_genome, get_all_genomes,
+    get_cached_genome, save_genome, get_all_genomes, get_all_genomes_rich,
+    search_genomes, ensure_judgment_exists,
     get_cached_judgments_with_fulltext,
     save_question_extraction, get_question_extraction,
     create_research_job, get_research_job, update_research_job,
@@ -864,6 +865,218 @@ def api_genome_list():
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/genome/validate", methods=["POST"])
+def api_genome_validate():
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+    genome_json = body.get("genome_json")
+    if not genome_json:
+        return jsonify({"error": "genome_json is required"}), 400
+    if isinstance(genome_json, str):
+        try:
+            genome_json = json.loads(genome_json)
+        except json.JSONDecodeError as e:
+            return jsonify({"valid": False, "errors": [f"Invalid JSON: {str(e)}"]}), 200
+    errors = _validate_genome_structure(genome_json)
+    return jsonify({"valid": len(errors) == 0, "errors": errors})
+
+
+@app.route("/api/genome/import", methods=["POST"])
+def api_genome_import():
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+    genome_json = body.get("genome_json")
+    tid = body.get("tid")
+    title = body.get("title", "")
+    court = body.get("court", "")
+    extraction_model = body.get("extraction_model", "manual-import")
+    if not genome_json:
+        return jsonify({"error": "genome_json is required"}), 400
+    if isinstance(genome_json, str):
+        try:
+            genome_json = json.loads(genome_json)
+        except json.JSONDecodeError as e:
+            return jsonify({"error": f"Invalid JSON: {str(e)}"}), 400
+    errors = _validate_genome_structure(genome_json)
+    if errors:
+        return jsonify({"error": "Genome validation failed", "validation_errors": errors}), 400
+    overwrite = body.get("overwrite", False)
+    if not tid:
+        import random
+        tid = random.randint(900000000, 999999999)
+    try:
+        tid = int(tid)
+    except (ValueError, TypeError):
+        return jsonify({"error": "tid must be a number"}), 400
+    existing = get_cached_genome(tid)
+    if existing and not overwrite:
+        return jsonify({
+            "error": "exists",
+            "message": f"A genome already exists for TID {tid}. Set overwrite=true to replace it.",
+            "existing_title": existing.get("genome_json", {}).get("extraction_metadata", {}).get("judgment_citation", str(tid)) if isinstance(existing.get("genome_json"), dict) else str(tid)
+        }), 409
+    if not title:
+        meta = genome_json.get("extraction_metadata", {})
+        title = meta.get("judgment_citation", "") or f"Imported Genome (TID {tid})"
+    ensure_judgment_exists(tid, title, court or None)
+    schema_ver = genome_json.get("schema_version", "3.1.0")
+    doc_id = genome_json.get("document_id")
+    cert_level = None
+    durability = None
+    audit = genome_json.get("dimension_6_audit", {})
+    if audit:
+        cert = audit.get("final_certification", {})
+        cert_level = cert.get("certification_level")
+        durability = cert.get("overall_durability_score")
+        if durability is not None:
+            try:
+                durability = int(durability)
+            except (ValueError, TypeError):
+                durability = None
+    try:
+        saved = save_genome(tid, genome_json, model=extraction_model,
+                            schema_version=schema_ver, doc_id=doc_id,
+                            cert_level=cert_level, durability=durability)
+        return jsonify({
+            "success": True,
+            "tid": tid,
+            "title": title,
+            "id": saved["id"] if saved else None,
+            "message": f"Genome saved for TID {tid}"
+        })
+    except Exception as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+
+
+@app.route("/api/genome/database")
+def api_genome_database():
+    query = request.args.get("q", "").strip()
+    try:
+        if query:
+            genomes = search_genomes(query)
+        else:
+            genomes = get_all_genomes_rich()
+        result = []
+        for g in genomes:
+            genome_data = g.get("genome_json", {})
+            if isinstance(genome_data, str):
+                try:
+                    genome_data = json.loads(genome_data)
+                except Exception:
+                    genome_data = {}
+            meta = genome_data.get("extraction_metadata", {})
+            d1 = genome_data.get("dimension_1_visible", {})
+            d5 = genome_data.get("dimension_5_synthesis", {})
+            d4 = genome_data.get("dimension_4_weaponizable", {})
+            case_id = d1.get("case_identity", {})
+            cheat = d5.get("practitioners_cheat_sheet", {})
+            provisions = d1.get("provisions_engaged", [])
+            prov_list = []
+            if isinstance(provisions, list):
+                for p in provisions[:8]:
+                    if isinstance(p, dict):
+                        label = p.get("provision") or p.get("provision_id") or p.get("parent_statute") or ""
+                        if not label and "parent_statute" in p:
+                            label = p["parent_statute"]
+                        if label:
+                            prov_list.append(str(label))
+                    elif isinstance(p, str) and len(p) < 100:
+                        prov_list.append(p)
+            ratio = d1.get("ratio_decidendi", {})
+            core_ratio = ""
+            if isinstance(ratio, dict):
+                core_ratio = ratio.get("core_ratio", "") or ratio.get("holding", "")
+            elif isinstance(ratio, list) and ratio:
+                first = ratio[0]
+                if isinstance(first, dict):
+                    core_ratio = first.get("core_ratio", "") or first.get("proposition", "") or first.get("holding", "") or first.get("the_holding", "") or first.get("ratio_text", "")
+                elif isinstance(first, str):
+                    core_ratio = first
+            elif isinstance(ratio, str):
+                core_ratio = ratio
+            result.append({
+                "id": g["id"],
+                "tid": g["tid"],
+                "title": g.get("title") or meta.get("judgment_citation", f"TID {g['tid']}"),
+                "court": g.get("court_source") or case_id.get("court", ""),
+                "bench": case_id.get("bench", ""),
+                "decided_date": case_id.get("decided_date", ""),
+                "publish_date": str(g.get("publish_date", "")) if g.get("publish_date") else "",
+                "num_cited_by": g.get("num_cited_by", 0) or 0,
+                "schema_version": g["schema_version"],
+                "extraction_model": g["extraction_model"],
+                "extraction_date": g["extraction_date"].isoformat() if g.get("extraction_date") else "",
+                "certification_level": g.get("certification_level"),
+                "overall_durability_score": g.get("overall_durability_score"),
+                "citation": meta.get("judgment_citation", ""),
+                "provisions": prov_list,
+                "core_ratio": core_ratio[:300] if core_ratio else "",
+                "cite_when": cheat.get("cite_when", ""),
+                "do_not_cite_when": cheat.get("do_not_cite_when", ""),
+                "killer_paragraph": cheat.get("killer_paragraph", ""),
+                "vulnerability_count": len(d4.get("vulnerability_map", [])) if isinstance(d4.get("vulnerability_map"), list) else 0,
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def _validate_genome_structure(genome):
+    errors = []
+    required_top = [
+        "document_id", "schema_version", "extraction_metadata",
+        "dimension_1_visible", "dimension_2_structural",
+        "dimension_3_invisible", "dimension_4_weaponizable",
+        "dimension_5_synthesis", "dimension_6_audit"
+    ]
+    for key in required_top:
+        if key not in genome:
+            errors.append(f"Missing required top-level key: {key}")
+    if errors:
+        return errors
+    meta = genome.get("extraction_metadata", {})
+    if not isinstance(meta, dict):
+        errors.append("extraction_metadata must be an object")
+    else:
+        for mk in ["extraction_date", "judgment_citation"]:
+            if mk not in meta:
+                errors.append(f"extraction_metadata missing: {mk}")
+    d1 = genome.get("dimension_1_visible", {})
+    if not isinstance(d1, dict):
+        errors.append("dimension_1_visible must be an object")
+    else:
+        d1_keys = ["case_identity", "story", "ratio_decidendi", "operative_order", "provisions_engaged"]
+        for dk in d1_keys:
+            if dk not in d1:
+                errors.append(f"dimension_1_visible missing: {dk}")
+    d2 = genome.get("dimension_2_structural", {})
+    if not isinstance(d2, dict):
+        errors.append("dimension_2_structural must be an object")
+    else:
+        for dk in ["syllogisms", "interpretive_method"]:
+            if dk not in d2:
+                errors.append(f"dimension_2_structural missing: {dk}")
+    d3 = genome.get("dimension_3_invisible", {})
+    if not isinstance(d3, dict):
+        errors.append("dimension_3_invisible must be an object")
+    d4 = genome.get("dimension_4_weaponizable", {})
+    if not isinstance(d4, dict):
+        errors.append("dimension_4_weaponizable must be an object")
+    else:
+        for dk in ["sword_uses", "shield_uses", "vulnerability_map"]:
+            if dk not in d4:
+                errors.append(f"dimension_4_weaponizable missing: {dk}")
+    d5 = genome.get("dimension_5_synthesis", {})
+    if not isinstance(d5, dict):
+        errors.append("dimension_5_synthesis must be an object")
+    d6 = genome.get("dimension_6_audit", {})
+    if not isinstance(d6, dict):
+        errors.append("dimension_6_audit must be an object")
+    return errors
 
 
 @app.route("/api/questions/extract", methods=["POST"])

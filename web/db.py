@@ -401,6 +401,63 @@ def get_all_genomes():
         conn.close()
 
 
+def get_all_genomes_rich():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("""
+                SELECT g.id, g.tid, g.schema_version, g.extraction_model,
+                       g.extraction_date, g.document_id, g.certification_level,
+                       g.overall_durability_score, g.genome_json,
+                       j.title, j.court_source, j.publish_date, j.num_cited_by
+                FROM judgment_genomes g
+                LEFT JOIN judgments j ON g.tid = j.tid
+                ORDER BY g.extraction_date DESC
+            """)
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def search_genomes(query_text):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            like_pattern = f"%{query_text}%"
+            cur.execute("""
+                SELECT g.id, g.tid, g.schema_version, g.extraction_model,
+                       g.extraction_date, g.document_id, g.certification_level,
+                       g.overall_durability_score, g.genome_json,
+                       j.title, j.court_source, j.publish_date, j.num_cited_by
+                FROM judgment_genomes g
+                LEFT JOIN judgments j ON g.tid = j.tid
+                WHERE j.title ILIKE %s
+                   OR g.genome_json::text ILIKE %s
+                ORDER BY g.extraction_date DESC
+                LIMIT 100
+            """, (like_pattern, like_pattern))
+            return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def ensure_judgment_exists(tid, title, court_source=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT tid FROM judgments WHERE tid = %s", (tid,))
+            if cur.fetchone():
+                return True
+            cur.execute("""
+                INSERT INTO judgments (tid, title, court_source, metadata_only)
+                VALUES (%s, %s, %s, TRUE)
+                ON CONFLICT (tid) DO NOTHING
+            """, (tid, title, court_source))
+            return True
+    finally:
+        conn.close()
+
+
 def get_cached_judgments_with_fulltext():
     conn = get_db_connection()
     try:

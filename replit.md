@@ -53,7 +53,7 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 - Auto-fetches and caches full text for selected judgments if not already cached
 
 ### Genome Lab Tab
-Two sub-tabs for deep legal analysis:
+Four sub-tabs for deep legal analysis:
 
 **Judgment Genome (Tab 1)**
 - Extract structured 6-dimension genome from any judgment using Claude Sonnet 4
@@ -77,6 +77,25 @@ Two sub-tabs for deep legal analysis:
 - Sub-questions, fact anchors, research directions shown in expandable detail
 - Hash-based caching (SHA256 of pleading text)
 - Download questions as JSON
+
+**Import Genome (Tab 3)**
+- Manually paste genome JSON extracted from any external LLM (Gemini, GPT, etc.)
+- Validates against v3.1 schema before saving (checks all 6 dimensions, extraction_metadata, required keys)
+- Shows dimension-by-dimension validation status with section counts
+- Fields: TID (optional, auto-generated), case title, court, extraction model
+- Conflict detection: warns if genome already exists for TID, offers overwrite option
+- Saves directly to PostgreSQL genome database
+- API: POST /api/genome/validate, POST /api/genome/import
+
+**Genome Database (Tab 4)**
+- Searchable library of all stored genomes (49+ currently)
+- Full-text search across case names and genome content (ILIKE on JSONB)
+- Card grid view showing: case title, durability score, court, date, cited-by count
+- Provisions displayed as tags (extracted from dimension_1)
+- Core ratio decidendi preview on each card
+- Model tag (claude-sonnet-4-6, manual-import, etc.) and extraction date
+- Click any card to open full genome viewer with all 6 dimensions, cheat sheet, download
+- API: GET /api/genome/database?q=search_term
 
 ### Pipeline Tab (Autonomous Research)
 Full end-to-end legal research pipeline. Submit a pleading and the system autonomously:

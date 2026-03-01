@@ -2199,4 +2199,268 @@ body {
     .pipeline-stats-grid {
         grid-template-columns: 1fr 1fr;
     }
+
+    .genome-db-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.import-desc {
+    color: #636e72;
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.import-textarea {
+    min-height: 300px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.import-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.import-validation-panel {
+    height: 100%;
+}
+
+.validation-success {
+    background: #f0fff4;
+    border: 1px solid #00b894;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.validation-success h3 {
+    color: #00b894;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.validation-success p {
+    color: #2d3436;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.validation-failure {
+    background: #fff5f5;
+    border: 1px solid #e17055;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.validation-failure h3 {
+    color: #e17055;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.validation-failure ul {
+    list-style: none;
+    padding: 0;
+}
+
+.validation-failure li {
+    color: #d63031;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #ffeaea;
+}
+
+.validation-failure li:last-child {
+    border-bottom: none;
+}
+
+.validation-dims {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.validation-dim {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.validation-dim.valid {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.validation-dim.missing {
+    background: #fbe9e7;
+    color: #c62828;
+}
+
+.validation-icon {
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+.validation-ready {
+    color: #00b894;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.genome-db-layout {
+    padding: 20px 0;
+}
+
+.genome-db-header {
+    margin-bottom: 20px;
+}
+
+.genome-db-header h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.genome-db-search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.genome-db-search-input {
+    flex: 1;
+    max-width: 500px;
+}
+
+.genome-db-stats {
+    font-size: 13px;
+    color: #636e72;
+}
+
+.genome-db-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.genome-card {
+    background: white;
+    border: 1px solid #dfe6e9;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.genome-card:hover {
+    border-color: #6c5ce7;
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.12);
+    transform: translateY(-1px);
+}
+
+.genome-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 12px;
+}
+
+.genome-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3436;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.genome-card-durability {
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.genome-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.genome-card-meta span {
+    font-size: 11px;
+    color: #636e72;
+    background: #f5f6fa;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.genome-card-ratio {
+    font-size: 12px;
+    color: #636e72;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.genome-card-provisions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.provision-tag {
+    font-size: 11px;
+    background: #e8f0fe;
+    color: #1a5276;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.provision-tag.more {
+    background: #dfe6e9;
+    color: #636e72;
+}
+
+.genome-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.model-tag {
+    font-size: 11px;
+    background: #f3e5f5;
+    color: #7b1fa2;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.date-tag {
+    font-size: 11px;
+    color: #b2bec3;
+}
+
+.genome-db-back-btn {
+    margin-bottom: 16px;
+}
+
+.btn-secondary {
+    background: #dfe6e9;
+    color: #2d3436;
+}
+
+.btn-secondary:hover {
+    background: #b2bec3;
 }

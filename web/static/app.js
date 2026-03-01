@@ -77,6 +77,10 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
         }
         if (view === "genomeLab") {
             loadCachedJudgments();
+            var activeSubtab = document.querySelector(".genome-sub-tab.active");
+            if (activeSubtab && activeSubtab.getAttribute("data-subtab") === "genomeDatabase") {
+                loadGenomeDatabase();
+            }
         }
         if (view === "pipeline") {
             loadPipelineJobs();
@@ -656,6 +660,9 @@ document.querySelectorAll(".genome-sub-tab").forEach(function (tab) {
         tab.classList.add("active");
         document.querySelectorAll(".genome-panel").forEach(function (p) { p.classList.remove("active"); });
         document.getElementById(subtab + "Panel").classList.add("active");
+        if (subtab === "genomeDatabase") {
+            loadGenomeDatabase();
+        }
     });
 });
 
@@ -1645,6 +1652,369 @@ pipelineSubmitBtn.addEventListener("click", function () {
             pipelineSubmitBtn.disabled = false;
             pipelineSubmitBtn.textContent = "Submit for Research";
         });
+});
+
+var _importValidated = false;
+
+document.getElementById("importGenomeText").addEventListener("input", function () {
+    _importValidated = false;
+    document.getElementById("importGenomeBtn").disabled = true;
+});
+
+document.getElementById("validateGenomeBtn").addEventListener("click", function () {
+    var raw = document.getElementById("importGenomeText").value.trim();
+    if (!raw) {
+        showImportValidation(false, ["No JSON pasted"]);
+        return;
+    }
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "Validating...";
+    fetch("/api/genome/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ genome_json: raw })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+        btn.disabled = false;
+        btn.textContent = "Validate";
+        if (data.error) {
+            showImportValidation(false, [data.error]);
+            return;
+        }
+        showImportValidation(data.valid, data.errors || []);
+        if (data.valid) {
+            _importValidated = true;
+            document.getElementById("importGenomeBtn").disabled = false;
+        }
+    })
+    .catch(function (e) {
+        btn.disabled = false;
+        btn.textContent = "Validate";
+        showImportValidation(false, ["Request failed: " + e.message]);
+    });
+});
+
+function showImportValidation(valid, errors) {
+    var panel = document.getElementById("importValidationResult");
+    if (valid) {
+        var raw = document.getElementById("importGenomeText").value.trim();
+        var parsed = {};
+        try { parsed = JSON.parse(raw); } catch(e) {}
+        var dims = ["dimension_1_visible", "dimension_2_structural", "dimension_3_invisible",
+                     "dimension_4_weaponizable", "dimension_5_synthesis", "dimension_6_audit"];
+        var dimStatus = "";
+        dims.forEach(function(d) {
+            var present = parsed[d] && typeof parsed[d] === "object";
+            var count = present ? Object.keys(parsed[d]).length : 0;
+            var label = d.replace("dimension_", "D").replace(/_/g, " ").replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+            dimStatus += '<div class="validation-dim ' + (present ? 'valid' : 'missing') + '">';
+            dimStatus += '<span class="validation-icon">' + (present ? '\u2713' : '\u2717') + '</span> ';
+            dimStatus += label;
+            if (present) dimStatus += ' (' + count + ' sections)';
+            dimStatus += '</div>';
+        });
+        var citation = "";
+        try { citation = parsed.extraction_metadata.judgment_citation || ""; } catch(e) {}
+        panel.innerHTML = '<div class="validation-success">' +
+            '<h3>\u2713 Genome Valid</h3>' +
+            '<p>Schema version: ' + (parsed.schema_version || "unknown") + '</p>' +
+            (citation ? '<p>Citation: ' + escapeHtml(citation) + '</p>' : '') +
+            '<div class="validation-dims">' + dimStatus + '</div>' +
+            '<p class="validation-ready">Ready to save to database.</p>' +
+            '</div>';
+    } else {
+        var errHtml = '<div class="validation-failure"><h3>\u2717 Validation Failed</h3><ul>';
+        errors.forEach(function(e) { errHtml += '<li>' + escapeHtml(e) + '</li>'; });
+        errHtml += '</ul></div>';
+        panel.innerHTML = errHtml;
+    }
+}
+
+document.getElementById("importGenomeBtn").addEventListener("click", function () {
+    if (!_importValidated) return;
+    var raw = document.getElementById("importGenomeText").value.trim();
+    var tid = document.getElementById("importTidInput").value.trim();
+    var title = document.getElementById("importTitleInput").value.trim();
+    var court = document.getElementById("importCourtInput").value.trim();
+    var model = document.getElementById("importModelInput").value.trim() || "manual-import";
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+    document.getElementById("importProgress").style.display = "block";
+    submitGenomeImport(raw, tid, title, court, model, false, btn);
+});
+
+function submitGenomeImport(raw, tid, title, court, model, overwrite, btn) {
+    fetch("/api/genome/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            genome_json: raw,
+            tid: tid || null,
+            title: title,
+            court: court,
+            extraction_model: model,
+            overwrite: overwrite
+        })
+    })
+    .then(function (r) { return r.json().then(function(d) { return {status: r.status, data: d}; }); })
+    .then(function (resp) {
+        var data = resp.data;
+        btn.textContent = "Save to Database";
+        document.getElementById("importProgress").style.display = "none";
+        if (resp.status === 409 && data.error === "exists") {
+            var doOverwrite = confirm("A genome already exists for TID " + tid + ". Do you want to overwrite it?");
+            if (doOverwrite) {
+                btn.disabled = true;
+                btn.textContent = "Overwriting...";
+                document.getElementById("importProgress").style.display = "block";
+                submitGenomeImport(raw, tid, title, court, model, true, btn);
+            } else {
+                btn.disabled = false;
+                showImportValidation(false, [data.message]);
+            }
+            return;
+        }
+        if (data.error) {
+            var errMsg = data.error;
+            if (data.validation_errors) errMsg += ": " + data.validation_errors.join(", ");
+            showImportValidation(false, [errMsg]);
+            btn.disabled = false;
+            return;
+        }
+        var panel = document.getElementById("importValidationResult");
+        panel.innerHTML = '<div class="validation-success">' +
+            '<h3>\u2713 Genome Saved Successfully</h3>' +
+            '<p>TID: ' + data.tid + '</p>' +
+            '<p>Title: ' + escapeHtml(data.title) + '</p>' +
+            '<p>' + escapeHtml(data.message) + '</p>' +
+            '<p class="validation-ready">You can view it in the Genome Database tab.</p>' +
+            '</div>';
+        document.getElementById("importGenomeText").value = "";
+        document.getElementById("importTidInput").value = "";
+        document.getElementById("importTitleInput").value = "";
+        document.getElementById("importCourtInput").value = "";
+        _importValidated = false;
+    })
+    .catch(function (e) {
+        btn.disabled = false;
+        btn.textContent = "Save to Database";
+        document.getElementById("importProgress").style.display = "none";
+        showImportValidation(false, ["Save failed: " + e.message]);
+    });
+}
+
+var _genomeDbData = [];
+var _currentDbGenome = null;
+
+function loadGenomeDatabase(query) {
+    var url = "/api/genome/database";
+    if (query) url += "?q=" + encodeURIComponent(query);
+    fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.error) {
+            document.getElementById("genomeDbList").innerHTML = '<div class="empty-state"><p>Error: ' + escapeHtml(data.error) + '</p></div>';
+            return;
+        }
+        _genomeDbData = data;
+        renderGenomeDbList(data);
+        var stats = document.getElementById("genomeDbStats");
+        stats.innerHTML = data.length + ' genome' + (data.length !== 1 ? 's' : '') + ' in database';
+    })
+    .catch(function(e) {
+        document.getElementById("genomeDbList").innerHTML = '<div class="empty-state"><p>Failed to load: ' + e.message + '</p></div>';
+    });
+}
+
+function renderGenomeDbList(genomes) {
+    var container = document.getElementById("genomeDbList");
+    if (!genomes.length) {
+        container.innerHTML = '<div class="empty-state"><h3>No Genomes Found</h3><p>Import genomes using the Import Genome tab or run genome extraction from the pipeline.</p></div>';
+        return;
+    }
+    var html = '<div class="genome-db-grid">';
+    genomes.forEach(function(g) {
+        var durColor = "#b2bec3";
+        var dur = g.overall_durability_score;
+        if (dur) {
+            durColor = dur >= 7 ? "#00b894" : dur >= 4 ? "#fdcb6e" : "#e17055";
+        }
+        var provHtml = "";
+        if (g.provisions && g.provisions.length) {
+            provHtml = '<div class="genome-card-provisions">';
+            g.provisions.slice(0, 4).forEach(function(p) {
+                provHtml += '<span class="provision-tag">' + escapeHtml(p) + '</span>';
+            });
+            if (g.provisions.length > 4) provHtml += '<span class="provision-tag more">+' + (g.provisions.length - 4) + '</span>';
+            provHtml += '</div>';
+        }
+        html += '<div class="genome-card" data-tid="' + g.tid + '">';
+        html += '<div class="genome-card-header">';
+        html += '<div class="genome-card-title">' + escapeHtml(g.title) + '</div>';
+        if (dur) html += '<div class="genome-card-durability" style="color:' + durColor + '">' + dur + '/10</div>';
+        html += '</div>';
+        html += '<div class="genome-card-meta">';
+        if (g.court) html += '<span>' + escapeHtml(g.court) + '</span>';
+        if (g.decided_date) html += '<span>' + escapeHtml(g.decided_date) + '</span>';
+        if (g.num_cited_by) html += '<span>Cited by ' + g.num_cited_by + '</span>';
+        html += '</div>';
+        if (g.core_ratio) {
+            html += '<div class="genome-card-ratio">' + escapeHtml(g.core_ratio.substring(0, 200)) + (g.core_ratio.length > 200 ? '...' : '') + '</div>';
+        }
+        html += provHtml;
+        if (g.extraction_model) {
+            html += '<div class="genome-card-footer"><span class="model-tag">' + escapeHtml(g.extraction_model) + '</span>';
+            if (g.extraction_date) html += '<span class="date-tag">' + g.extraction_date.split("T")[0] + '</span>';
+            html += '</div>';
+        }
+        html += '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+    document.querySelectorAll(".genome-card").forEach(function(card) {
+        card.addEventListener("click", function() {
+            var tid = parseInt(card.getAttribute("data-tid"));
+            openGenomeDbViewer(tid);
+        });
+    });
+}
+
+function openGenomeDbViewer(tid) {
+    document.getElementById("genomeDbList").style.display = "none";
+    document.getElementById("genomeDbViewer").style.display = "block";
+    fetch("/api/genome/" + tid)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.error) {
+            document.getElementById("genomeDbViewer").innerHTML = '<p>Error: ' + escapeHtml(data.error) + '</p>';
+            return;
+        }
+        _currentDbGenome = data;
+        renderGenomeInContainer(data, "genomeDb");
+    })
+    .catch(function(e) {
+        document.getElementById("genomeDbViewer").innerHTML = '<p>Failed: ' + e.message + '</p>';
+    });
+}
+
+function renderGenomeInContainer(data, prefix) {
+    var genome = data.genome;
+    var metaHtml = "";
+    var cert = "";
+    try { cert = genome.dimension_6_audit.final_certification.certification_level || ""; } catch(e) {}
+    if (cert) metaHtml += '<span class="cert-badge cert-' + cert + '">' + cert.replace(/_/g, " ") + '</span> ';
+    var durability = 0;
+    try { durability = genome.dimension_4_weaponizable.vulnerability_map.overall_durability_score || 0; } catch(e) {}
+    if (!durability) try { durability = data.overall_durability_score || 0; } catch(e) {}
+    if (durability) {
+        var color = durability >= 7 ? "#00b894" : durability >= 4 ? "#fdcb6e" : "#e17055";
+        metaHtml += '<span class="durability-score">' + durability + '/10 <span class="score-bar"><span class="score-fill" style="width:' + (durability * 10) + '%;background:' + color + '"></span></span></span> ';
+    }
+    if (data.extraction_date) metaHtml += '<span>' + data.extraction_date.split("T")[0] + '</span>';
+    document.getElementById(prefix + "MetaInfo").innerHTML = metaHtml;
+    var cheatSheet = null;
+    try { cheatSheet = genome.dimension_5_synthesis.practitioners_cheat_sheet; } catch(e) {}
+    var csHtml = "";
+    if (cheatSheet) {
+        csHtml = '<div class="cheat-sheet-title">Practitioner\'s Cheat Sheet</div>';
+        if (cheatSheet.cite_when && cheatSheet.cite_when.length) {
+            csHtml += '<div class="cheat-item"><div class="cheat-label">Cite When</div><ul class="cheat-list">';
+            cheatSheet.cite_when.forEach(function (item) { csHtml += '<li>' + escapeHtml(item) + '</li>'; });
+            csHtml += '</ul></div>';
+        }
+        if (cheatSheet.do_not_cite_when && cheatSheet.do_not_cite_when.length) {
+            csHtml += '<div class="cheat-item"><div class="cheat-label">Do NOT Cite When</div><ul class="cheat-list">';
+            cheatSheet.do_not_cite_when.forEach(function (item) { csHtml += '<li>' + escapeHtml(item) + '</li>'; });
+            csHtml += '</ul></div>';
+        }
+        if (cheatSheet.killer_paragraph) {
+            csHtml += '<div class="cheat-item"><div class="cheat-label">Killer Paragraph</div><div class="cheat-value">' + escapeHtml(cheatSheet.killer_paragraph) + '</div></div>';
+        }
+        if (cheatSheet.hidden_gem) {
+            csHtml += '<div class="cheat-item"><div class="cheat-label">Hidden Gem</div><div class="cheat-value">' + escapeHtml(cheatSheet.hidden_gem) + '</div></div>';
+        }
+    }
+    document.getElementById(prefix + "CheatSheet").innerHTML = csHtml;
+    document.getElementById(prefix + "CheatSheet").style.display = csHtml ? "block" : "none";
+    var dims = [
+        { num: "1", label: "Visible", key: "dimension_1_visible" },
+        { num: "2", label: "Structural", key: "dimension_2_structural" },
+        { num: "3", label: "Invisible", key: "dimension_3_invisible" },
+        { num: "4", label: "Weaponizable", key: "dimension_4_weaponizable" },
+        { num: "5", label: "Synthesis", key: "dimension_5_synthesis" },
+        { num: "6", label: "Audit", key: "dimension_6_audit" },
+    ];
+    var tabsHtml = "";
+    dims.forEach(function (d, i) {
+        tabsHtml += '<button class="dim-tab ' + prefix + '-dim-tab' + (i === 0 ? ' active' : '') + '" data-dim="' + d.num + '" data-key="' + d.key + '">D' + d.num + ': ' + d.label + '</button>';
+    });
+    document.getElementById(prefix + "DimTabs").innerHTML = tabsHtml;
+    renderDimensionInContainer(genome, dims[0].key, prefix);
+    document.querySelectorAll("." + prefix + "-dim-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            document.querySelectorAll("." + prefix + "-dim-tab").forEach(function (t) { t.classList.remove("active"); });
+            tab.classList.add("active");
+            renderDimensionInContainer(genome, tab.getAttribute("data-key"), prefix);
+        });
+    });
+}
+
+function renderDimensionInContainer(genome, dimKey, prefix) {
+    var dimData = genome[dimKey];
+    var target = document.getElementById(prefix + "DimContent");
+    if (!dimData) {
+        target.innerHTML = '<div class="empty-state small"><p>No data for this dimension.</p></div>';
+        return;
+    }
+    var html = "";
+    var keys = Object.keys(dimData);
+    keys.forEach(function (sectionKey) {
+        var sectionData = dimData[sectionKey];
+        if (sectionData === null || sectionData === undefined) return;
+        var sectionLabel = sectionKey.replace(/_/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        html += '<div class="genome-section">';
+        html += '<div class="genome-section-header" onclick="this.parentElement.classList.toggle(\'open\')">';
+        html += '<span>' + sectionLabel + '</span>';
+        html += '<span class="toggle-icon">\u25B6</span>';
+        html += '</div>';
+        html += '<div class="genome-section-body">';
+        html += renderSectionContent(sectionKey, sectionData);
+        html += '</div></div>';
+    });
+    target.innerHTML = html;
+}
+
+document.getElementById("genomeDbBackBtn").addEventListener("click", function() {
+    document.getElementById("genomeDbViewer").style.display = "none";
+    document.getElementById("genomeDbList").style.display = "block";
+});
+
+document.getElementById("genomeDbDownloadBtn").addEventListener("click", function() {
+    if (!_currentDbGenome) return;
+    var blob = new Blob([JSON.stringify(_currentDbGenome.genome, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "genome_" + _currentDbGenome.tid + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById("genomeDbSearchBtn").addEventListener("click", function() {
+    var query = document.getElementById("genomeDbSearch").value.trim();
+    loadGenomeDatabase(query);
+});
+
+document.getElementById("genomeDbSearch").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") loadGenomeDatabase(this.value.trim());
+});
+
+document.getElementById("genomeDbRefreshBtn").addEventListener("click", function() {
+    document.getElementById("genomeDbSearch").value = "";
+    loadGenomeDatabase();
 });
 
 document.getElementById("pipelineRetryBtn").addEventListener("click", function () {
