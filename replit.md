@@ -17,6 +17,7 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── cost_tracker.py     # Pipeline cost tracking (Claude API + IK API, USD/INR)
 │   ├── topic_synthesis.py  # AI topic synthesis (evolution timeline, killer arguments)
 │   ├── conflict_radar.py   # AI cross-topic conflict detection
+│   ├── parallel_claude.py  # Async parallel Claude API calls (asyncio + AsyncAnthropic)
 │   ├── taxonomy_seed.py    # Taxonomy seed script (categories, topics, provisions)
 │   ├── auto_tagger.py      # Auto-tagger engine (provision matching, keyword matching)
 │   ├── templates/
