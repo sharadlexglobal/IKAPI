@@ -321,6 +321,29 @@ def init_db():
                 );
             """)
 
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS expressway_jobs (
+                    id SERIAL PRIMARY KEY,
+                    job_id TEXT UNIQUE NOT NULL,
+                    pleading_hash TEXT,
+                    status TEXT DEFAULT 'PENDING',
+                    result_json JSONB,
+                    queries_used JSONB,
+                    judgments_found INT,
+                    execution_time_ms INT,
+                    input_tokens INT,
+                    output_tokens INT,
+                    cost_usd NUMERIC(10,4),
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    completed_at TIMESTAMP,
+                    callback_url TEXT,
+                    callback_delivered BOOLEAN DEFAULT FALSE,
+                    error_message TEXT
+                );
+                CREATE INDEX IF NOT EXISTS idx_expressway_jobs_job_id ON expressway_jobs(job_id);
+                CREATE INDEX IF NOT EXISTS idx_expressway_jobs_status ON expressway_jobs(status);
+            """)
+
             _seed_delhi_courts(cur)
     finally:
         conn.close()
@@ -1463,5 +1486,80 @@ def get_fetched_dc_judgments(limit=50):
                 LIMIT %s
             """, (limit,))
             return cur.fetchall()
+    finally:
+        conn.close()
+
+
+def create_expressway_job(job_id, pleading_hash, callback_url=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO expressway_jobs (job_id, pleading_hash, callback_url)
+                VALUES (%s, %s, %s)
+            """, (job_id, pleading_hash, callback_url))
+    finally:
+        conn.close()
+
+
+def update_expressway_status(job_id, status=None, **kwargs):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            set_clauses = []
+            params = []
+            if status is not None:
+                set_clauses.append("status = %s")
+                params.append(status)
+            allowed = [
+                "result_json", "queries_used", "judgments_found",
+                "execution_time_ms", "input_tokens", "output_tokens",
+                "cost_usd", "completed_at", "callback_delivered", "error_message"
+            ]
+            for key in allowed:
+                if key in kwargs:
+                    set_clauses.append(f"{key} = %s")
+                    val = kwargs[key]
+                    if key in ("result_json", "queries_used") and isinstance(val, (dict, list)):
+                        params.append(json.dumps(val))
+                    else:
+                        params.append(val)
+            if not set_clauses:
+                return
+            params.append(job_id)
+            cur.execute(
+                f"UPDATE expressway_jobs SET {', '.join(set_clauses)} WHERE job_id = %s",
+                params
+            )
+    finally:
+        conn.close()
+
+
+def get_expressway_job(job_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM expressway_jobs WHERE job_id = %s", (job_id,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def save_expressway_result(job_id, result_json, execution_time_ms, input_tokens, output_tokens, cost_usd):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE expressway_jobs
+                SET status = 'COMPLETED',
+                    result_json = %s,
+                    execution_time_ms = %s,
+                    input_tokens = %s,
+                    output_tokens = %s,
+                    cost_usd = %s,
+                    completed_at = NOW()
+                WHERE job_id = %s
+            """, (json.dumps(result_json), execution_time_ms, input_tokens,
+                  output_tokens, cost_usd, job_id))
     finally:
         conn.close()

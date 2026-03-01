@@ -18,6 +18,8 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── topic_synthesis.py  # AI topic synthesis (evolution timeline, killer arguments)
 │   ├── conflict_radar.py   # AI cross-topic conflict detection
 │   ├── parallel_claude.py  # Async parallel Claude API calls (asyncio + AsyncAnthropic)
+│   ├── expressway.py       # Superfast Expressway engine (instant legal research)
+│   ├── expressway_prompts.py # Expressway prompt templates (query extraction + para drafting)
 │   ├── taxonomy_seed.py    # Taxonomy seed script (categories, topics, provisions)
 │   ├── auto_tagger.py      # Auto-tagger engine (provision matching, keyword matching)
 │   ├── templates/
@@ -267,7 +269,7 @@ Indexes: `idx_judgments_cited_by` (DESC), `idx_judgments_publish_date`, `idx_sea
 
 ## Dependencies
 
-- **Python**: flask, gunicorn, beautifulsoup4, anthropic, psycopg2-binary, google-genai, tenacity, requests
+- **Python**: flask, gunicorn, beautifulsoup4, anthropic, psycopg2-binary, google-genai, tenacity, requests, aiohttp
 - **Java**: Maven project with argparse4j, json, opencsv, jsoup
 
 ## AI Models & Costs
@@ -345,6 +347,27 @@ Cost breakdown stored in `cost_breakdown_json` (JSONB) on each research job. Das
 - JSON repair for truncated API responses: auto-detects max_tokens truncation and repairs JSON
 - Question extraction limited to top 40 questions via prompt constraint (reduces output size)
 - Caching is critical: cached genomes from prior runs save 80% of cost
+
+### Superfast Expressway (Instant Legal Research)
+Separate fast-track module that bypasses the full genome pipeline. Receives a pleading via webhook, finds relevant judgments, and returns ready-made legal paragraphs in 25-45 seconds.
+
+**Flow:** Pleading → Claude Haiku generates 3-5 IK queries → Parallel IK search → Parallel doc fetch → Single Claude Sonnet call (1M context window) → 2-3 ready-made legal paragraphs
+
+**Three outputs:**
+1. Full judgment texts from IK API (code, no AI)
+2. Relevant paragraphs + metadata (code, no AI)
+3. Ready-made legal paragraphs citing accurate case titles, para numbers, holdings (one Claude Sonnet 4.6 call)
+
+**API:**
+- `POST /api/expressway/research` — Main endpoint. Auth: `X-API-Key`. Sync (blocks) or async (with callback_url)
+- `GET /api/expressway/status/<job_id>` — Check async job status
+- `GET /api/expressway/result/<job_id>` — Get completed result
+
+**Request:** `{pleading_text, pleading_type?, court?, max_judgments? (default 15, max 25), callback_url?, webhook_secret?}`
+**Response:** `{success, execution_time_seconds, queries_used[], full_texts[], relevant_extracts[], drafted_paragraphs, token_usage}`
+**Cost:** ~$0.60-$1.50 per call (vs $20-70 for full pipeline)
+**Files:** `web/expressway.py` (engine), `web/expressway_prompts.py` (prompts), `web/test_expressway.py` (test)
+**DB table:** `expressway_jobs` — tracks async jobs with status, result, cost, token usage
 
 ## Notes
 

@@ -1819,6 +1819,125 @@ def api_district_fetched_judgments():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/expressway/research", methods=["POST"])
+def api_expressway_research():
+    if not _check_pipeline_auth():
+        return jsonify({"error": "Invalid API key"}), 401
+    body = request.get_json(silent=True)
+    if not body:
+        return jsonify({"error": "Request body is required"}), 400
+    pleading_text = body.get("pleading_text", "").strip()
+    if not pleading_text or len(pleading_text) < 100:
+        return jsonify({"error": "pleading_text is required (minimum 100 characters)"}), 400
+    max_judgments = min(int(body.get("max_judgments", 15)), 25)
+    callback_url = body.get("callback_url", "").strip()
+    if callback_url:
+        from urllib.parse import urlparse
+        parsed = urlparse(callback_url)
+        if parsed.scheme not in ("http", "https"):
+            return jsonify({"error": "callback_url must use http or https"}), 400
+        host = parsed.hostname or ""
+        if host in ("localhost", "127.0.0.1", "0.0.0.0", "::1") or host.startswith("10.") or host.startswith("192.168.") or host.startswith("172."):
+            return jsonify({"error": "callback_url must not point to private/internal addresses"}), 400
+    webhook_secret = body.get("webhook_secret", "")
+    pleading_json = {
+        "pleading_text": pleading_text,
+        "pleading_type": body.get("pleading_type", ""),
+        "court": body.get("court", ""),
+        "client_name": body.get("client_name", ""),
+        "reliefs_sought": body.get("reliefs_sought", ""),
+    }
+    if callback_url:
+        import uuid
+        from db import create_expressway_job, update_expressway_status, save_expressway_result
+        from expressway import run_expressway, pleading_hash as _ph
+        job_id = str(uuid.uuid4())[:12]
+        create_expressway_job(job_id, _ph(pleading_text), callback_url)
+        def _run_async():
+            try:
+                update_expressway_status(job_id, "SEARCHING")
+                result = run_expressway(pleading_json, max_judgments=max_judgments)
+                if result.get("success"):
+                    save_expressway_result(
+                        job_id, result,
+                        int(result.get("execution_time_seconds", 0) * 1000),
+                        result.get("token_usage", {}).get("total_input_tokens", 0),
+                        result.get("token_usage", {}).get("total_output_tokens", 0),
+                        result.get("token_usage", {}).get("total_cost_usd", 0),
+                    )
+                else:
+                    update_expressway_status(job_id, "FAILED", error_message=result.get("error", "Unknown"))
+                _deliver_expressway_webhook(job_id, callback_url, webhook_secret, result)
+            except Exception as e:
+                app.logger.error(f"Expressway async job {job_id} failed: {e}")
+                update_expressway_status(job_id, "FAILED", error_message=str(e))
+        import threading
+        t = threading.Thread(target=_run_async, daemon=True)
+        t.start()
+        return jsonify({
+            "job_id": job_id,
+            "status": "PROCESSING",
+            "message": "Expressway research started. Result will be delivered to callback_url.",
+            "estimated_time_seconds": "25-45",
+        }), 202
+    else:
+        from expressway import run_expressway
+        try:
+            result = run_expressway(pleading_json, max_judgments=max_judgments)
+            return jsonify(result)
+        except Exception as e:
+            app.logger.error(f"Expressway sync failed: {e}")
+            return jsonify({"error": str(e), "success": False}), 500
+
+
+def _deliver_expressway_webhook(job_id, callback_url, webhook_secret, result):
+    import hmac, hashlib
+    event = "expressway.completed" if result.get("success") else "expressway.failed"
+    try:
+        payload = json.dumps({
+            "job_id": job_id,
+            "event": event,
+            "result": result,
+        })
+        headers = {"Content-Type": "application/json"}
+        if webhook_secret:
+            sig = hmac.new(webhook_secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
+            headers["X-Hub-Signature-256"] = f"sha256={sig}"
+        import requests as req_lib
+        resp = req_lib.post(callback_url, data=payload, headers=headers, timeout=30)
+        app.logger.info(f"Expressway webhook delivered for {job_id}: {resp.status_code}")
+        from db import update_expressway_status
+        update_expressway_status(job_id, callback_delivered=True)
+    except Exception as e:
+        app.logger.error(f"Expressway webhook delivery failed for {job_id}: {e}")
+
+
+@app.route("/api/expressway/status/<job_id>")
+def api_expressway_status(job_id):
+    from db import get_expressway_job
+    job = get_expressway_job(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    return jsonify({
+        "job_id": job["job_id"],
+        "status": job["status"],
+        "created_at": job["created_at"].isoformat() if job.get("created_at") else None,
+        "completed_at": job["completed_at"].isoformat() if job.get("completed_at") else None,
+        "execution_time_ms": job.get("execution_time_ms"),
+    })
+
+
+@app.route("/api/expressway/result/<job_id>")
+def api_expressway_result(job_id):
+    from db import get_expressway_job
+    job = get_expressway_job(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    if job["status"] != "COMPLETED":
+        return jsonify({"error": f"Job status is {job['status']}, not COMPLETED yet"}), 400
+    return jsonify(job.get("result_json", {}))
+
+
 try:
     init_db()
     seed_default_templates()
