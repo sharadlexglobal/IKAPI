@@ -238,6 +238,10 @@ async def _fetch_docs_parallel(
         return enriched
 
 
+def _estimate_tokens(text: str) -> int:
+    return len(text) // 4 + 1
+
+
 def _draft_legal_paragraphs(pleading_json: dict, enriched_judgments: list[dict]) -> dict:
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     if not api_key:
@@ -245,8 +249,33 @@ def _draft_legal_paragraphs(pleading_json: dict, enriched_judgments: list[dict])
 
     client = anthropic.Anthropic(api_key=api_key)
 
+    MAX_TOTAL_TOKENS = 150000
+    SYSTEM_PROMPT_TOKENS = _estimate_tokens(LEGAL_PARA_DRAFTING_PROMPT)
+    PLEADING_TOKENS = _estimate_tokens(json.dumps(pleading_json, ensure_ascii=False))
+    OVERHEAD_TOKENS = 5000
+    available_for_judgments = MAX_TOTAL_TOKENS - SYSTEM_PROMPT_TOKENS - PLEADING_TOKENS - OVERHEAD_TOKENS
+
+    sorted_judgments = sorted(enriched_judgments, key=lambda j: j.get("numcitedby", 0), reverse=True)
+
     judgment_summaries = []
-    for j in enriched_judgments:
+    tokens_used = 0
+    for j in sorted_judgments:
+        relevant_frags = j.get("relevant_fragments", [])[:20]
+        relevant_text = json.dumps(relevant_frags, ensure_ascii=False) if relevant_frags else ""
+        relevant_tokens = _estimate_tokens(relevant_text)
+
+        remaining = available_for_judgments - tokens_used
+        if remaining <= 0:
+            break
+
+        meta_tokens = 200
+        text_budget_tokens = remaining - meta_tokens - relevant_tokens
+        if text_budget_tokens < 500:
+            text_budget_tokens = 500
+
+        max_chars = text_budget_tokens * 4
+        full_text = j["full_text"][:max_chars]
+
         summary = {
             "tid": j["tid"],
             "title": j["title"],
@@ -254,11 +283,17 @@ def _draft_legal_paragraphs(pleading_json: dict, enriched_judgments: list[dict])
             "date": j["publishdate"],
             "judge": j.get("author", ""),
             "cited_by": j["numcitedby"],
-            "full_text": j["full_text"][:200000],
+            "full_text": full_text,
         }
-        if j.get("relevant_fragments"):
-            summary["relevant_paragraphs"] = j["relevant_fragments"][:20]
+        if relevant_frags:
+            summary["relevant_paragraphs"] = relevant_frags
         judgment_summaries.append(summary)
+
+        entry_tokens = _estimate_tokens(json.dumps(summary, ensure_ascii=False))
+        tokens_used += entry_tokens
+
+    logger.info(f"[expressway] Drafting with {len(judgment_summaries)}/{len(enriched_judgments)} judgments, "
+                f"~{tokens_used} judgment tokens (budget {available_for_judgments})")
 
     user_msg = json.dumps({
         "pleading": pleading_json,
