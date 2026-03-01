@@ -102,6 +102,10 @@ def _generate_queries_sync(pleading_text: str, pleading_type: str = "") -> list[
         )
         response_text = message.content[0].text.strip()
         logger.debug(f"[expressway] Haiku raw response: {response_text[:500]}")
+        response_text = response_text.replace('\u201c', '"').replace('\u201d', '"')
+        response_text = response_text.replace('\u2018', "'").replace('\u2019', "'")
+        response_text = response_text.replace('\u2033', '"').replace('\u2032', "'")
+        response_text = response_text.replace('\u00ab', '"').replace('\u00bb', '"')
         cleaned = _strip_markdown_json(response_text)
         parsed = None
         for attempt_fn in [
@@ -119,9 +123,27 @@ def _generate_queries_sync(pleading_text: str, pleading_type: str = "") -> list[
                 continue
         if parsed is None:
             logger.warning(f"[expressway] All JSON parse attempts failed, extracting queries via regex")
-            query_matches = re.findall(r'"query"\s*:\s*"([^"]+)"', cleaned)
+            query_matches = re.findall(r'"query"\s*:\s*"((?:[^"\\]|\\"|"")*)"', cleaned)
+            if not query_matches:
+                lines = cleaned.split('\n')
+                for line in lines:
+                    m = re.search(r'"query"\s*:\s*"(.+?)"\s*[,}]', line)
+                    if m:
+                        query_matches.append(m.group(1))
+            if not query_matches:
+                query_matches = re.findall(r'(?:ANDD|ORR|NOTT|doctypes:|"[^"]{3,}")', cleaned)
+                if query_matches:
+                    chunks = re.split(r'\},\s*\{', cleaned)
+                    query_matches = []
+                    for chunk in chunks:
+                        m = re.search(r'"query"\s*:\s*"(.+)', chunk)
+                        if m:
+                            val = m.group(1)
+                            end = val.rfind('"')
+                            if end > 0:
+                                query_matches.append(val[:end])
             if query_matches:
-                parsed = {"queries": [{"query": q, "doctype": "", "sort": "mostcited", "rationale": "regex-extracted"} for q in query_matches]}
+                parsed = {"queries": [{"query": q.replace('\\"', '"'), "doctype": "judgments", "sort": "mostcited", "rationale": "regex-extracted"} for q in query_matches]}
                 logger.info(f"[expressway] Regex-extracted {len(query_matches)} queries from malformed JSON")
             else:
                 raise ValueError(f"Cannot parse Haiku response as JSON or extract queries")
