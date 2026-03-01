@@ -101,15 +101,33 @@ def _generate_queries_sync(pleading_text: str, pleading_type: str = "") -> list[
             timeout=30,
         )
         response_text = message.content[0].text.strip()
+        logger.debug(f"[expressway] Haiku raw response: {response_text[:500]}")
         cleaned = _strip_markdown_json(response_text)
-        try:
-            parsed = json.loads(cleaned)
-        except json.JSONDecodeError:
-            cleaned = re.sub(r',\s*}', '}', cleaned)
-            cleaned = re.sub(r',\s*]', ']', cleaned)
-            cleaned = re.sub(r'[\x00-\x1f]', ' ', cleaned)
-            parsed = json.loads(cleaned)
+        parsed = None
+        for attempt_fn in [
+            lambda t: json.loads(t),
+            lambda t: json.loads(re.sub(r',\s*}', '}', re.sub(r',\s*]', ']', re.sub(r'[\x00-\x1f]', ' ', t)))),
+            lambda t: json.loads(t[t.find('{'):t.rfind('}') + 1]) if '{' in t else None,
+            lambda t: json.loads(re.sub(r'//[^\n]*', '', t[t.find('{'):t.rfind('}') + 1])) if '{' in t else None,
+        ]:
+            try:
+                result = attempt_fn(cleaned)
+                if result is not None:
+                    parsed = result
+                    break
+            except (json.JSONDecodeError, TypeError, ValueError):
+                continue
+        if parsed is None:
+            logger.warning(f"[expressway] All JSON parse attempts failed, extracting queries via regex")
+            query_matches = re.findall(r'"query"\s*:\s*"([^"]+)"', cleaned)
+            if query_matches:
+                parsed = {"queries": [{"query": q, "doctype": "", "sort": "mostcited", "rationale": "regex-extracted"} for q in query_matches]}
+                logger.info(f"[expressway] Regex-extracted {len(query_matches)} queries from malformed JSON")
+            else:
+                raise ValueError(f"Cannot parse Haiku response as JSON or extract queries")
         queries = parsed.get("queries", [])
+        if isinstance(queries, list) and len(queries) > 0 and isinstance(queries[0], str):
+            queries = [{"query": q, "doctype": "", "sort": "mostcited", "rationale": "auto"} for q in queries]
         usage = {
             "input_tokens": message.usage.input_tokens,
             "output_tokens": message.usage.output_tokens,
@@ -120,14 +138,32 @@ def _generate_queries_sync(pleading_text: str, pleading_type: str = "") -> list[
         return queries, usage
     except Exception as e:
         logger.error(f"[expressway] Query generation failed: {e}")
-        provisions = re.findall(r'[Ss]ection\s+\d+[A-Za-z]?\s+(?:of\s+)?(?:the\s+)?\w+', pleading_text[:10000])
-        fallback = []
-        for p in provisions[:3]:
-            fallback.append({"query": f'"{p}"', "doctype": "supremecourt", "sort": "mostcited", "rationale": "fallback"})
-        if not fallback:
-            words = pleading_text[:200].split()[:10]
-            fallback.append({"query": " ".join(words), "doctype": "", "sort": "mostcited", "rationale": "fallback"})
+        fallback = _build_fallback_queries(pleading_text, pleading_type)
         return fallback, {"input_tokens": 0, "output_tokens": 0, "cost_usd": 0}
+
+
+def _build_fallback_queries(pleading_text: str, pleading_type: str = "") -> list[dict]:
+    fallback = []
+    provisions = re.findall(
+        r'(?:[Ss]ection|[Aa]rticle|[Rr]ule|[Oo]rder)\s+\d+[A-Za-z]?(?:\s*(?:of|,)\s*(?:the\s+)?[\w\s]+(?:Act|Code|Rules|Constitution)(?:,?\s*\d{4})?)?',
+        pleading_text[:15000]
+    )
+    seen = set()
+    for p in provisions[:6]:
+        p_clean = p.strip()
+        if p_clean.lower() not in seen:
+            seen.add(p_clean.lower())
+            fallback.append({"query": f'"{p_clean}"', "doctype": "judgments", "sort": "mostcited", "rationale": "fallback-provision"})
+    keywords = re.findall(r'(?:bail|quashing|anticipatory|writ|mandamus|certiorari|habeas corpus|stay|injunction|appeal|revision|discharge|acquittal|conviction|custody|parole|compensation|damages|specific performance|eviction|restitution|maintenance|divorce|guardianship)', pleading_text[:10000], re.IGNORECASE)
+    unique_kw = list(dict.fromkeys([k.lower() for k in keywords]))
+    for kw in unique_kw[:2]:
+        if len(fallback) < 5:
+            fallback.append({"query": kw, "doctype": "judgments", "sort": "mostcited", "rationale": f"fallback-keyword-{kw}"})
+    if not fallback:
+        words = [w for w in pleading_text[:500].split() if len(w) > 3][:8]
+        fallback.append({"query": " ".join(words), "doctype": "judgments", "sort": "mostcited", "rationale": "fallback-generic"})
+    logger.info(f"[expressway] Built {len(fallback)} fallback queries")
+    return fallback
 
 
 async def _search_ik_parallel(queries: list[dict], token: str, max_judgments: int = 15) -> list[dict]:
