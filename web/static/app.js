@@ -2235,7 +2235,7 @@ function showGenomeFromDb(tid) {
     var genomTab = document.querySelector('[data-view="genomeLab"]');
     if (genomTab) genomTab.classList.add("active");
     document.querySelectorAll(".view-panel").forEach(function (p) { p.classList.remove("active"); });
-    var glPanel = document.getElementById("genomeLab");
+    var glPanel = document.getElementById("genomeLabView");
     if (glPanel) glPanel.classList.add("active");
 
     var genomeSubTabs = document.querySelectorAll(".genome-sub-tab");
