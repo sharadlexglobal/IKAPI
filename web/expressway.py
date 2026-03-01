@@ -276,7 +276,21 @@ def _draft_legal_paragraphs(pleading_json: dict, enriched_judgments: list[dict])
         )
         response_text = message.content[0].text.strip()
         cleaned = _strip_markdown_json(response_text)
-        parsed = json.loads(cleaned)
+        try:
+            parsed = json.loads(cleaned)
+        except json.JSONDecodeError:
+            cleaned = re.sub(r',\s*}', '}', cleaned)
+            cleaned = re.sub(r',\s*]', ']', cleaned)
+            cleaned = re.sub(r'[\x00-\x1f]', ' ', cleaned)
+            try:
+                parsed = json.loads(cleaned)
+            except json.JSONDecodeError:
+                brace_start = cleaned.find('{')
+                brace_end = cleaned.rfind('}')
+                if brace_start >= 0 and brace_end > brace_start:
+                    parsed = json.loads(cleaned[brace_start:brace_end + 1])
+                else:
+                    raise
         usage = {
             "input_tokens": message.usage.input_tokens,
             "output_tokens": message.usage.output_tokens,

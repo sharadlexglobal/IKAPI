@@ -1829,7 +1829,10 @@ def api_expressway_research():
     pleading_text = body.get("pleading_text", "").strip()
     if not pleading_text or len(pleading_text) < 100:
         return jsonify({"error": "pleading_text is required (minimum 100 characters)"}), 400
-    max_judgments = min(int(body.get("max_judgments", 15)), 25)
+    try:
+        max_judgments = min(int(body.get("max_judgments", 15)), 25)
+    except (ValueError, TypeError):
+        max_judgments = 15
     callback_url = body.get("callback_url", "").strip()
     if callback_url:
         from urllib.parse import urlparse
