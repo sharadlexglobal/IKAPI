@@ -226,7 +226,7 @@ def _step_extract_questions(job_id, job, cost_tracker):
     user_message = (
         f"## OUTPUT SCHEMA\n{schema_summary}\n\n"
         f"## IMPORTANT CONSTRAINTS\n"
-        f"- Limit to the TOP 40 most important questions across all categories.\n"
+        f"- Limit to the TOP 30 most important questions across all categories. Do NOT exceed 30 questions.\n"
         f"- Keep why_this_matters and research_direction fields to 1-2 sentences each.\n"
         f"- Only include categories that have relevant questions (skip empty categories).\n"
         f"- Prioritize CRITICAL and HIGH importance questions.\n\n"
