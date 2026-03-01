@@ -1,0 +1,484 @@
+{
+  "document_id": "REPLACE_WITH_UNIQUE_ID",
+  "schema_version": "3.1.0",
+  "extraction_metadata": {
+    "extraction_date": "YYYY-MM-DD",
+    "source_url": "https://indiankanoon.org/doc/XXXXXX/",
+    "judgment_citation": "(YEAR) VOLUME REPORTER PAGE",
+    "framework_version": "Judgment Genome Project v3.0",
+    "extractor": "MODEL_NAME_HERE"
+  },
+  "dimension_1_visible": {
+    "case_identity": {
+      "case_name": "Party A v. Party B",
+      "court": "Supreme Court of India",
+      "bench": {
+        "judges": [
+          {"name": "Justice Name", "role": "AUTHOR"}
+        ],
+        "strength": 2,
+        "is_constitution_bench": false
+      },
+      "date_of_judgment": "YYYY-MM-DD",
+      "case_number": "Criminal Appeal No. XXX/YYYY",
+      "domain": "CRIMINAL",
+      "domain_detail": "Sub-domain description",
+      "judgment_author": "Justice Name",
+      "dissenting_judges": [],
+      "case_origin": "APPEAL",
+      "source_paragraphs": "¶1-3"
+    },
+    "story": {
+      "plain_language": "8-15 sentences in plain English, no legal jargon. Tell the story as if explaining to a non-lawyer.",
+      "legal_language": "5-10 sentences with full legal precision, proper terminology, and statutory references.",
+      "verification_note": "Confirmed both versions are factually identical."
+    },
+    "procedural_journey": [
+      {
+        "stage": "Trial Court",
+        "forum": "Sessions Court, City",
+        "date": "YYYY-MM-DD",
+        "date_source": "STATED_IN_JUDGMENT",
+        "outcome": "Convicted/Acquitted/Dismissed",
+        "what_was_decided": "Brief description of what was decided at this stage",
+        "source_paragraph": "¶X"
+      }
+    ],
+    "provisions_engaged": [
+      {
+        "provision_id": "Section XXX Act Name — Short Title",
+        "parent_statute": "Full Statute Name, Year",
+        "exact_text": null,
+        "text_source": "NOT_REPRODUCED_IN_JUDGMENT_REQUIRES_VERIFICATION",
+        "role": "CHARGED_PROVISION",
+        "court_action": "APPLIED",
+        "source_paragraph": "¶X",
+        "corresponding_new_provision": null
+      }
+    ],
+    "precedent_registry": [
+      {
+        "case_name": "Cited Case Name v. Other Party",
+        "citation": "(YEAR) VOLUME REPORTER PAGE",
+        "what_it_held": "2-3 sentences — ONLY what the current judgment says this case held. Do not add from your own knowledge.",
+        "why_cited": "Why the court cited this case",
+        "treatment": "FOLLOWED",
+        "source_paragraph": "¶X"
+      }
+    ],
+    "ratio_decidendi": [
+      {
+        "ratio_id": "RATIO_1",
+        "label": "Short descriptive label",
+        "proposition": "Universalized legal principle stated as a general rule, not case-specific.",
+        "source_paragraph": "¶X",
+        "linked_syllogism_ids": ["SYL_1"]
+      }
+    ],
+    "obiter_dicta": [
+      {
+        "obiter_id": "OBITER_1",
+        "observation": "The court's observation that was not necessary for the decision",
+        "future_significance": "How this observation might matter in future cases",
+        "source_paragraph": "¶X",
+        "necessity_check": {
+          "is_necessary_for_decision": false,
+          "verified": true
+        }
+      }
+    ],
+    "operative_order": {
+      "order_text": "Verbatim or close paraphrase of what the court ordered",
+      "order_items": [
+        {"action": "ALLOWED", "detail": "Specific detail of what was ordered"}
+      ],
+      "source_paragraph": "¶X"
+    }
+  },
+  "dimension_2_structural": {
+    "syllogisms": {
+      "items": [
+        {
+          "syllogism_id": "SYL_1",
+          "label": "Short label for this syllogism",
+          "major_premise": "The legal rule (general principle or statutory provision)",
+          "minor_premise": "The case-specific facts applied to the rule",
+          "conclusion": "The conclusion that follows",
+          "source_paragraphs": "¶X-Y",
+          "is_independent": true,
+          "feeds_into": []
+        }
+      ],
+      "chain_logic": "Narrative description of how the syllogisms connect to produce the final conclusion."
+    },
+    "dependency_tree": {
+      "root_node": "The ultimate conclusion / operative order",
+      "nodes": [
+        {
+          "node_id": "DEP_1",
+          "parent_node_id": null,
+          "branch_id": "BRANCH_A",
+          "premise": "The premise this node represents",
+          "type": "LEGAL_RULE",
+          "is_critical": true,
+          "source_paragraph": "¶X"
+        }
+      ]
+    },
+    "interpretive_method": {
+      "primary_method": "PURPOSIVE",
+      "method_basis": "EXPLICITLY_STATED",
+      "method_explanation": "Explanation of why the judge chose this interpretive method",
+      "alternative_method_analysis": [
+        {
+          "method": "LITERAL",
+          "would_outcome_change": false,
+          "likely_alternative_outcome": null,
+          "analysis_steps": ["Step 1: Apply the literal text...", "Step 2: Compare the result..."],
+          "analysis_narrative": "Step-by-step application of this alternative method to the same facts"
+        }
+      ],
+      "judges_tendency": "Description of the judge's interpretive tendency based on this judgment"
+    },
+    "rhetorical_architecture": {
+      "opening_move": "How the judgment opens (e.g., sets out the question, narrates facts first, etc.)",
+      "persuasion_technique": "Primary persuasion strategy used",
+      "metaphor_or_analogy": null,
+      "tone": "NEUTRAL",
+      "strategic_ambiguity": null,
+      "source_paragraphs": "¶X-Y"
+    }
+  },
+  "dimension_3_invisible": {
+    "hidden_assumptions": [
+      {
+        "assumption_id": "HA_1",
+        "what_court_assumes": "The unstated assumption the court relies on",
+        "where_it_operates": "¶X",
+        "why_it_matters": "Why this assumption is significant for the reasoning",
+        "how_to_challenge": "How an advocate could challenge this assumption",
+        "confidence": "SOUND_INFERENCE",
+        "self_check": {
+          "is_truly_unstated": true,
+          "challenge_structurally_valid": true,
+          "notes": "Verification notes"
+        }
+      }
+    ],
+    "silent_arguments": [
+      {
+        "argument_id": "SA_1",
+        "the_argument": "The argument that was never made but should have been",
+        "who_should_have_made_it": "APPELLANT",
+        "why_it_matters": "Why this omission is significant",
+        "provision_or_principle": "Section XXX of Act Name",
+        "confidence": "SOUND_INFERENCE",
+        "stress_test": {
+          "step_1_statutory_basis": {
+            "provision_identified": true,
+            "provision_detail": "Exact section and statute"
+          },
+          "step_2_structural_validity": {
+            "respects_hierarchy": true,
+            "explanation": "How this argument respects statutory hierarchy"
+          },
+          "step_3_adversarial_challenge": {
+            "counter_argument": "The strongest counter-argument against this silent argument",
+            "is_counter_stronger": false
+          },
+          "verdict": "INCLUDE"
+        }
+      }
+    ],
+    "fact_sensitivity_matrix": {
+      "load_bearing_facts": [
+        {
+          "fact": "A fact that the reasoning critically depends on",
+          "dependent_syllogism_ids": ["SYL_1"],
+          "source_paragraph": "¶X"
+        }
+      ],
+      "decorative_facts": [
+        {
+          "fact": "A fact mentioned but not critical to the reasoning",
+          "why_decorative": "Why removing this fact would not change the outcome",
+          "source_paragraph": "¶X"
+        }
+      ],
+      "ambiguous_facts": [
+        {
+          "fact": "A fact whose characterization is debatable",
+          "why_ambiguous": "Why this fact could be read differently",
+          "source_paragraph": "¶X"
+        }
+      ]
+    },
+    "counterfactual_analysis": [
+      {
+        "cf_id": "CF_1",
+        "original_fact": "The actual fact as stated in the judgment",
+        "original_fact_source": "¶X",
+        "altered_fact": "What if this fact were different?",
+        "impact_on_reasoning": "Which syllogism from 2.1 would break?",
+        "broken_syllogism_id": "SYL_1",
+        "likely_new_outcome": "What the outcome would likely be",
+        "applicable_provision": "Section XXX of Act Name",
+        "confidence": "SOUND_INFERENCE",
+        "is_practically_plausible": true
+      }
+    ],
+    "alternative_interpretations": [
+      {
+        "alt_id": "ALT_1",
+        "what_it_would_have_been": "The alternative interpretation not chosen by the court",
+        "why_not_adopted": "Why the court rejected or did not consider this",
+        "confidence": "SOUND_INFERENCE",
+        "statutory_structure_check": {
+          "respects_hierarchy": true,
+          "hierarchy_explanation": "How provisions relate hierarchically",
+          "intent_vs_definition_confusion": false,
+          "passes_check": true
+        },
+        "is_defensible": true,
+        "what_would_change": "How the outcome would differ"
+      }
+    ],
+    "doctrinal_undercurrent": {
+      "doctrines": [
+        {
+          "doctrine_name": "Name of the doctrine at work",
+          "how_it_manifests": "How this doctrine operates in the judgment",
+          "source_paragraphs": "¶X-Y"
+        }
+      ],
+      "tensions": [
+        {
+          "competing_doctrine": "Name of the competing doctrine",
+          "description": "Description of the tension",
+          "supporting_sc_judgment": "Case Name (Year) — at least one SC judgment endorsing the competing doctrine",
+          "verification_status": "VERIFIED_WITH_CITATION",
+          "source_paragraph": "¶X"
+        }
+      ]
+    }
+  },
+  "dimension_4_weaponizable": {
+    "sword_uses": [
+      {
+        "use_case_id": "SWORD_1",
+        "scenario": "Scenario where this judgment can be used offensively",
+        "how_to_cite": "¶X — specific paragraph to cite",
+        "draft_argument": "2-3 sentence draft argument with case name, citation, and ¶ number ready to use in court.",
+        "stage_of_proceedings": "BAIL",
+        "is_practically_common": true
+      }
+    ],
+    "shield_uses": [
+      {
+        "scenario_id": "SHIELD_1",
+        "attack_being_faced": "What attack this judgment defends against",
+        "how_judgment_helps": "How citing this judgment helps defensively",
+        "key_factual_similarity": "What facts MUST be true in your case for this shield to work",
+        "boundary_condition": "Under what facts would this shield FAIL",
+        "source_paragraph": "¶X"
+      }
+    ],
+    "vulnerability_map": {
+      "vulnerabilities": [
+        {
+          "vuln_id": "VULN_1",
+          "weak_point": "The specific weakness in this judgment",
+          "attack_vector": "How to exploit this weakness",
+          "likelihood_of_success": "MEDIUM",
+          "what_would_be_needed": "What facts/arguments would be needed to succeed",
+          "confidence": "SOUND_INFERENCE",
+          "stress_test": {
+            "statutory_basis": "Statutory basis for the attack",
+            "respects_hierarchy": true,
+            "defence_response": "How the other side would defend",
+            "is_defence_stronger": false
+          }
+        }
+      ],
+      "overall_durability_score": 7,
+      "durability_reasoning": "Explanation of why this score was assigned"
+    },
+    "distinguishing_playbook": [
+      {
+        "strategy_id": "DIST_1",
+        "factual_difference": "The key factual difference to exploit",
+        "draft_argument": "Draft argument for distinguishing this judgment",
+        "is_material_to_ratio": true,
+        "validity_note": "Why this distinction is material to the ratio",
+        "source_paragraph": "¶X"
+      }
+    ],
+    "cross_domain_transplants": [
+      {
+        "transplant_id": "TRANS_1",
+        "original_domain": "CRIMINAL",
+        "target_domain": "CIVIL",
+        "analogous_principle": "The principle that can be transplanted",
+        "viability": "MEDIUM",
+        "gate_7_validation": {
+          "target_provision": "Section XXX of Target Act",
+          "has_specialized_framework": false,
+          "specialized_framework_name": null,
+          "works_within_framework": null,
+          "specialist_would_accept": true,
+          "verdict": "VIABLE"
+        }
+      }
+    ],
+    "temporal_vulnerability": {
+      "bench_strength": 2,
+      "can_be_overruled_by": "3-judge bench or larger",
+      "legislative_override_risk": "Assessment of legislative override risk",
+      "cross_statutory_mapping": null,
+      "societal_shift_risk": "Assessment of societal/doctrinal shifts",
+      "conflicting_trends": "Any conflicting judicial trends",
+      "survival_probability": "HIGH_10_PLUS_YEARS"
+    }
+  },
+  "dimension_5_synthesis": {
+    "interpretive_lineage_map": [
+      {
+        "provision": "Section XXX of Act",
+        "timeline": [
+          {
+            "year": 2020,
+            "case_or_event": "Case Name or legislative event",
+            "layer_added": "What interpretive layer was added",
+            "method_used": "PURPOSIVE",
+            "status_now": "Good law / Overruled / Modified",
+            "durability": "HIGH",
+            "is_current_judgment": false,
+            "source": "CITED_IN_JUDGMENT"
+          }
+        ]
+      }
+    ],
+    "genome_summary": {
+      "text": "5-8 sentences capturing: what the court held, what assumptions it made, where it is vulnerable, where the law is heading, and why this judgment matters. Minimum 200 characters.",
+      "consistency_verified_against": ["1.6", "2.1", "3.1", "4.3", "4.6"],
+      "consistency_check_passed": true
+    },
+    "practitioners_cheat_sheet": {
+      "cite_when": [
+        "Condition 1 when you should cite this judgment",
+        "Condition 2 when you should cite this judgment"
+      ],
+      "do_not_cite_when": [
+        "Condition 1 when you should NOT cite this judgment",
+        "Condition 2 when you should NOT cite this judgment"
+      ],
+      "killer_paragraph": {
+        "paragraph_number": "¶X",
+        "text": "The most powerful paragraph — verbatim from judgment",
+        "text_verification": "VERBATIM_FROM_JUDGMENT"
+      },
+      "hidden_gem": {
+        "paragraph_number": "¶X",
+        "text": "An overlooked paragraph with untapped potential",
+        "why_it_matters": "Why practitioners should pay attention to this",
+        "text_verification": "VERBATIM_FROM_JUDGMENT"
+      }
+    },
+    "questions_created": [
+      {
+        "question_id": "Q_1",
+        "the_question": "A new legal question this judgment creates or leaves open",
+        "why_new": "Why this question did not exist before this judgment",
+        "who_will_raise_first": "Who is most likely to raise this question",
+        "likely_forum": "Supreme Court / High Court / Tribunal",
+        "confidence": "SOUND_INFERENCE",
+        "constitutional_reference": null
+      }
+    ],
+    "extraction_confidence": {
+      "overall_confidence": "HIGH",
+      "highest_uncertainty_sections": ["3.2", "4.5"],
+      "judgment_clarity_grade": "A",
+      "extraction_limitations": ["Any limitations encountered during extraction"]
+    }
+  },
+  "dimension_6_audit": {
+    "internal_consistency": {
+      "check_1_ratio_syllogism": {
+        "passed": true,
+        "detail": "Every ratio in 1.6 traces to at least one syllogism in 2.1"
+      },
+      "check_2_operative_order": {
+        "passed": true,
+        "detail": "Operative order in 1.8 is consistent with ratio in 1.6"
+      },
+      "check_3_dependency_tree": {
+        "passed": true,
+        "detail": "Every syllogism conclusion in 2.1 appears as a node in 2.2"
+      },
+      "check_4_fact_sensitivity": {
+        "passed": true,
+        "detail": "Every load-bearing fact in 3.3 links to specific syllogism(s) in 2.1"
+      },
+      "check_5_counterfactual": {
+        "passed": true,
+        "detail": "Every counterfactual in 3.4 targets a real syllogism and a real fact"
+      }
+    },
+    "statutory_verification": {
+      "check_6_provision_numbers": {
+        "all_verified": true,
+        "unverified_provisions": []
+      },
+      "check_7_cross_statutory": {
+        "mappings_present": false,
+        "all_verified": true,
+        "mapping_details": []
+      },
+      "check_8_hierarchy": {
+        "claims_present": true,
+        "all_valid": true,
+        "hierarchy_claims": []
+      }
+    },
+    "analytical_claims": {
+      "check_9_silent_arguments": {
+        "all_stress_tested": true,
+        "results": [
+          {
+            "argument_id": "SA_1",
+            "stress_test_result": "PASSED",
+            "removed_if_failed": false
+          }
+        ]
+      },
+      "check_10_transplants": {
+        "all_validated": true,
+        "results": [
+          {
+            "transplant_id": "TRANS_1",
+            "gate_7_result": "PASSED",
+            "removed_if_failed": false
+          }
+        ]
+      },
+      "check_11_constitutional": {
+        "references_present": false,
+        "all_accurate": true,
+        "details": []
+      },
+      "check_12_vulnerability_ratings": {
+        "all_adversarially_tested": true,
+        "downgrades": []
+      }
+    },
+    "final_certification": {
+      "all_12_checks_completed": true,
+      "all_failed_items_corrected": true,
+      "unverifiable_items_flagged": true,
+      "confidence_markers_applied": true,
+      "certification_level": "COURT_USE",
+      "certified_date": "YYYY-MM-DD"
+    }
+  }
+}
