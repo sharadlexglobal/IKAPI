@@ -2096,47 +2096,12 @@ function loadTaxonomyCategories() {
         });
 }
 
-function loadTaxonomyTopics(catId) {
-    var container = document.getElementById("taxonomyTopicList");
-    container.innerHTML = '<div class="empty-state"><p>Loading topics...</p></div>';
-    fetch("/api/taxonomy/topics?category_id=" + encodeURIComponent(catId))
-        .then(function (r) { return r.json(); })
-        .then(function (topics) {
-            if (!topics.length) {
-                container.innerHTML = '<div class="empty-state"><p>No topics defined for this category yet.</p></div>';
-                return;
-            }
-            var html = "";
-            topics.forEach(function (t) {
-                var kwHtml = "";
-                if (t.keywords && t.keywords.length) {
-                    t.keywords.slice(0, 8).forEach(function (kw) {
-                        kwHtml += '<span class="taxonomy-keyword-tag">' + escapeHtml(kw) + '</span>';
-                    });
-                    if (t.keywords.length > 8) kwHtml += '<span class="taxonomy-keyword-tag">+' + (t.keywords.length - 8) + ' more</span>';
-                }
-                html += '<div class="taxonomy-topic-card" data-topic-id="' + t.id + '">' +
-                    '<div class="taxonomy-topic-header"><span class="taxonomy-topic-name">' + escapeHtml(t.name) + '</span>' +
-                    '<span class="taxonomy-topic-count">' + t.genome_count + ' genome' + (t.genome_count !== 1 ? 's' : '') + '</span></div>' +
-                    (t.description ? '<div class="taxonomy-topic-desc">' + escapeHtml(t.description) + '</div>' : '') +
-                    (kwHtml ? '<div class="taxonomy-topic-keywords">' + kwHtml + '</div>' : '') +
-                    '</div>';
-            });
-            container.innerHTML = html;
-            container.querySelectorAll(".taxonomy-topic-card").forEach(function (el) {
-                el.addEventListener("click", function () {
-                    var topicId = this.getAttribute("data-topic-id");
-                    var topicName = this.querySelector(".taxonomy-topic-name").textContent;
-                    _taxonomyActiveTopic = topicId;
-                    loadTaxonomyGenomes("topic", topicId, topicName);
-                });
-            });
-        });
-}
-
 function loadTaxonomyGenomes(type, id, label) {
     document.getElementById("taxonomyTopicList").style.display = "none";
     document.getElementById("taxonomySearchResults").style.display = "none";
+    document.getElementById("taxonomySynthesisPanel").style.display = "none";
+    document.getElementById("taxonomyConflictPanel").style.display = "none";
+    document.getElementById("taxonomyComparePanel").style.display = "none";
     var genomeSection = document.getElementById("taxonomyGenomeList");
     genomeSection.style.display = "";
     document.getElementById("taxonomyGenomeListTitle").textContent = label;
@@ -2384,7 +2349,7 @@ function loadHeatmap() {
                     _heatmapVisible = false;
                     document.getElementById("heatmapDashboard").style.display = "none";
                     heatmapToggle.textContent = "Coverage Dashboard";
-                    loadTaxonomyGenomes("topic", topicId, topicName);
+                    loadTaxonomyGenomesWithCompare("topic", topicId, topicName);
                 });
             });
         });

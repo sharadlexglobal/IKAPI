@@ -1576,7 +1576,9 @@ def api_taxonomy_heatmap():
 def api_topic_synthesize(topic_id):
     try:
         from topic_synthesis import synthesize_topic
-        synthesis, usage = synthesize_topic(topic_id)
+        data = request.get_json(silent=True) or {}
+        force = data.get("force", False)
+        synthesis, usage = synthesize_topic(topic_id, force=force)
         return jsonify({"synthesis": synthesis, "usage": usage})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404

@@ -57,7 +57,7 @@ TOPIC_SYNTHESIS_SCHEMA = """{
 }"""
 
 
-def synthesize_topic(topic_id):
+def synthesize_topic(topic_id, force=False):
     from db import get_topic_genomes_with_json, get_topic_synthesis, save_topic_synthesis
 
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -68,9 +68,10 @@ def synthesize_topic(topic_id):
     if not genomes:
         raise ValueError(f"No genomes found for topic {topic_id}")
 
-    cached = get_topic_synthesis(topic_id)
-    if cached and cached.get("genome_count") == len(genomes):
-        return cached["synthesis_json"], {"cached": True}
+    if not force:
+        cached = get_topic_synthesis(topic_id)
+        if cached and cached.get("genome_count") == len(genomes):
+            return cached["synthesis_json"], {"cached": True}
 
     genome_summaries = _prepare_topic_genome_summaries(genomes)
 
