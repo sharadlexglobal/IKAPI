@@ -1941,6 +1941,46 @@ def api_expressway_result(job_id):
     return jsonify(job.get("result_json", {}))
 
 
+@app.route("/api/genome-research", methods=["POST"])
+def api_genome_research():
+    body = request.get_json(silent=True)
+    if not body or not body.get("question"):
+        return jsonify({"error": "Missing 'question' field"}), 400
+    question = body["question"].strip()
+    if len(question) < 10:
+        return jsonify({"error": "Question too short (minimum 10 characters)"}), 400
+    max_genomes = min(int(body.get("max_genomes", 15)), 30)
+    try:
+        from genome_research import run_genome_research
+        result = run_genome_research(question, max_genomes=max_genomes)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"[genome-research] API error: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/genome-research/discover")
+def api_genome_research_discover():
+    question = request.args.get("q", "").strip()
+    if not question or len(question) < 10:
+        return jsonify({"error": "Missing or too short 'q' parameter"}), 400
+    try:
+        from genome_research import expand_query, discover_relevant_genomes, filter_relevant
+        expanded = expand_query(question)
+        discovery = discover_relevant_genomes(expanded)
+        filtered = filter_relevant(question, discovery["candidates"])
+        return jsonify({
+            "success": True,
+            "expanded_query": expanded,
+            "total_searched": discovery["total_searched"],
+            "candidates_found": len(discovery["candidates"]),
+            "relevant": filtered["relevant"],
+        })
+    except Exception as e:
+        logger.error(f"[genome-research] Discover error: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 try:
     init_db()
     seed_default_templates()

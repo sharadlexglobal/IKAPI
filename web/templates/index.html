@@ -13,6 +13,7 @@
             <p>Search millions of Indian court judgments, laws, and legal documents</p>
             <div class="nav-tabs">
                 <button class="nav-tab active" data-view="search">Search</button>
+                <button class="nav-tab research-tab" data-view="genomeResearch">Research</button>
                 <button class="nav-tab" data-view="analysis">Analysis</button>
                 <button class="nav-tab" data-view="genomeLab">Genome Lab</button>
                 <button class="nav-tab" data-view="pipeline">Pipeline</button>
@@ -202,6 +203,45 @@
                     <p>Enter a query above to search through judgments, laws, and tribunal orders.</p>
                     <p class="empty-hint">Try clicking "Search tips &amp; examples" for help crafting your query, or use "Smart Search" to search in plain language.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="genomeResearchView" class="view-panel">
+        <div class="container">
+            <div class="research-header">
+                <h2>Legal Research from Genomes</h2>
+                <p>Ask any legal research question. The system discovers relevant pre-analyzed judgment genomes and generates a comprehensive research report with exact citations, paragraph numbers, and holdings.</p>
+            </div>
+            <div class="research-input-section">
+                <textarea id="researchQuestion" class="research-textarea" rows="4" placeholder="Ask any legal research question, e.g.: Under what circumstances can a cheque bounce complaint under Section 138 NI Act be quashed under Section 482 CrPC?"></textarea>
+                <div class="research-controls">
+                    <button id="researchBtn" class="research-btn">Research from Genomes</button>
+                    <button id="discoverOnlyBtn" class="discover-btn">Discover Only (No Report)</button>
+                </div>
+            </div>
+            <div id="researchProgress" class="research-progress" style="display:none;">
+                <div class="progress-steps">
+                    <div class="progress-step" id="stepExpand"><span class="step-icon"></span> Expanding query...</div>
+                    <div class="progress-step" id="stepDiscover"><span class="step-icon"></span> Discovering genomes...</div>
+                    <div class="progress-step" id="stepFilter"><span class="step-icon"></span> Filtering relevance...</div>
+                    <div class="progress-step" id="stepGenerate"><span class="step-icon"></span> Generating report...</div>
+                </div>
+            </div>
+            <div id="researchResults" class="research-results" style="display:none;">
+                <div class="research-discovery" id="discoveryPanel">
+                    <h3>Discovery Results</h3>
+                    <div class="discovery-stats" id="discoveryStats"></div>
+                    <div class="discovery-genomes" id="discoveryGenomes"></div>
+                </div>
+                <div class="research-report" id="reportPanel" style="display:none;">
+                    <h3>Legal Research Report</h3>
+                    <div class="report-content" id="reportContent"></div>
+                </div>
+            </div>
+            <div id="researchEmpty" class="empty-state">
+                <p>Type a legal research question above and click "Research from Genomes" to generate a report from pre-analyzed judgment data.</p>
+                <p class="research-note">This feature works from saved genomes only. For live search from Indian Kanoon, use the Search tab.</p>
             </div>
         </div>
     </div>

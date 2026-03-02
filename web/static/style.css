@@ -3477,3 +3477,271 @@ body {
     padding: 3px 10px;
     font-size: 0.75rem;
 }
+
+.research-tab {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    color: #fff !important;
+    font-weight: 700;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+.research-tab:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    transform: translateY(-1px);
+}
+
+.research-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+.research-header h2 {
+    color: #1e293b;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+.research-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.research-input-section {
+    max-width: 800px;
+    margin: 0 auto 24px;
+}
+.research-textarea {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.research-textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+.research-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    justify-content: center;
+}
+.research-btn {
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.research-btn:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+.research-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+.discover-btn {
+    padding: 12px 24px;
+    background: #fff;
+    color: #6366f1;
+    border: 2px solid #6366f1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.discover-btn:hover {
+    background: #f5f3ff;
+}
+.discover-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.research-progress {
+    max-width: 500px;
+    margin: 24px auto;
+}
+.progress-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+.progress-step.active {
+    background: #eff6ff;
+    color: #3b82f6;
+    font-weight: 600;
+}
+.progress-step.done {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+.progress-step .step-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.progress-step.active .step-icon {
+    background: #3b82f6;
+    animation: pulse 1s infinite;
+}
+.progress-step.done .step-icon {
+    background: #16a34a;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.research-results {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.research-discovery {
+    margin-bottom: 24px;
+}
+.research-discovery h3 {
+    color: #1e293b;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+.discovery-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.stat-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 120px;
+}
+.stat-card .stat-num {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #6366f1;
+}
+.stat-card .stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+.discovery-genomes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.genome-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+.genome-card:hover {
+    border-color: #6366f1;
+}
+.genome-score {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.genome-info {
+    flex: 1;
+    min-width: 0;
+}
+.genome-title {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.genome-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+.genome-reason {
+    font-size: 0.8rem;
+    color: #6366f1;
+    font-style: italic;
+}
+
+.research-report h3 {
+    color: #1e293b;
+    margin-bottom: 16px;
+    font-size: 1.2rem;
+}
+.report-content {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 28px 32px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #1e293b;
+    white-space: pre-wrap;
+    font-family: 'Georgia', serif;
+}
+.report-content h1, .report-content h2, .report-content h3 {
+    color: #1e293b;
+    font-family: inherit;
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.research-note {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+.research-timing {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+}

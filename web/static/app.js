@@ -3110,3 +3110,181 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
         }
     });
 });
+
+(function() {
+    var researchBtn = document.getElementById('researchBtn');
+    var discoverBtn = document.getElementById('discoverOnlyBtn');
+    var questionInput = document.getElementById('researchQuestion');
+    var progressDiv = document.getElementById('researchProgress');
+    var resultsDiv = document.getElementById('researchResults');
+    var emptyDiv = document.getElementById('researchEmpty');
+    var discoveryStats = document.getElementById('discoveryStats');
+    var discoveryGenomes = document.getElementById('discoveryGenomes');
+    var reportPanel = document.getElementById('reportPanel');
+    var reportContent = document.getElementById('reportContent');
+
+    if (!researchBtn) return;
+
+    function setStep(stepId) {
+        var steps = ['stepExpand', 'stepDiscover', 'stepFilter', 'stepGenerate'];
+        var found = false;
+        for (var i = 0; i < steps.length; i++) {
+            var el = document.getElementById(steps[i]);
+            if (!el) continue;
+            if (steps[i] === stepId) {
+                el.className = 'progress-step active';
+                found = true;
+            } else if (!found) {
+                el.className = 'progress-step done';
+            } else {
+                el.className = 'progress-step';
+            }
+        }
+    }
+
+    function allStepsDone() {
+        var steps = ['stepExpand', 'stepDiscover', 'stepFilter', 'stepGenerate'];
+        for (var i = 0; i < steps.length; i++) {
+            var el = document.getElementById(steps[i]);
+            if (el) el.className = 'progress-step done';
+        }
+    }
+
+    function renderDiscovery(data) {
+        var totalSearched = data.discovery ? data.discovery.total_genomes_searched : (data.total_searched || 0);
+        var candidatesFound = data.discovery ? data.discovery.candidates_found : (data.candidates_found || 0);
+        var relevantFound = data.discovery ? data.discovery.relevant_found : 0;
+        var relevant = data.relevant_judgments || data.relevant || [];
+        if (!relevantFound) relevantFound = relevant.length;
+
+        discoveryStats.innerHTML =
+            '<div class="stat-card"><div class="stat-num">' + totalSearched + '</div><div class="stat-label">Genomes Searched</div></div>' +
+            '<div class="stat-card"><div class="stat-num">' + candidatesFound + '</div><div class="stat-label">Candidates Found</div></div>' +
+            '<div class="stat-card"><div class="stat-num">' + relevantFound + '</div><div class="stat-label">Relevant</div></div>';
+
+        var html = '';
+        for (var i = 0; i < relevant.length; i++) {
+            var g = relevant[i];
+            var score = g.relevance_score || g.score || 0;
+            var reason = g.relevance_reason || g.reason || '';
+            var title = g.title || 'Unknown';
+            var court = g.court || '';
+            var date = g.date || '';
+            html += '<div class="genome-card">' +
+                '<div class="genome-score">' + score + '</div>' +
+                '<div class="genome-info">' +
+                '<div class="genome-title">' + title + '</div>' +
+                '<div class="genome-meta">' + court + (date ? ' | ' + date : '') + '</div>' +
+                (reason ? '<div class="genome-reason">' + reason + '</div>' : '') +
+                '</div></div>';
+        }
+        if (!html) {
+            html = '<p style="color:#94a3b8; text-align:center;">No relevant genomes found for this question.</p>';
+        }
+        discoveryGenomes.innerHTML = html;
+    }
+
+    function renderReport(reportText) {
+        if (!reportText) {
+            reportPanel.style.display = 'none';
+            return;
+        }
+        reportPanel.style.display = 'block';
+        var formatted = reportText
+            .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+            .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+            .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/^(\d+)\.\s/gm, '<br>$1. ')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/\n/g, '<br>');
+        reportContent.innerHTML = '<p>' + formatted + '</p>';
+    }
+
+    function doResearch(reportMode) {
+        var question = questionInput.value.trim();
+        if (!question || question.length < 10) {
+            alert('Please enter a research question (at least 10 characters).');
+            return;
+        }
+        researchBtn.disabled = true;
+        discoverBtn.disabled = true;
+        emptyDiv.style.display = 'none';
+        resultsDiv.style.display = 'none';
+        reportPanel.style.display = 'none';
+
+        if (reportMode) {
+            progressDiv.style.display = 'block';
+            setStep('stepExpand');
+            setTimeout(function() { setStep('stepDiscover'); }, 1500);
+            setTimeout(function() { setStep('stepFilter'); }, 3000);
+
+            fetch('/api/genome-research', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question: question})
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                allStepsDone();
+                setTimeout(function() {
+                    progressDiv.style.display = 'none';
+                    resultsDiv.style.display = 'block';
+                    renderDiscovery(data);
+                    if (data.report && data.report.report_text) {
+                        renderReport(data.report.report_text);
+                    }
+                    if (data.total_time_seconds) {
+                        var timingHtml = '<div class="research-timing">Completed in ' + data.total_time_seconds + 's';
+                        if (data.token_usage) {
+                            timingHtml += ' | Tokens: ' + (data.token_usage.input_tokens || 0) + ' in / ' + (data.token_usage.output_tokens || 0) + ' out';
+                        }
+                        timingHtml += '</div>';
+                        resultsDiv.insertAdjacentHTML('beforeend', timingHtml);
+                    }
+                }, 500);
+            })
+            .catch(function(err) {
+                progressDiv.style.display = 'none';
+                alert('Research failed: ' + err.message);
+            })
+            .finally(function() {
+                researchBtn.disabled = false;
+                discoverBtn.disabled = false;
+            });
+        } else {
+            progressDiv.style.display = 'block';
+            setStep('stepExpand');
+            setTimeout(function() { setStep('stepDiscover'); }, 1000);
+
+            fetch('/api/genome-research/discover?q=' + encodeURIComponent(question))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                allStepsDone();
+                setTimeout(function() {
+                    progressDiv.style.display = 'none';
+                    resultsDiv.style.display = 'block';
+                    renderDiscovery(data);
+                }, 300);
+            })
+            .catch(function(err) {
+                progressDiv.style.display = 'none';
+                alert('Discovery failed: ' + err.message);
+            })
+            .finally(function() {
+                researchBtn.disabled = false;
+                discoverBtn.disabled = false;
+            });
+        }
+    }
+
+    researchBtn.addEventListener('click', function() { doResearch(true); });
+    discoverBtn.addEventListener('click', function() { doResearch(false); });
+
+    questionInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            doResearch(true);
+        }
+    });
+})();

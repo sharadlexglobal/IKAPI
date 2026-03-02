@@ -20,6 +20,7 @@ A web application for searching Indian legal judgments, laws, and tribunal order
 │   ├── parallel_claude.py  # Async parallel Claude API calls (asyncio + AsyncAnthropic)
 │   ├── expressway.py       # Superfast Expressway engine (instant legal research)
 │   ├── expressway_prompts.py # Expressway prompt templates (query extraction + para drafting)
+│   ├── genome_research.py  # Genome Research engine (discover genomes + generate reports)
 │   ├── taxonomy_seed.py    # Taxonomy seed script (categories, topics, provisions)
 │   ├── auto_tagger.py      # Auto-tagger engine (provision matching, keyword matching)
 │   ├── templates/
@@ -350,6 +351,25 @@ Cost breakdown stored in `cost_breakdown_json` (JSONB) on each research job. Das
 - JSON repair for truncated API responses: auto-detects max_tokens truncation and repairs JSON
 - Question extraction limited to top 40 questions via prompt constraint (reduces output size)
 - Caching is critical: cached genomes from prior runs save 80% of cost
+
+### Research Tab (Genome-Based Legal Research)
+New prominent tab that discovers relevant pre-analyzed judgment genomes from the database and generates comprehensive legal research reports.
+
+**Discovery Algorithm (3-Layer):**
+1. **Query Expansion (Haiku)** — Extracts keywords, provisions, legal concepts, taxonomy IDs from natural language question
+2. **Multi-Signal DB Search** — Scores all genomes using 5 signals: taxonomy match (3pts), provision match (3pts), ratio match (2pts), weaponizable match (2pts), keyword match (1pt). Returns top 20 candidates.
+3. **AI Relevance Filter (Haiku)** — Sends genome summaries + ratios to Haiku for relevance scoring (1-10). Keeps score >= 5.
+
+**Report Generation (Single Sonnet call):**
+- Extracts D1 (ratio, provisions, case identity), D4 (sword/shield, vulnerability), D5 (cheat sheet, summary) from relevant genomes
+- Generates structured report: Executive Summary, Key Principles, Supporting Judgments, Contrary Positions, Practical Application, Strength Assessment
+
+**API:**
+- `POST /api/genome-research` — Full research `{question, max_genomes?}` → report + discovery stats
+- `GET /api/genome-research/discover?q=` — Discovery only (no report, lightweight)
+
+**Cost:** ~$0.10-$0.25 per query (no full text needed — reads from pre-extracted genomes)
+**Files:** `web/genome_research.py` (engine)
 
 ### Superfast Expressway (Instant Legal Research)
 Separate fast-track module that bypasses the full genome pipeline. Receives a pleading via webhook, finds relevant judgments, and returns ready-made legal paragraphs in 25-45 seconds.
