@@ -170,13 +170,18 @@ def _call_opus(system_prompt, user_message, max_retries=1):
     last_error = None
     for attempt in range(max_retries + 1):
         message = client.messages.create(
-            model="claude-opus-4-20250514",
-            max_tokens=4000,
+            model="claude-opus-4-6",
+            max_tokens=8000,
+            thinking={"type": "adaptive"},
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
-            timeout=90,
+            timeout=120,
         )
-        raw = message.content[0].text.strip()
+        raw = ""
+        for block in message.content:
+            if block.type == "text":
+                raw = block.text.strip()
+                break
         raw = raw.replace('\u201c', '"').replace('\u201d', '"')
         raw = raw.replace('\u2018', "'").replace('\u2019', "'")
         usage = {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens}
@@ -194,9 +199,9 @@ def _call_opus(system_prompt, user_message, max_retries=1):
                     pass
             last_error = f"JSON parse failed on attempt {attempt + 1}"
             if attempt < max_retries:
-                logger.warning(f"[genome-research] Opus JSON parse failed (attempt {attempt + 1}), retrying...")
+                logger.warning(f"[genome-research] Opus 4.6 JSON parse failed (attempt {attempt + 1}), retrying...")
                 continue
-    raise ValueError(f"Failed to parse Opus response as valid JSON after {max_retries + 1} attempts. Please try again.")
+    raise ValueError(f"Failed to parse Opus 4.6 response as valid JSON after {max_retries + 1} attempts. Please try again.")
 
 
 def _call_sonnet(system_prompt, user_message, max_tokens=8000):
