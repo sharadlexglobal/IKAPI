@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CourtCraft.ai — Research from Genomes: Complete Flow Diagram</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 30px; }
+h1 { text-align: center; font-size: 28px; color: #7c3aed; margin-bottom: 8px; }
+.subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
+.flow-container { max-width: 1100px; margin: 0 auto; }
+
+.phase { margin-bottom: 50px; position: relative; }
+.phase-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.phase-num { background: #7c3aed; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.phase-title { font-size: 20px; font-weight: 700; color: #f1f5f9; }
+.phase-model { font-size: 13px; color: #a78bfa; background: #1e1b4b; padding: 3px 10px; border-radius: 12px; margin-left: 10px; }
+
+.flow-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.flow-box h3 { color: #7c3aed; font-size: 15px; margin-bottom: 10px; }
+.flow-box p { color: #94a3b8; font-size: 13px; line-height: 1.6; }
+.flow-box code { background: #0f172a; color: #22d3ee; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.flow-box .field-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.flow-box .field-tag { background: #0f172a; color: #60a5fa; border: 1px solid #1e3a5f; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-family: monospace; }
+.flow-box .field-tag.highlight { color: #22d3ee; border-color: #164e63; background: #0c2a3a; }
+
+.arrow { text-align: center; margin: 18px 0; font-size: 28px; color: #7c3aed; }
+.arrow-label { text-align: center; color: #64748b; font-size: 12px; margin-top: -10px; margin-bottom: 10px; }
+
+.scoring-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+.score-item { background: #0f172a; border-radius: 8px; padding: 10px; text-align: center; }
+.score-item .pts { font-size: 22px; font-weight: 700; color: #7c3aed; }
+.score-item .desc { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+.report-section { border-left: 3px solid #7c3aed; padding: 12px 16px; margin: 10px 0; background: #0f172a; border-radius: 0 8px 8px 0; }
+.report-section h4 { color: #c084fc; font-size: 14px; margin-bottom: 6px; }
+.report-section p { color: #94a3b8; font-size: 12px; line-height: 1.6; }
+.report-section .data-source { color: #22d3ee; font-size: 11px; font-style: italic; margin-top: 4px; }
+
+.ui-preview { background: #1e293b; border: 2px solid #7c3aed; border-radius: 12px; padding: 20px; margin-top: 20px; }
+.ui-preview h3 { color: #f1f5f9; font-size: 16px; margin-bottom: 14px; text-align: center; }
+
+.stats-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 16px; }
+.stat-box { background: #0f172a; border-radius: 8px; padding: 12px 20px; text-align: center; min-width: 120px; }
+.stat-box .num { font-size: 28px; font-weight: 700; color: #7c3aed; }
+.stat-box .label { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+.judgment-card-preview { display: flex; align-items: flex-start; gap: 12px; background: #0f172a; border-radius: 8px; padding: 12px; margin: 8px 0; }
+.jc-score { background: #7c3aed; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.jc-info .jc-title { color: #f1f5f9; font-size: 13px; font-weight: 600; }
+.jc-info .jc-meta { color: #64748b; font-size: 11px; margin-top: 2px; }
+.jc-info .jc-reason { color: #94a3b8; font-size: 11px; margin-top: 4px; font-style: italic; }
+
+.report-preview { background: #0f172a; border-radius: 8px; padding: 16px; margin-top: 12px; }
+.report-preview h4 { font-size: 14px; color: #c084fc; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 10px; }
+.report-preview .rp-section { margin: 10px 0; }
+.report-preview .rp-section h5 { color: #f1f5f9; font-size: 13px; margin-bottom: 4px; }
+.report-preview .rp-section p { color: #94a3b8; font-size: 11px; line-height: 1.5; }
+.report-preview .rp-section .binding { color: #22c55e; font-weight: 600; }
+.report-preview .rp-section .persuasive { color: #f59e0b; font-weight: 600; }
+
+.genome-fields-sent { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.gf-group { background: #0f172a; border-radius: 8px; padding: 10px; }
+.gf-group h5 { color: #c084fc; font-size: 12px; margin-bottom: 6px; }
+.gf-group .gf-item { color: #94a3b8; font-size: 11px; margin: 3px 0; padding-left: 12px; position: relative; }
+.gf-group .gf-item::before { content: "→"; position: absolute; left: 0; color: #7c3aed; }
+.gf-limit { color: #f59e0b; font-size: 10px; }
+
+.timing-bar { display: flex; gap: 2px; margin-top: 16px; border-radius: 8px; overflow: hidden; height: 32px; }
+.timing-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: white; }
+.timing-seg.expand { background: #3b82f6; flex: 1; }
+.timing-seg.discover { background: #22d3ee; flex: 1; }
+.timing-seg.filter { background: #7c3aed; flex: 5; }
+.timing-seg.report { background: #ec4899; flex: 4; }
+.timing-labels { display: flex; gap: 16px; justify-content: center; margin-top: 8px; }
+.timing-labels span { font-size: 11px; color: #94a3b8; }
+.timing-labels .dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<h1>CourtCraft.ai — "Research from Genomes" Complete Flow</h1>
+<p class="subtitle">What happens when you type a legal question and click the button — function by function, field by field</p>
+
+<div class="flow-container">
+
+<!-- PHASE 1 -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num">1</div>
+  <div class="phase-title">Query Expansion</div>
+  <div class="phase-model">Claude Haiku · ~2s</div>
+</div>
+<div class="flow-box">
+  <h3>expand_query(question) → _call_haiku(QUERY_EXPANSION_PROMPT)</h3>
+  <p>Your plain-English question gets transformed into structured search terms. Haiku reads the full taxonomy list (17 categories, 28 topics) and extracts 6 types of search signals.</p>
+  <p style="margin-top:10px;color:#f1f5f9;font-weight:600;">Input: <code>"Can a cheque bounce complaint be quashed under Section 482 CrPC?"</code></p>
+  <div class="field-list" style="margin-top:12px;">
+    <div class="field-tag highlight">statutory_terms: ["cheque dishonour", "quashing"]</div>
+    <div class="field-tag highlight">synonyms: ["setting aside", "striking down"]</div>
+    <div class="field-tag">provisions: ["Section 138 NI Act", "Section 482 CrPC"]</div>
+    <div class="field-tag">legal_concepts: ["inherent jurisdiction", "abuse of process"]</div>
+    <div class="field-tag">taxonomy_ids: ["CAT_NI_ACT", "TOP_NI138_QUASH"]</div>
+    <div class="field-tag" style="color:#ef4444;border-color:#7f1d1d;">negative_keywords: ["motor accident", "land acquisition"]</div>
+  </div>
+  <p style="margin-top:10px;color:#64748b;font-size:11px;">Rule: Generic terms like "court", "judgment", "case" are excluded. Only issue-specific terms.</p>
+</div>
+</div>
+
+<div class="arrow">↓</div>
+<div class="arrow-label">All 6 signal types passed to scoring engine</div>
+
+<!-- PHASE 2 -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num">2</div>
+  <div class="phase-title">Multi-Signal Database Scoring</div>
+  <div class="phase-model">PostgreSQL · ~150ms</div>
+</div>
+<div class="flow-box">
+  <h3>discover_relevant_genomes(expanded_query)</h3>
+  <p>Loads ALL genomes from DB (80+), scores each one against 5 signal types. No AI call — pure string matching + taxonomy lookup. Returns top 20 candidates sorted by score.</p>
+  <div class="scoring-grid">
+    <div class="score-item"><div class="pts">+3</div><div class="desc">Taxonomy match<br>(category or topic ID)</div></div>
+    <div class="score-item"><div class="pts">+3</div><div class="desc">Provision match<br>(Section/Article in genome)</div></div>
+    <div class="score-item"><div class="pts">+2</div><div class="desc">Concept in ratio<br>OR weapon (deduped)</div></div>
+    <div class="score-item"><div class="pts">+1</div><div class="desc">Keyword match<br>(capped at 3 total)</div></div>
+    <div class="score-item"><div class="pts" style="color:#ef4444;">−2</div><div class="desc">Negative keyword<br>penalty</div></div>
+  </div>
+  <p style="margin-top:12px;color:#64748b;font-size:11px;">Each candidate carries: TID, title, court, date, score, signals[], ratio (500 chars), summary (1000 chars), provisions_engaged</p>
+</div>
+</div>
+
+<div class="arrow">↓</div>
+<div class="arrow-label">Top 20 candidates sent to AI filter</div>
+
+<!-- PHASE 3 -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num">3</div>
+  <div class="phase-title">AI Relevance Filter</div>
+  <div class="phase-model">Claude Opus 4.6 · Adaptive Thinking · ~60-90s</div>
+</div>
+<div class="flow-box">
+  <h3>filter_relevant(question, candidates) → _call_opus(RELEVANCE_FILTER_PROMPT)</h3>
+  <p>Opus 4.6 with adaptive thinking deeply analyzes each candidate. Writes a 2-3 sentence analysis BEFORE scoring (chain-of-thought). Uses a legal-specific rubric. Keeps only score ≥ 6.</p>
+  <p style="margin-top:10px;color:#f1f5f9;font-size:13px;">What Opus sees per candidate:</p>
+  <div class="field-list">
+    <div class="field-tag">TID</div>
+    <div class="field-tag">Title</div>
+    <div class="field-tag">Court</div>
+    <div class="field-tag">Provisions</div>
+    <div class="field-tag">Ratio (500 chars)</div>
+    <div class="field-tag">Summary (1000 chars)</div>
+    <div class="field-tag">DB Match Score + signals</div>
+  </div>
+  <p style="margin-top:10px;color:#f1f5f9;font-size:13px;">Legal Rubric:</p>
+  <p><code>9-10</code> Directly on point (supporting OR opposing) · <code>7-8</code> Highly relevant · <code>5-6</code> Background · <code>3-4</code> Tangential · <code>1-2</code> Not relevant</p>
+  <p style="margin-top:8px;color:#22d3ee;font-size:12px;">Key rule: Contrary authority scores 8-10 (lawyers MUST know about opposing holdings)</p>
+  <p style="margin-top:4px;color:#22d3ee;font-size:12px;">Key rule: SC preferred over HC over Tribunals when relevance is equal</p>
+</div>
+</div>
+
+<div class="arrow">↓</div>
+<div class="arrow-label">Relevant genomes (up to 15, sorted by relevance score) sent to report generator</div>
+
+<!-- PHASE 4 -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num">4</div>
+  <div class="phase-title">Genome Data Extraction for Sonnet</div>
+  <div class="phase-model">PostgreSQL · instant</div>
+</div>
+<div class="flow-box">
+  <h3>_extract_genome_data_for_report(relevant_genomes)</h3>
+  <p>Fetches full genome JSON for each relevant judgment, extracts 11 fields from 3 dimensions, and formats them as structured text. Genomes are ordered by relevance score (highest first).</p>
+  <div class="genome-fields-sent">
+    <div class="gf-group">
+      <h5>Dimension 1: Visible (Legal Core)</h5>
+      <div class="gf-item">case_identity <span class="gf-limit">(1500 chars)</span></div>
+      <div class="gf-item">ratio_decidendi <span class="gf-limit">(2000 chars)</span></div>
+      <div class="gf-item">provisions_engaged <span class="gf-limit">(1000 chars)</span></div>
+      <div class="gf-item">precedent_registry <span class="gf-limit">(1500 chars)</span></div>
+      <div class="gf-item">operative_order <span class="gf-limit">(500 chars)</span></div>
+    </div>
+    <div class="gf-group">
+      <h5>Dimension 4: Weaponizable</h5>
+      <div class="gf-item">sword_uses <span class="gf-limit">(1500 chars)</span></div>
+      <div class="gf-item">shield_uses <span class="gf-limit">(1500 chars)</span></div>
+      <div class="gf-item">vulnerability_map <span class="gf-limit">(1000 chars)</span></div>
+      <div class="gf-item">distinguishing_playbook <span class="gf-limit">(1000 chars)</span></div>
+    </div>
+    <div class="gf-group">
+      <h5>Dimension 5: Synthesis</h5>
+      <div class="gf-item">practitioners_cheat_sheet <span class="gf-limit">(1500 chars)</span></div>
+      <div class="gf-item">genome_summary <span class="gf-limit">(1000 chars)</span></div>
+    </div>
+    <div class="gf-group">
+      <h5>_safe_json() Truncation</h5>
+      <div class="gf-item" style="color:#f59e0b;">Tries indented JSON first</div>
+      <div class="gf-item" style="color:#f59e0b;">Falls back to compact JSON</div>
+      <div class="gf-item" style="color:#f59e0b;">Hard truncates with "..." at limit</div>
+      <div class="gf-item" style="color:#f59e0b;">~14.5K chars max per genome</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="arrow">↓</div>
+<div class="arrow-label">Formatted genome data (up to ~200K chars for 15 genomes) inserted into prompt</div>
+
+<!-- PHASE 5 -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num">5</div>
+  <div class="phase-title">Report Generation</div>
+  <div class="phase-model">Claude Sonnet 4 · max 8000 tokens · ~50s</div>
+</div>
+<div class="flow-box">
+  <h3>generate_report(question, relevant_genomes) → _call_sonnet(REPORT_GENERATION_PROMPT)</h3>
+  <p>Sonnet 4 receives the question + all genome data and writes a structured legal research report with 6 mandatory sections. It follows 8 critical rules including court hierarchy labeling and no hallucination.</p>
+  
+  <div class="report-section">
+    <h4>Section 1: EXECUTIVE SUMMARY</h4>
+    <p>3-5 sentences directly answering the question with specific case references.</p>
+    <div class="data-source">Sources from: ratio_decidendi, genome_summary</div>
+  </div>
+  
+  <div class="report-section">
+    <h4>Section 2: KEY LEGAL PRINCIPLES</h4>
+    <p>Numbered list. Each principle cites exact case title + paragraph number from genome data. Labeled as SC or HC source.</p>
+    <div class="data-source">Sources from: ratio_decidendi (proposition + source_paragraph), case_identity (court)</div>
+  </div>
+  
+  <div class="report-section">
+    <h4>Section 3: SUPPORTING JUDGMENTS</h4>
+    <p>Per-judgment breakdown: case title, court, year, <span style="color:#22c55e;font-weight:600;">BINDING</span> / <span style="color:#f59e0b;font-weight:600;">PERSUASIVE</span> label, ratio decidendi, key paragraphs, how it supports the question.</p>
+    <div class="data-source">Sources from: case_identity, ratio_decidendi, provisions_engaged, precedent_registry</div>
+  </div>
+  
+  <div class="report-section" style="border-color:#ef4444;">
+    <h4 style="color:#ef4444;">Section 4: CONTRARY / DISTINGUISHABLE POSITIONS (CRITICAL)</h4>
+    <p>Mandatory section. Must include opposing holdings, vulnerability_map weaknesses, and distinguishing factors. Cannot be omitted or dismissed with "no contrary authority."</p>
+    <div class="data-source">Sources from: vulnerability_map (weak_point, stress_test), distinguishing_playbook, precedent_registry (DISTINGUISHED/OVERRULED)</div>
+  </div>
+  
+  <div class="report-section">
+    <h4>Section 5: PRACTICAL APPLICATION</h4>
+    <p>Actionable advice for the lawyer. Sword strategies (offensive use) and shield strategies (defensive use) with specific paragraph citations.</p>
+    <div class="data-source">Sources from: sword_uses (how_to_cite, draft_argument, scenario), shield_uses (attack_being_faced, how_judgment_helps)</div>
+  </div>
+  
+  <div class="report-section">
+    <h4>Section 6: STRENGTH ASSESSMENT</h4>
+    <p>Rating: <strong>STRONG</strong> / <strong>MODERATE</strong> / <strong>WEAK</strong> with reasoning. Factors: SC authority count, contrary holdings, judgment recency.</p>
+    <div class="data-source">Sources from: all genome data collectively, precedent_registry (treatment), case_identity (court, date)</div>
+  </div>
+</div>
+</div>
+
+<div class="arrow">↓</div>
+<div class="arrow-label">Markdown report text returned to frontend</div>
+
+<!-- PHASE 6: UI RENDERING -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num">6</div>
+  <div class="phase-title">Frontend Rendering</div>
+  <div class="phase-model">Browser · instant</div>
+</div>
+<div class="ui-preview">
+  <h3>What the User Sees</h3>
+  
+  <div class="stats-row">
+    <div class="stat-box"><div class="num">80</div><div class="label">Genomes Searched</div></div>
+    <div class="stat-box"><div class="num">20</div><div class="label">Candidates Found</div></div>
+    <div class="stat-box"><div class="num">13</div><div class="label">Relevant</div></div>
+  </div>
+  
+  <p style="color:#94a3b8;font-size:12px;text-align:center;margin-bottom:12px;">Discovered Relevant Judgments (cards with relevance scores)</p>
+  
+  <div class="judgment-card-preview">
+    <div class="jc-score">9</div>
+    <div class="jc-info">
+      <div class="jc-title">Yogendra Pratap Singh vs Savitri Pandey (2014)</div>
+      <div class="jc-meta">Supreme Court of India | 2014-09-19</div>
+      <div class="jc-reason">"Directly addresses premature filing of S.138 complaints — complaint filed before 15-day notice period is void ab initio (Para 36)."</div>
+    </div>
+  </div>
+  <div class="judgment-card-preview">
+    <div class="jc-score">8</div>
+    <div class="jc-info">
+      <div class="jc-title">TRL Krosaki Refractories vs SMS Asia (2022)</div>
+      <div class="jc-meta">Supreme Court of India | 2022-01-12</div>
+      <div class="jc-reason">"Addresses corporate authorization standard for S.138 complaints — restricts quashing jurisdiction for technical authorization challenges."</div>
+    </div>
+  </div>
+  <div class="judgment-card-preview" style="opacity:0.5;">
+    <div class="jc-score" style="background:#64748b;">7</div>
+    <div class="jc-info">
+      <div class="jc-title">... more judgment cards ...</div>
+      <div class="jc-meta">Each with score, court, date, and Opus 4.6 analysis</div>
+    </div>
+  </div>
+  
+  <div class="report-preview">
+    <h4>Legal Research Report</h4>
+    
+    <div class="rp-section">
+      <h5>1. EXECUTIVE SUMMARY</h5>
+      <p>Based on the available authorities, cheque bounce complaints under Section 138 NI Act can be quashed under Section 482 CrPC in several specific circumstances: (1) when complaints are filed before the statutory 15-day payment window expires...</p>
+    </div>
+    
+    <div class="rp-section">
+      <h5>2. KEY LEGAL PRINCIPLES</h5>
+      <p>1. <strong>Premature Complaint Doctrine</strong> — A complaint filed under S.138 before expiry of 15 days is "not a complaint at all in the eye of law" (<em>Yogendra Pratap Singh v. Savitri Pandey</em>, Para 36, <span class="binding">Supreme Court — BINDING</span>)</p>
+      <p>2. <strong>Essential Ingredients Pleading</strong> — Complaints must contain specific factual allegations of all five essential ingredients (<em>Vijay Kumar Mishra vs State Of U.P.</em>, Paras 22-25, <span class="persuasive">Allahabad HC — PERSUASIVE</span>)</p>
+    </div>
+    
+    <div class="rp-section">
+      <h5>3. SUPPORTING JUDGMENTS</h5>
+      <p>Per-judgment analysis with <span class="binding">BINDING</span> / <span class="persuasive">PERSUASIVE</span> labels, ratio decidendi from genome, paragraph references, and relevance explanation.</p>
+    </div>
+    
+    <div class="rp-section" style="border-left: 2px solid #ef4444; padding-left: 10px;">
+      <h5 style="color:#ef4444;">4. CONTRARY / DISTINGUISHABLE</h5>
+      <p>Vulnerabilities from genome data, opposing holdings, single-judge limitations, distinguishing factors — the section a lawyer checks first.</p>
+    </div>
+    
+    <div class="rp-section">
+      <h5>5. PRACTICAL APPLICATION</h5>
+      <p><strong>Sword:</strong> Use <em>Yogendra Pratap Singh</em> (Para 36) where complaint filed before 15-day window — argue void ab initio.<br>
+      <strong>Shield:</strong> Use <em>TRL Krosaki</em> (Para 17) to resist quashing based on disputed authorization.</p>
+    </div>
+    
+    <div class="rp-section">
+      <h5>6. STRENGTH ASSESSMENT: MODERATE TO STRONG</h5>
+      <p>Multiple Supreme Court authorities. Strongest for premature complaint challenges. Weakest for corporate authorization disputes.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TIMING -->
+<div class="phase" style="margin-top:30px;">
+<div class="phase-header">
+  <div class="phase-num" style="background:#64748b;">⏱</div>
+  <div class="phase-title">Typical Timing Breakdown (~2 minutes total)</div>
+</div>
+<div class="flow-box">
+  <div class="timing-bar">
+    <div class="timing-seg expand">~2s</div>
+    <div class="timing-seg discover">~0.2s</div>
+    <div class="timing-seg filter">~70s</div>
+    <div class="timing-seg report">~50s</div>
+  </div>
+  <div class="timing-labels">
+    <span><span class="dot" style="background:#3b82f6;"></span>Query Expansion (Haiku)</span>
+    <span><span class="dot" style="background:#22d3ee;"></span>DB Scoring</span>
+    <span><span class="dot" style="background:#7c3aed;"></span>AI Filter (Opus 4.6)</span>
+    <span><span class="dot" style="background:#ec4899;"></span>Report (Sonnet 4)</span>
+  </div>
+</div>
+</div>
+
+<!-- MODEL LINEUP -->
+<div class="phase">
+<div class="phase-header">
+  <div class="phase-num" style="background:#64748b;">🤖</div>
+  <div class="phase-title">AI Model Lineup</div>
+</div>
+<div class="flow-box">
+  <div class="scoring-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="score-item">
+      <div class="pts" style="font-size:16px;color:#3b82f6;">Claude Haiku</div>
+      <div class="desc" style="margin-top:8px;">Query Expansion<br>Fast, cheap (~$0.001)<br>max_tokens: 4000<br>timeout: 60s</div>
+    </div>
+    <div class="score-item" style="border:2px solid #7c3aed;">
+      <div class="pts" style="font-size:16px;color:#7c3aed;">Claude Opus 4.6</div>
+      <div class="desc" style="margin-top:8px;">Relevance Filter<br>Adaptive Thinking<br>max_tokens: 8000<br>timeout: 120s<br><strong style="color:#22d3ee;">The soul of the system</strong></div>
+    </div>
+    <div class="score-item">
+      <div class="pts" style="font-size:16px;color:#ec4899;">Claude Sonnet 4</div>
+      <div class="desc" style="margin-top:8px;">Report Generation<br>Structured legal writing<br>max_tokens: 8000<br>timeout: 120s</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>
