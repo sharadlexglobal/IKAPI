@@ -1,0 +1,103 @@
+DEEP QUALITY AUDIT PROMPT — GENOME RESEARCH REPORT SYSTEM
+
+You are auditing the Genome Research feature of CourtCraft.ai. This feature takes a legal research question, discovers relevant pre-analyzed judgment genomes from a PostgreSQL database, and generates a comprehensive legal research report using Claude Sonnet.
+
+YOUR GOAL: Find every issue — mechanical, logical, AND quality — that prevents this system from producing a report that a practicing Indian lawyer would trust and use in court preparation.
+
+CRITICAL MINDSET SHIFT: A "bug" is not just code that crashes. A bug is ANYTHING that makes the final report less useful to a lawyer. If the report says "Sword Use SWORD_1" instead of showing the actual draft argument — that's a bug. If Sonnet receives genomes in random order instead of relevance order — that's a bug. If critical data gets truncated mid-sentence — that's a bug.
+
+PHASE 1: OUTPUT-FIRST AUDIT (Do this BEFORE reading any code)
+Generate an actual report by calling POST /api/genome-research with a real legal question. Read the ENTIRE report word by word. For each section, ask:
+
+EXECUTIVE SUMMARY — Does it actually answer the question with specifics, or is it vague filler? Does it cite specific holdings or just paraphrase generically?
+
+KEY LEGAL PRINCIPLES — Does every principle cite an exact case name AND paragraph number? Are the paragraph numbers real (present in genome data) or hallucinated? Cross-check at least 3 cited paragraph numbers against the actual genome_json in the database.
+
+SUPPORTING JUDGMENTS — Does each judgment have BINDING/PERSUASIVE label? Is the label correct (Supreme Court = BINDING, High Court = PERSUASIVE outside that state)? Are ratio decidendi quotes accurate to the genome data or paraphrased/hallucinated?
+
+CONTRARY/DISTINGUISHABLE — Is this section substantive or a token "no contrary authority found" dismissal? Check the actual genome vulnerability_map data — does the report reflect what's actually in the vulnerability data?
+
+PRACTICAL APPLICATION — Does this section contain actionable advice with specific paragraph citations? Or does it contain internal IDs like "SWORD_1", "SHIELD_1" instead of the actual how_to_cite, draft_argument, scenario content from the genome?
+
+STRENGTH ASSESSMENT — Is the reasoning specific to the genomes analyzed, or is it generic boilerplate that could apply to any topic?
+
+For every problem found, log:
+
+REPORT QUALITY ISSUE [R-001]:
+Section: [which section]
+Problem: [exact text from report that's wrong]
+Expected: [what a lawyer would expect to see]
+Root cause hypothesis: [what in the code/prompt/data might cause this]
+PHASE 2: DATA PIPELINE AUDIT (Trace what Sonnet actually receives)
+Now read the code. Trace the EXACT data that reaches Sonnet's context window:
+
+2A: Genome Data Extraction (_extract_genome_data_for_report)
+What fields from each genome are sent to Sonnet? List every field.
+What fields are NOT sent but exist in the genome? Are any of them useful for report quality?
+Is _safe_json() truncating any critical data? Check: what's the average size of ratio_decidendi, sword_uses, shield_uses, vulnerability_map across actual genomes in the database? Are the truncation limits (2000, 1500, 1000 chars) sufficient?
+Are genomes sent in relevance-score order or arbitrary DB order? If arbitrary — that's a quality bug because LLMs attend more to early context.
+Is there any dead code (variables extracted but never used in the template)?
+2B: Token Budget Calculation
+Calculate the ACTUAL token count for the genome data string when max_genomes=15. Query the database: what's the average genome_json size? Multiply by 15, add the prompt template size, add the system prompt. Does this fit in Sonnet's context window (200K tokens)?
+What happens if it doesn't fit? Does the code check? Does Sonnet silently truncate?
+Is max_tokens=8000 for the report sufficient? What's the longest report that could reasonably be needed for 15 genomes with 6 sections?
+2C: Prompt Engineering Quality
+Read REPORT_GENERATION_PROMPT critically. Does it tell Sonnet to:
+Extract the how_to_cite and draft_argument fields from sword/shield uses (not just reference them)?
+Prefer proposition from ratio_decidendi (not label or raw JSON)?
+Use source_paragraph from ratio as the citation source (not hallucinate paragraph numbers)?
+Check treatment field in precedent_registry (FOLLOWED/DISTINGUISHED/OVERRULED)?
+Note the confidence level from genome fields (VERIFIED vs SPECULATIVE)?
+Are there any ambiguities in the prompt that could cause Sonnet to hallucinate?
+PHASE 3: DISCOVERY QUALITY AUDIT (Are the RIGHT genomes being found?)
+3A: Query Expansion
+Run 5 different legal questions through expand_query() and examine the output. Are the keywords, provisions, taxonomy_ids accurate?
+Test with: (a) a narrow NI Act question, (b) a CrPC procedural question, (c) a constitutional law question, (d) a question that spans two legal areas, (e) a question about a topic with NO genomes in the database.
+Does the prompt produce too many synonyms that dilute precision? Too few that miss relevant genomes?
+3B: Scoring Logic
+For each of the 5 test questions above, examine the scored candidates. Are the top-scored genomes actually the most relevant?
+Is the taxonomy match (3pts) overweighting? Could a genome match a broad category but be irrelevant to the specific question?
+Is the keyword cap (3pts max) too restrictive? Could a highly relevant genome with 5 keyword matches score the same as one with 3?
+Is the negative keyword penalty (-2pts) too weak? Too strong?
+3C: Haiku Filter Quality
+For each test question, examine what Haiku returns. Are the relevance scores justified by the analysis text? Is Haiku's analysis substantive or formulaic?
+Are there cases where Haiku scores a genome 6-7 but the analysis reveals it's actually irrelevant (Haiku being generous)?
+Are there cases where a clearly relevant genome gets filtered out (false negative)?
+PHASE 4: ERROR RESILIENCE AUDIT
+What happens when Haiku returns invalid JSON after both retries?
+What happens when Sonnet's report generation times out (>120s)?
+What happens when a genome's genome_json is malformed or missing expected dimensions?
+What happens when provisions_engaged is a string instead of a list? A dict instead of a list?
+What happens when ratio_decidendi is a single dict instead of a list of dicts?
+What happens when the database connection fails mid-request?
+What happens when ANTHROPIC_API_KEY is invalid or rate-limited?
+PHASE 5: FRONTEND RENDERING AUDIT
+Does the report render correctly with markdown formatting? Test: are **bold**, #headings, numbered lists rendered properly?
+Does the timing div stack if the user clicks "Research" multiple times?
+What happens if the user clicks "Research" while a previous request is still in progress?
+Are long case titles truncated properly in the genome cards?
+Is the "Discover Only" mode response consistent with the "Research" mode response in terms of data shape?
+OUTPUT FORMAT
+After completing all 5 phases, produce:
+
+CRITICAL (blocks lawyer from trusting report):
+[C-001] ...
+[C-002] ...
+HIGH (noticeably degrades report quality):
+[H-001] ...
+[H-002] ...
+MEDIUM (subtle quality issues a careful reader would notice):
+[M-001] ...
+LOW (cosmetic or edge-case issues):
+[L-001] ...
+RECOMMENDED FIXES (ordered by impact, with exact file:line references):
+1. [C-001] Fix: ... (File: ..., Line: ...)
+2. [C-002] Fix: ...
+...
+ABSOLUTE RULES:
+
+DO NOT FIX ANYTHING. Read-only audit. Write findings down. That's it.
+Every finding must cite EVIDENCE — exact text from code, exact text from report output, or exact data from database query.
+Do not guess. If you're unsure whether a truncation limit is sufficient, QUERY THE DATABASE and measure actual sizes.
+Do not assume "it probably works fine." VERIFY by generating actual reports and cross-checking against actual genome data.
+This audit is not complete until you have generated at least 2 different reports and cross-checked at least 5 specific citations against actual genome database records.

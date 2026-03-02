@@ -447,6 +447,9 @@ def _extract_genome_data_for_report(relevant_genomes):
             """, tids)
             rows = cur.fetchall()
 
+        tid_order = {tid: i for i, tid in enumerate(tids)}
+        rows.sort(key=lambda r: tid_order.get(r['tid'], 999))
+
         genome_data_parts = []
         for row in rows:
             gj = row['genome_json']
