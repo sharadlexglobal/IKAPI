@@ -165,6 +165,40 @@ def _call_haiku(system_prompt, user_message, max_retries=1):
     raise ValueError(f"Failed to parse AI response as valid JSON after {max_retries + 1} attempts. Please try again.")
 
 
+def _call_opus(system_prompt, user_message, max_retries=1):
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    last_error = None
+    for attempt in range(max_retries + 1):
+        message = client.messages.create(
+            model="claude-opus-4-20250514",
+            max_tokens=4000,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+            timeout=90,
+        )
+        raw = message.content[0].text.strip()
+        raw = raw.replace('\u201c', '"').replace('\u201d', '"')
+        raw = raw.replace('\u2018', "'").replace('\u2019', "'")
+        usage = {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens}
+        try:
+            parsed = json.loads(raw)
+            return parsed, usage
+        except json.JSONDecodeError:
+            start = raw.find('{')
+            end = raw.rfind('}')
+            if start >= 0 and end > start:
+                try:
+                    parsed = json.loads(raw[start:end + 1])
+                    return parsed, usage
+                except json.JSONDecodeError:
+                    pass
+            last_error = f"JSON parse failed on attempt {attempt + 1}"
+            if attempt < max_retries:
+                logger.warning(f"[genome-research] Opus JSON parse failed (attempt {attempt + 1}), retrying...")
+                continue
+    raise ValueError(f"Failed to parse Opus response as valid JSON after {max_retries + 1} attempts. Please try again.")
+
+
 def _call_sonnet(system_prompt, user_message, max_tokens=8000):
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     message = client.messages.create(
@@ -397,7 +431,7 @@ def filter_relevant(question, candidates, min_score=6):
         )
 
     prompt = RELEVANCE_FILTER_PROMPT.format(question=question, candidates=candidate_text)
-    parsed, usage = _call_haiku(prompt, "Analyze and score the candidate judgments above.")
+    parsed, usage = _call_opus(prompt, "Analyze and score the candidate judgments above.")
     elapsed_ms = int((time.time() - t0) * 1000)
 
     scored = parsed.get("scored", [])
