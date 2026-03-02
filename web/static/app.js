@@ -3243,6 +3243,8 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
                     if (data.report && data.report.report_text) {
                         renderReport(data.report.report_text);
                     }
+                    var oldTiming = resultsDiv.querySelector('.research-timing');
+                    if (oldTiming) oldTiming.remove();
                     if (data.total_time_seconds) {
                         var timingHtml = '<div class="research-timing">Completed in ' + data.total_time_seconds + 's';
                         if (data.token_usage) {

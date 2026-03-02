@@ -3701,7 +3701,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.genome-meta {
+.research-genome-card .genome-meta {
     font-size: 0.75rem;
     color: #64748b;
     margin-top: 2px;

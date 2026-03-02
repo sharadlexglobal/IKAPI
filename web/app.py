@@ -1970,9 +1970,10 @@ def api_genome_research_discover():
         discovery = discover_relevant_genomes(expanded)
         filtered = filter_relevant(question, discovery["candidates"])
         relevant = filtered["relevant"]
+        expanded_clean = {k: v for k, v in expanded.items() if k not in ("usage", "timing_ms")}
         return jsonify({
             "success": True,
-            "expanded_query": expanded,
+            "expanded_query": expanded_clean,
             "discovery": {
                 "total_genomes_searched": discovery["total_searched"],
                 "candidates_found": len(discovery["candidates"]),

@@ -503,6 +503,9 @@ VULNERABILITY MAP:
 DISTINGUISHING PLAYBOOK:
 {_safe_json(distinguishing, 1000)}
 
+PRECEDENT REGISTRY:
+{_safe_json(precedents, 1500)}
+
 PRACTITIONERS CHEAT SHEET:
 {_safe_json(cheat_sheet, 1500)}
 
