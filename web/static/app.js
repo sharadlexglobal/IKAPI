@@ -3151,10 +3151,11 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
     }
 
     function renderDiscovery(data) {
-        var totalSearched = data.discovery ? data.discovery.total_genomes_searched : (data.total_searched || 0);
-        var candidatesFound = data.discovery ? data.discovery.candidates_found : (data.candidates_found || 0);
-        var relevantFound = data.discovery ? data.discovery.relevant_found : 0;
-        var relevant = data.relevant_judgments || data.relevant || [];
+        var disc = data.discovery || {};
+        var totalSearched = disc.total_genomes_searched || 0;
+        var candidatesFound = disc.candidates_found || 0;
+        var relevantFound = disc.relevant_found || 0;
+        var relevant = data.relevant_judgments || [];
         if (!relevantFound) relevantFound = relevant.length;
 
         discoveryStats.innerHTML =
@@ -3170,12 +3171,12 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
             var title = g.title || 'Unknown';
             var court = g.court || '';
             var date = g.date || '';
-            html += '<div class="genome-card">' +
+            html += '<div class="research-genome-card">' +
                 '<div class="genome-score">' + score + '</div>' +
                 '<div class="genome-info">' +
-                '<div class="genome-title">' + title + '</div>' +
-                '<div class="genome-meta">' + court + (date ? ' | ' + date : '') + '</div>' +
-                (reason ? '<div class="genome-reason">' + reason + '</div>' : '') +
+                '<div class="genome-title">' + sanitizeText(title) + '</div>' +
+                '<div class="genome-meta">' + sanitizeText(court) + (date ? ' | ' + sanitizeText(date) : '') + '</div>' +
+                (reason ? '<div class="genome-reason">' + sanitizeText(reason) + '</div>' : '') +
                 '</div></div>';
         }
         if (!html) {
@@ -3184,13 +3185,20 @@ document.querySelectorAll(".nav-tab").forEach(function (tab) {
         discoveryGenomes.innerHTML = html;
     }
 
+    function sanitizeText(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     function renderReport(reportText) {
         if (!reportText) {
             reportPanel.style.display = 'none';
             return;
         }
         reportPanel.style.display = 'block';
-        var formatted = reportText
+        var safe = sanitizeText(reportText);
+        var formatted = safe
             .replace(/^# (.+)$/gm, '<h1>$1</h1>')
             .replace(/^## (.+)$/gm, '<h2>$1</h2>')
             .replace(/^### (.+)$/gm, '<h3>$1</h3>')

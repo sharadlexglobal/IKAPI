@@ -1969,12 +1969,29 @@ def api_genome_research_discover():
         expanded = expand_query(question)
         discovery = discover_relevant_genomes(expanded)
         filtered = filter_relevant(question, discovery["candidates"])
+        relevant = filtered["relevant"]
         return jsonify({
             "success": True,
             "expanded_query": expanded,
-            "total_searched": discovery["total_searched"],
-            "candidates_found": len(discovery["candidates"]),
-            "relevant": filtered["relevant"],
+            "discovery": {
+                "total_genomes_searched": discovery["total_searched"],
+                "candidates_found": len(discovery["candidates"]),
+                "relevant_found": len(relevant),
+            },
+            "relevant_judgments": [
+                {
+                    "tid": g["tid"],
+                    "title": g["title"],
+                    "court": g["court"],
+                    "date": g["date"],
+                    "cited_by": g.get("cited_by", 0),
+                    "durability": g.get("durability", 0),
+                    "relevance_score": g.get("relevance_score", 0),
+                    "relevance_reason": g.get("relevance_reason", ""),
+                    "signals": g.get("signals", []),
+                }
+                for g in relevant
+            ],
         })
     except Exception as e:
         logger.error(f"[genome-research] Discover error: {e}", exc_info=True)

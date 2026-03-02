@@ -142,7 +142,7 @@ def _call_haiku(system_prompt, user_message):
                 return parsed, usage
             except json.JSONDecodeError:
                 pass
-        raise ValueError(f"Cannot parse Haiku response: {raw[:300]}")
+        raise ValueError("Failed to parse AI response as valid JSON. Please try again.")
 
 
 def _call_sonnet(system_prompt, user_message, max_tokens=8000):
@@ -276,12 +276,18 @@ def discover_relevant_genomes(expanded_query):
                     summary_text = genome_summary
 
                 ratio_text_short = ""
-                if isinstance(ratio, dict):
-                    ratio_text_short = ratio.get("primary_ratio", "") or ratio.get("text", "") or json.dumps(ratio)[:500]
+                if isinstance(ratio, list):
+                    propositions = []
+                    for r_item in ratio:
+                        if isinstance(r_item, dict):
+                            prop = r_item.get("proposition", "") or r_item.get("label", "")
+                            if prop:
+                                propositions.append(prop)
+                    ratio_text_short = " | ".join(propositions)[:500] if propositions else json.dumps(ratio)[:500]
+                elif isinstance(ratio, dict):
+                    ratio_text_short = ratio.get("proposition", "") or ratio.get("primary_ratio", "") or ratio.get("text", "") or json.dumps(ratio)[:500]
                 elif isinstance(ratio, str):
                     ratio_text_short = ratio[:500]
-                elif isinstance(ratio, list):
-                    ratio_text_short = json.dumps(ratio)[:500]
 
                 scored_genomes.append({
                     "id": gid,
