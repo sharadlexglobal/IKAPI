@@ -1955,7 +1955,7 @@ def api_genome_research():
         result = run_genome_research(question, max_genomes=max_genomes)
         return jsonify(result)
     except Exception as e:
-        logger.error(f"[genome-research] API error: {e}", exc_info=True)
+        app.logger.error(f"[genome-research] API error: {e}", exc_info=True)
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -1995,7 +1995,7 @@ def api_genome_research_discover():
             ],
         })
     except Exception as e:
-        logger.error(f"[genome-research] Discover error: {e}", exc_info=True)
+        app.logger.error(f"[genome-research] Discover error: {e}", exc_info=True)
         return jsonify({"success": False, "error": str(e)}), 500
 
 

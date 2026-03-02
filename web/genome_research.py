@@ -34,9 +34,9 @@ RULES:
 2. synonyms: 3-6 alternative phrasings or related terms that mean the same thing as the core issue. Example: if question mentions laches, also include delay, acquiescence. If question mentions quashing, also include setting aside, striking down.
 3. provisions: Exact statutory provisions referenced or implied (Section, Article, Rule, Order numbers with Act name)
 4. legal_concepts: 2-5 abstract legal principles involved (e.g., inherent jurisdiction, natural justice, res judicata)
-5. taxonomy_ids: Pick from the available list above — only IDs that are clearly relevant
+5. taxonomy_ids: Pick from the available list above — only IDs that DIRECTLY match the legal issue in the question. Do NOT pick broad categories just because they vaguely relate. If no taxonomy ID clearly matches, return an empty list.
 6. negative_keywords: 2-3 terms that would indicate a genome is about a DIFFERENT legal issue and NOT relevant. Example: if question is about cheque dishonour, a negative keyword might be motor accident or land acquisition.
-7. Be broad enough to catch related judgments but specific enough to exclude noise"""
+7. Be broad enough to catch related judgments but specific enough to exclude noise. If the question is about a legal area NOT covered in the taxonomy list (e.g., patent law, environmental law), return empty taxonomy_ids — do not force-fit unrelated categories."""
 
 RELEVANCE_FILTER_PROMPT = """You are an expert Indian legal researcher. Given a legal research question and a list of judgment genome summaries, determine which judgments are RELEVANT to answering the question.
 
@@ -53,9 +53,11 @@ For each judgment, first ANALYZE its relationship to the question, then assign a
 - 3-4: Tangentially related — different legal issue but shares a procedural or statutory overlap
 - 1-2: Not relevant to the question
 
-IMPORTANT: Contrary authority (judgments that OPPOSE the proposition in the question) should score 8-10 if they address the same legal issue. A practicing lawyer MUST know about contrary holdings to prepare for them.
-
-When relevance is otherwise equal, give slight preference to Supreme Court judgments over High Court, and High Court over Tribunals/lower courts.
+CRITICAL FILTERING RULES:
+1. Contrary authority (judgments that OPPOSE the proposition in the question) should score 8-10 if they address the same legal issue. A practicing lawyer MUST know about contrary holdings.
+2. A judgment that merely MENTIONS a word from the question is NOT relevant. The judgment must actually ADDRESS the legal issue in the question. For example, if the question is about patent law, a cheque dishonour case that happens to mention the word "drug" is score 1-2, NOT 5-6.
+3. Be STRICT. If the judgment discusses a fundamentally different area of law than the question, score it 1-2 regardless of incidental word overlaps.
+4. When relevance is otherwise equal, give slight preference to Supreme Court judgments over High Court, and High Court over Tribunals/lower courts.
 
 RESPOND WITH ONLY VALID JSON, NO MARKDOWN:
 {{"scored": [{{"tid": 12345, "analysis": "2-3 sentences: what legal issue this judgment addresses, how it relates to the research question, and whether it supports or opposes the position", "score": 8}}, ...]}}
@@ -133,10 +135,10 @@ def _call_haiku(system_prompt, user_message):
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     message = client.messages.create(
         model="claude-3-haiku-20240307",
-        max_tokens=2000,
+        max_tokens=4000,
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
-        timeout=30,
+        timeout=60,
     )
     raw = message.content[0].text.strip()
     raw = raw.replace('\u201c', '"').replace('\u201d', '"')
@@ -369,7 +371,7 @@ def discover_relevant_genomes(expanded_query):
         conn.close()
 
 
-def filter_relevant(question, candidates, min_score=5):
+def filter_relevant(question, candidates, min_score=6):
     if not candidates:
         return {"relevant": [], "timing_ms": 0, "usage": {"input_tokens": 0, "output_tokens": 0}}
 
