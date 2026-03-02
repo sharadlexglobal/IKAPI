@@ -1949,7 +1949,10 @@ def api_genome_research():
     question = body["question"].strip()
     if len(question) < 10:
         return jsonify({"error": "Question too short (minimum 10 characters)"}), 400
-    max_genomes = min(int(body.get("max_genomes", 15)), 30)
+    try:
+        max_genomes = min(int(body.get("max_genomes", 15)), 30)
+    except (ValueError, TypeError):
+        max_genomes = 15
     try:
         from genome_research import run_genome_research
         result = run_genome_research(question, max_genomes=max_genomes)

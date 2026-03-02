@@ -62,7 +62,7 @@ CRITICAL FILTERING RULES:
 RESPOND WITH ONLY VALID JSON, NO MARKDOWN:
 {{"scored": [{{"tid": 12345, "analysis": "2-3 sentences: what legal issue this judgment addresses, how it relates to the research question, and whether it supports or opposes the position", "score": 8}}, ...]}}
 
-Only include judgments with score >= 5. Exclude irrelevant ones entirely."""
+Only include judgments with score >= 6. Exclude irrelevant ones entirely."""
 
 REPORT_GENERATION_PROMPT = """You are a Senior Advocate with 40+ years of practice before the Supreme Court of India. You are writing a legal research report based on pre-analyzed judgment genomes.
 
@@ -131,32 +131,38 @@ def _get_taxonomy_list():
         conn.close()
 
 
-def _call_haiku(system_prompt, user_message):
+def _call_haiku(system_prompt, user_message, max_retries=1):
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    message = client.messages.create(
-        model="claude-3-haiku-20240307",
-        max_tokens=4000,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
-        timeout=60,
-    )
-    raw = message.content[0].text.strip()
-    raw = raw.replace('\u201c', '"').replace('\u201d', '"')
-    raw = raw.replace('\u2018', "'").replace('\u2019', "'")
-    usage = {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens}
-    try:
-        parsed = json.loads(raw)
-        return parsed, usage
-    except json.JSONDecodeError:
-        start = raw.find('{')
-        end = raw.rfind('}')
-        if start >= 0 and end > start:
-            try:
-                parsed = json.loads(raw[start:end + 1])
-                return parsed, usage
-            except json.JSONDecodeError:
-                pass
-        raise ValueError("Failed to parse AI response as valid JSON. Please try again.")
+    last_error = None
+    for attempt in range(max_retries + 1):
+        message = client.messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=4000,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+            timeout=60,
+        )
+        raw = message.content[0].text.strip()
+        raw = raw.replace('\u201c', '"').replace('\u201d', '"')
+        raw = raw.replace('\u2018', "'").replace('\u2019', "'")
+        usage = {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens}
+        try:
+            parsed = json.loads(raw)
+            return parsed, usage
+        except json.JSONDecodeError:
+            start = raw.find('{')
+            end = raw.rfind('}')
+            if start >= 0 and end > start:
+                try:
+                    parsed = json.loads(raw[start:end + 1])
+                    return parsed, usage
+                except json.JSONDecodeError:
+                    pass
+            last_error = f"JSON parse failed on attempt {attempt + 1}"
+            if attempt < max_retries:
+                logger.warning(f"[genome-research] Haiku JSON parse failed (attempt {attempt + 1}), retrying...")
+                continue
+    raise ValueError(f"Failed to parse AI response as valid JSON after {max_retries + 1} attempts. Please try again.")
 
 
 def _call_sonnet(system_prompt, user_message, max_tokens=8000):
@@ -559,6 +565,7 @@ def run_genome_research(question, max_genomes=15):
         timings["expand_ms"] = expanded["timing_ms"]
         total_usage["input_tokens"] += expanded["usage"]["input_tokens"]
         total_usage["output_tokens"] += expanded["usage"]["output_tokens"]
+        expanded_clean = {k: v for k, v in expanded.items() if k not in ("usage", "timing_ms")}
 
         discovery = discover_relevant_genomes(expanded)
         timings["discover_ms"] = discovery["timing_ms"]
@@ -574,7 +581,7 @@ def run_genome_research(question, max_genomes=15):
                     "total_genomes_searched": discovery["total_searched"],
                     "candidates_found": 0,
                     "relevant_found": 0,
-                    "expanded_query": expanded,
+                    "expanded_query": expanded_clean,
                 },
                 "relevant_judgments": [],
                 "timing": timings,
@@ -599,7 +606,7 @@ def run_genome_research(question, max_genomes=15):
                     "total_genomes_searched": discovery["total_searched"],
                     "candidates_found": len(candidates),
                     "relevant_found": 0,
-                    "expanded_query": expanded,
+                    "expanded_query": expanded_clean,
                 },
                 "relevant_judgments": [],
                 "timing": timings,
@@ -624,7 +631,7 @@ def run_genome_research(question, max_genomes=15):
                 "total_genomes_searched": discovery["total_searched"],
                 "candidates_found": len(candidates),
                 "relevant_found": len(relevant),
-                "expanded_query": expanded,
+                "expanded_query": expanded_clean,
             },
             "relevant_judgments": [
                 {
