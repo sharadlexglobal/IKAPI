@@ -27,14 +27,16 @@ AVAILABLE TAXONOMY CATEGORIES AND TOPICS:
 YOUR TASK: Extract search terms from the question below.
 
 RESPOND WITH ONLY VALID JSON, NO MARKDOWN:
-{{"keywords": ["keyword1", "keyword2", ...], "provisions": ["Section X of Act Y", ...], "legal_concepts": ["concept1", "concept2", ...], "taxonomy_ids": ["TOPIC_ID1", "CATEGORY_ID1", ...]}}
+{{"statutory_terms": ["cheque dishonour", "negotiable instrument", ...], "synonyms": ["alternative phrasing 1", "related term", ...], "provisions": ["Section X of Act Y", ...], "legal_concepts": ["concept1", "concept2", ...], "taxonomy_ids": ["TOPIC_ID1", "CATEGORY_ID1", ...], "negative_keywords": ["term that indicates NOT relevant", ...]}}
 
 RULES:
-1. Keywords: 5-15 specific legal terms that would appear in judgment text
-2. Provisions: Exact statutory provisions referenced or implied
-3. Legal concepts: Abstract legal principles involved
-4. Taxonomy IDs: Pick from the available list above — only IDs that are clearly relevant
-5. Be broad enough to catch related judgments but specific enough to exclude noise"""
+1. statutory_terms: 3-8 specific legal terms from statutes or legal doctrine that would appear in judgment text. Do NOT include generic terms like court, judgment, case, law, act, petition, order, appeal — only terms specific to the legal issue.
+2. synonyms: 3-6 alternative phrasings or related terms that mean the same thing as the core issue. Example: if question mentions laches, also include delay, acquiescence. If question mentions quashing, also include setting aside, striking down.
+3. provisions: Exact statutory provisions referenced or implied (Section, Article, Rule, Order numbers with Act name)
+4. legal_concepts: 2-5 abstract legal principles involved (e.g., inherent jurisdiction, natural justice, res judicata)
+5. taxonomy_ids: Pick from the available list above — only IDs that are clearly relevant
+6. negative_keywords: 2-3 terms that would indicate a genome is about a DIFFERENT legal issue and NOT relevant. Example: if question is about cheque dishonour, a negative keyword might be motor accident or land acquisition.
+7. Be broad enough to catch related judgments but specific enough to exclude noise"""
 
 RELEVANCE_FILTER_PROMPT = """You are an expert Indian legal researcher. Given a legal research question and a list of judgment genome summaries, determine which judgments are RELEVANT to answering the question.
 
@@ -44,15 +46,19 @@ RESEARCH QUESTION:
 CANDIDATE JUDGMENTS:
 {candidates}
 
-For each judgment, assign a relevance score from 1-10:
-- 9-10: Directly answers the question or establishes the core legal principle
-- 7-8: Highly relevant — discusses the same legal issue with applicable holdings
-- 5-6: Moderately relevant — related legal area, useful background
-- 3-4: Tangentially related
-- 1-2: Not relevant
+For each judgment, first ANALYZE its relationship to the question, then assign a relevance score from 1-10:
+- 9-10: Directly on point — addresses the SAME legal issue with an applicable holding, WHETHER it supports OR opposes the position in the question
+- 7-8: Highly relevant — same legal area, discusses the core principle, a key exception, or an important procedural aspect
+- 5-6: Useful background — related legal area, provides context, defines key terms, or establishes a procedural framework used in the main issue
+- 3-4: Tangentially related — different legal issue but shares a procedural or statutory overlap
+- 1-2: Not relevant to the question
+
+IMPORTANT: Contrary authority (judgments that OPPOSE the proposition in the question) should score 8-10 if they address the same legal issue. A practicing lawyer MUST know about contrary holdings to prepare for them.
+
+When relevance is otherwise equal, give slight preference to Supreme Court judgments over High Court, and High Court over Tribunals/lower courts.
 
 RESPOND WITH ONLY VALID JSON, NO MARKDOWN:
-{{"scored": [{{"tid": 12345, "score": 8, "reason": "one line why relevant"}}, ...]}}
+{{"scored": [{{"tid": 12345, "analysis": "2-3 sentences: what legal issue this judgment addresses, how it relates to the research question, and whether it supports or opposes the position", "score": 8}}, ...]}}
 
 Only include judgments with score >= 5. Exclude irrelevant ones entirely."""
 
@@ -65,6 +71,8 @@ CRITICAL RULES:
 4. If a genome has sword_uses or shield_uses, incorporate them into practical application
 5. If a genome has vulnerability_map, note weaknesses where relevant
 6. Structure the report for a practicing advocate who needs actionable research
+7. Organize judgments by court hierarchy — Supreme Court of India holdings are BINDING precedent. High Court holdings are binding within that state and PERSUASIVE in other states. Tribunal/lower court holdings are persuasive only. Label each judgment accordingly.
+8. If an older judgment exists alongside a newer one on the same legal point, note the temporal relationship. Later judgments may have distinguished, explained, or overruled earlier ones — check the genome's precedent_registry for this information.
 
 RESEARCH QUESTION:
 {question}
@@ -76,20 +84,24 @@ Write a comprehensive legal research report with these sections:
 
 1. EXECUTIVE SUMMARY (3-5 sentences answering the research question based on the genomes)
 
-2. KEY LEGAL PRINCIPLES (numbered list — each principle must cite the exact case title and paragraph number from the genome data)
+2. KEY LEGAL PRINCIPLES (numbered list — each principle must cite the exact case title and paragraph number from the genome data. Note whether the source is a Supreme Court or High Court judgment.)
 
 3. SUPPORTING JUDGMENTS (for each relevant judgment:
    - Case title and citation
-   - Court and year
+   - Court, year, and authority status (BINDING / PERSUASIVE)
    - Ratio decidendi (from genome)
    - Key paragraphs referenced
    - How it supports the research question)
 
-4. CONTRARY / DISTINGUISHABLE POSITIONS (any judgments or holdings that go against the proposition, or vulnerabilities noted in genomes)
+4. CONTRARY / DISTINGUISHABLE POSITIONS — THIS SECTION IS CRITICAL. If ANY genome data contains holdings, ratio decidendi, or vulnerability_map entries that oppose or weaken the legal position in the question, they MUST appear here. Do not omit contrary authority. Include:
+   - Any judgments that take an opposing view
+   - Any vulnerabilities noted in genome vulnerability_map
+   - Any distinguishing factors that could limit applicability
+   If no contrary authority exists in the provided genomes, state so explicitly.
 
 5. PRACTICAL APPLICATION (specific advice on how to use these judgments — cite sword_uses and shield_uses from genomes where available)
 
-6. STRENGTH ASSESSMENT (on a scale of STRONG / MODERATE / WEAK, how well-supported is the legal position based on available genomes, with reasoning)
+6. STRENGTH ASSESSMENT (on a scale of STRONG / MODERATE / WEAK, how well-supported is the legal position based on available genomes, with reasoning. Factor in: number of Supreme Court authorities, presence or absence of contrary holdings, recency of judgments.)
 
 Write in formal legal English suitable for court submissions."""
 
@@ -165,12 +177,23 @@ def expand_query(question):
     prompt = QUERY_EXPANSION_PROMPT.format(taxonomy_list=taxonomy_list)
     parsed, usage = _call_haiku(prompt, question)
     elapsed_ms = int((time.time() - t0) * 1000)
-    logger.info(f"[genome-research] Query expansion: {len(parsed.get('keywords', []))} keywords, "
+
+    statutory_terms = parsed.get("statutory_terms", [])
+    synonyms = parsed.get("synonyms", [])
+    negative_keywords = parsed.get("negative_keywords", [])
+    keywords_combined = list(set(statutory_terms + synonyms + parsed.get("keywords", [])))
+
+    logger.info(f"[genome-research] Query expansion: {len(statutory_terms)} statutory_terms, "
+                f"{len(synonyms)} synonyms, "
                 f"{len(parsed.get('provisions', []))} provisions, "
                 f"{len(parsed.get('legal_concepts', []))} concepts, "
-                f"{len(parsed.get('taxonomy_ids', []))} taxonomy matches in {elapsed_ms}ms")
+                f"{len(parsed.get('taxonomy_ids', []))} taxonomy matches, "
+                f"{len(negative_keywords)} negative_keywords in {elapsed_ms}ms")
     return {
-        "keywords": parsed.get("keywords", []),
+        "keywords": keywords_combined,
+        "statutory_terms": statutory_terms,
+        "synonyms": synonyms,
+        "negative_keywords": negative_keywords,
         "provisions": parsed.get("provisions", []),
         "legal_concepts": parsed.get("legal_concepts", []),
         "taxonomy_ids": parsed.get("taxonomy_ids", []),
@@ -214,6 +237,7 @@ def discover_relevant_genomes(expanded_query):
         provisions = expanded_query.get("provisions", [])
         legal_concepts = expanded_query.get("legal_concepts", [])
         taxonomy_ids = expanded_query.get("taxonomy_ids", [])
+        negative_keywords = expanded_query.get("negative_keywords", [])
 
         for genome in all_genomes:
             score = 0
@@ -223,6 +247,12 @@ def discover_relevant_genomes(expanded_query):
             if isinstance(gj, str):
                 gj = json.loads(gj)
             gj_text = json.dumps(gj).lower()
+
+            negative_hit = False
+            for nk in negative_keywords:
+                if nk.lower() in gj_text:
+                    negative_hit = True
+                    break
 
             genome_topic_ids = topic_links.get(genome['tid'], [])
             genome_cat_ids = category_links.get(genome['tid'], [])
@@ -249,22 +279,28 @@ def discover_relevant_genomes(expanded_query):
 
             ratio = d1.get("ratio_decidendi", {})
             ratio_text = json.dumps(ratio).lower() if ratio else ""
-            for concept in legal_concepts:
-                if concept.lower() in ratio_text:
-                    score += 2
-                    signals.append(f"ratio:{concept}")
-
             d4 = gj.get("dimension_4_weaponizable", {})
             d4_text = json.dumps(d4).lower() if d4 else ""
+
             for concept in legal_concepts:
-                if concept.lower() in d4_text:
+                concept_lower = concept.lower()
+                if concept_lower in ratio_text:
+                    score += 2
+                    signals.append(f"ratio:{concept}")
+                elif concept_lower in d4_text:
                     score += 2
                     signals.append(f"weapon:{concept}")
 
+            keyword_score = 0
             for kw in keywords:
                 if kw.lower() in gj_text:
-                    score += 1
+                    keyword_score += 1
                     signals.append(f"keyword:{kw}")
+            score += min(keyword_score, 3)
+
+            if negative_hit and score > 0:
+                score = max(1, score - 2)
+                signals.append("negative_keyword_penalty")
 
             if score > 0:
                 d5 = gj.get("dimension_5_synthesis", {})
@@ -289,6 +325,19 @@ def discover_relevant_genomes(expanded_query):
                 elif isinstance(ratio, str):
                     ratio_text_short = ratio[:500]
 
+                provisions_short = ""
+                if provisions_engaged:
+                    if isinstance(provisions_engaged, list):
+                        prov_names = []
+                        for pe in provisions_engaged:
+                            if isinstance(pe, dict):
+                                prov_names.append(pe.get("provision", "") or pe.get("name", "") or str(pe))
+                            elif isinstance(pe, str):
+                                prov_names.append(pe)
+                        provisions_short = "; ".join(prov_names)[:500]
+                    else:
+                        provisions_short = json.dumps(provisions_engaged)[:500]
+
                 scored_genomes.append({
                     "id": gid,
                     "tid": genome['tid'],
@@ -302,6 +351,7 @@ def discover_relevant_genomes(expanded_query):
                     "signals": signals,
                     "summary": summary_text[:1000],
                     "ratio": ratio_text_short[:500],
+                    "provisions_engaged": provisions_short,
                 })
 
         scored_genomes.sort(key=lambda x: x['score'], reverse=True)
@@ -326,11 +376,13 @@ def filter_relevant(question, candidates, min_score=5):
     t0 = time.time()
     candidate_text = ""
     for i, c in enumerate(candidates):
+        prov_line = f"Provisions: {c.get('provisions_engaged', 'N/A')}\n" if c.get('provisions_engaged') else ""
         candidate_text += (
             f"\n--- Judgment {i + 1} ---\n"
             f"TID: {c['tid']}\n"
             f"Title: {c['title']}\n"
             f"Court: {c['court']}\n"
+            f"{prov_line}"
             f"Ratio: {c['ratio']}\n"
             f"Summary: {c['summary']}\n"
             f"DB Match Score: {c['score']} (signals: {', '.join(c['signals'][:5])})\n"
@@ -349,7 +401,8 @@ def filter_relevant(question, candidates, min_score=5):
                 tid_val = int(tid_val)
             except (ValueError, TypeError):
                 continue
-            relevant_tids[tid_val] = {"score": item["score"], "reason": item.get("reason", "")}
+            reason = item.get("analysis", "") or item.get("reason", "")
+            relevant_tids[tid_val] = {"score": item["score"], "reason": reason}
 
     relevant = []
     for c in candidates:

@@ -356,13 +356,15 @@ Cost breakdown stored in `cost_breakdown_json` (JSONB) on each research job. Das
 New prominent tab that discovers relevant pre-analyzed judgment genomes from the database and generates comprehensive legal research reports.
 
 **Discovery Algorithm (3-Layer):**
-1. **Query Expansion (Haiku)** — Extracts keywords, provisions, legal concepts, taxonomy IDs from natural language question
-2. **Multi-Signal DB Search** — Scores all genomes using 5 signals: taxonomy match (3pts), provision match (3pts), ratio match (2pts), weaponizable match (2pts), keyword match (1pt). Returns top 20 candidates.
-3. **AI Relevance Filter (Haiku)** — Sends genome summaries + ratios to Haiku for relevance scoring (1-10). Keeps score >= 5.
+1. **Query Expansion (Haiku)** — Extracts structured search terms: statutory_terms (specific legal terms, no generics), synonyms (alternative phrasings), provisions, legal_concepts, taxonomy_ids, negative_keywords (terms indicating NOT relevant). Combined into unified keyword list for scoring.
+2. **Multi-Signal DB Search** — Scores all genomes using 5 signals: taxonomy match (3pts), provision match (3pts), concept match in ratio OR weapon — deduplicated, not both (2pts), keyword match (1pt, capped at 3pts per genome). Negative keyword penalty (-2pts). Returns top 20 candidates.
+3. **AI Relevance Filter (Haiku)** — Chain-of-thought: Haiku writes analysis BEFORE scoring (analysis field precedes score in JSON). Legal-specific rubric: contrary authority scores 8-10 (lawyers must know opposing holdings). Court hierarchy preference (SC > HC > Tribunal). Provisions data included in candidate info. Keeps score >= 5.
 
 **Report Generation (Single Sonnet call):**
 - Extracts D1 (ratio, provisions, case identity), D4 (sword/shield, vulnerability), D5 (cheat sheet, summary) from relevant genomes
-- Generates structured report: Executive Summary, Key Principles, Supporting Judgments, Contrary Positions, Practical Application, Strength Assessment
+- Generates structured report: Executive Summary, Key Principles (with court hierarchy labels), Supporting Judgments (BINDING/PERSUASIVE labels), Contrary Positions (mandatory — cannot be omitted), Practical Application, Strength Assessment (factors in SC authority count, contrary holdings, recency)
+- Court hierarchy awareness: Supreme Court = BINDING, High Court = PERSUASIVE in other states
+- Temporal awareness: flags when newer judgments may distinguish older ones
 
 **API:**
 - `POST /api/genome-research` — Full research `{question, max_genomes?}` → report + discovery stats
